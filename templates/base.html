@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Official Passenger Grievance Redressal and Assistance System - RailAssist">
+    <title>{% block title %}RailAssist - Passenger Portal{% endblock %}</title>
+    <!-- Google Fonts: Outfit for sleek, modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Link to our stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="header-left">
+            <img src="{{ url_for('static', filename='images/railway_logo.jpg') }}" alt="Indian Railways Logo" class="header-logo">
+            <div class="header-text">
+                <span class="hindi-logo-text">भारतीय रेल</span>
+                <span class="eng-logo-text">INDIAN RAILWAYS</span>
+                <span class="portal-subtext">Ministry of Railways</span>
+            </div>
+        </div>
+        
+        <div class="header-center">
+            <h1>RailAssist</h1>
+            <p>Passenger Grievance & Assistance Portal</p>
+        </div>
+
+        <nav class="header-nav">
+            <a href="/" class="nav-link active">Passenger Portal</a>
+            <a href="https://railmadad.indianrailways.gov.in/" target="_blank" class="nav-link">Official Portal</a>
+        </nav>
+    </header>
+
+    <!-- Main Content Container -->
+    <div class="app-container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Main Footer -->
+    <footer class="main-footer">
+        <div class="footer-grid">
+            <div class="footer-column brand-column">
+                <div class="footer-logo-row">
+                    <img src="{{ url_for('static', filename='images/railway_logo.jpg') }}" alt="Indian Railways Logo" class="footer-logo">
+                    <h3>INDIAN RAILWAYS</h3>
+                </div>
+                <p class="footer-desc">
+                    RailAssist is the unified passenger support portal of Indian Railways. It provides real-time registering and tracking of grievances across trains and stations to ensure a safe and comfortable travel experience.
+                </p>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Important Links</h4>
+                <ul class="footer-links-list">
+                    <li><a href="https://www.indianrail.gov.in/" target="_blank">Indian Railways Portal</a></li>
+                    <li><a href="https://www.irctc.co.in/" target="_blank">IRCTC Ticket Booking</a></li>
+                    <li><a href="https://enquiry.indianrail.gov.in/" target="_blank">NTES Train Enquiry</a></li>
+                    <li><a href="https://www.india.gov.in/" target="_blank">National Portal of India</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Helpline Directory</h4>
+                <ul class="footer-help-list">
+                    <li><strong>Integrated Helpline:</strong> Dial 139</li>
+                    <li><strong>Security Assistance:</strong> Dial 182 / 139</li>
+                    <li><strong>Medical Emergency:</strong> Dial 139</li>
+                    <li><strong>Portal Support:</strong> support@railassist.gov.in</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 Ministry of Railways, Government of India. All Rights Reserved.</p>
+            <p class="footer-tag">Unified Grievance Redressal and Assistance System</p>
+        </div>
+    </footer>
+</body>
+</html>
