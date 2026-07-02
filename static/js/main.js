@@ -90,19 +90,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Set today's date as max for incident date inputs
-    const today = new Date().toISOString().split("T")[0];
-    document.querySelectorAll('input[type="date"]').forEach(input => {
-        input.max = today;
-        input.value = today; // default to today
-    });
-
-    // Set current time as default
+    // Set current date/time as default and max for datetime-local inputs
     const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    document.querySelectorAll('input[type="time"]').forEach(input => {
-        input.value = `${hours}:${minutes}`;
+    const tzOffset = now.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(now - tzOffset)).toISOString().slice(0, 16);
+    
+    document.querySelectorAll('input[type="datetime-local"]').forEach(input => {
+        input.max = localISOTime;
+        input.value = localISOTime;
     });
 
     // 3. AJAX Form Submissions (Train, Station)
@@ -195,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     // Render details beautifully
                     const typeLabel = data.complaint_type === "Train" ? "Train Complaint" : "Station Complaint";
                     const locationLabel = data.complaint_type === "Train" 
-                        ? `Train No: ${data.train_number} | Coach: ${data.coach_number || 'N/A'} | Seat: ${data.seat_number || 'N/A'}`
+                        ? `Train No: ${data.train_number} | Coach: ${data.coach_number || 'N/A'}`
                         : `Station: ${data.station_name} | Platform: ${data.platform_number || 'N/A'} | Area: ${data.station_area || 'N/A'}`;
 
                     const statusClass = data.complaint_status.toLowerCase() === "open" ? "open" : "closed";
@@ -211,10 +206,6 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <div class="form-group">
                                     <label>Current Status</label>
                                     <div><span class="status-badge ${statusClass}">${data.complaint_status}</span></div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Passenger Name</label>
-                                    <div>${data.passenger_name}</div>
                                 </div>
                                 <div class="form-group">
                                     <label>Phone Number</label>
@@ -267,4 +258,44 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // 5. Word Counting & Truncation for Textareas (Max 150 Words)
+    const textareas = [
+        { id: "trainDescription", counterId: "trainWordCount" },
+        { id: "stationDescription", counterId: "stationWordCount" }
+    ];
+
+    textareas.forEach(item => {
+        const textarea = document.getElementById(item.id);
+        const counter = document.getElementById(item.counterId);
+
+        if (textarea && counter) {
+            const updateCount = () => {
+                const text = textarea.value;
+                let words = text.trim().split(/\s+/).filter(w => w.length > 0);
+                let wordCount = words.length;
+
+                if (wordCount > 150) {
+                    // Match the first 150 words including their whitespace
+                    const match = text.match(/^(\s*\S+\s+){149}\s*\S+/);
+                    if (match) {
+                        textarea.value = match[0];
+                        words = textarea.value.trim().split(/\s+/).filter(w => w.length > 0);
+                        wordCount = words.length;
+                    }
+                }
+
+                counter.textContent = `(${wordCount} / 150 words)`;
+
+                if (wordCount >= 150) {
+                    counter.classList.add("limit-reached");
+                } else {
+                    counter.classList.remove("limit-reached");
+                }
+            };
+
+            textarea.addEventListener("input", updateCount);
+            updateCount();
+        }
+    });
 });

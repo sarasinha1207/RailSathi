@@ -62,16 +62,25 @@ def submit_train():
     try:
         complaint_id = generate_id("CMP")
         
-        # Build 20 columns data list
+        # Parse datetime-local input
+        incident_datetime = request.form.get("incident_datetime", "")
+        incident_date = ""
+        incident_time = ""
+        if incident_datetime and "T" in incident_datetime:
+            parts = incident_datetime.split("T")
+            incident_date = parts[0]
+            incident_time = parts[1]
+        else:
+            incident_date = incident_datetime
+
+        # Build 18 columns data list
         data = [
             complaint_id,
             "Train",
             request.form.get("phone_number", ""),
-            request.form.get("passenger_name", ""),
             request.form.get("pnr_number", ""),
             request.form.get("train_number", ""),
             request.form.get("coach_number", ""),
-            request.form.get("seat_number", ""),
             request.form.get("current_station", ""),
             request.form.get("next_station", ""),
             "", # station_name
@@ -79,8 +88,8 @@ def submit_train():
             "", # station_area
             request.form.get("main_class", ""),
             request.form.get("sub_class", ""),
-            request.form.get("incident_date", ""),
-            request.form.get("incident_time", ""),
+            incident_date,
+            incident_time,
             request.form.get("complaint_description", ""),
             "Open",
             datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -100,16 +109,25 @@ def submit_station():
     try:
         complaint_id = generate_id("CMP")
 
-        # Build 20 columns data list
+        # Parse datetime-local input
+        incident_datetime = request.form.get("incident_datetime", "")
+        incident_date = ""
+        incident_time = ""
+        if incident_datetime and "T" in incident_datetime:
+            parts = incident_datetime.split("T")
+            incident_date = parts[0]
+            incident_time = parts[1]
+        else:
+            incident_date = incident_datetime
+
+        # Build 18 columns data list
         data = [
             complaint_id,
             "Station",
             request.form.get("phone_number", ""),
-            request.form.get("passenger_name", ""),
             "", # pnr_number
             "", # train_number
             "", # coach_number
-            "", # seat_number
             "", # current_station
             "", # next_station
             request.form.get("station_name", ""),
@@ -117,8 +135,8 @@ def submit_station():
             request.form.get("station_area", ""),
             request.form.get("main_class", ""),
             request.form.get("sub_class", ""),
-            request.form.get("incident_date", ""),
-            request.form.get("incident_time", ""),
+            incident_date,
+            incident_time,
             request.form.get("complaint_description", ""),
             "Open",
             datetime.now().strftime("%Y-%m-%d %H:%M:%S")

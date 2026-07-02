@@ -46,10 +46,7 @@
                     <label for="trainPhone">Phone Number <span class="required-asterisk">*</span></label>
                     <input type="tel" id="trainPhone" name="phone_number" required placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}">
                 </div>
-                <div class="form-group">
-                    <label for="trainName">Passenger Name <span class="required-asterisk">*</span></label>
-                    <input type="text" id="trainName" name="passenger_name" required placeholder="Enter passenger name">
-                </div>
+
                 <div class="form-group">
                     <label for="trainPnr">PNR Number</label>
                     <input type="text" id="trainPnr" name="pnr_number" placeholder="Enter 10-digit PNR (Optional)" pattern="[0-9]{10}">
@@ -60,17 +57,15 @@
             <h3 class="form-section-title">Journey Details</h3>
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="trainNo">Train Number <span class="required-asterisk">*</span></label>
-                    <input type="text" id="trainNo" name="train_number" required placeholder="Enter 5-digit Train Number" pattern="[0-9]{5}">
+                    <label for="trainNo">Train Number/Name <span class="required-asterisk">*</span></label>
+                    <input type="text" id="trainNo" name="train_number" required placeholder="Type Train Name/Number..." list="trainList" autocomplete="off">
+                    <datalist id="trainList"></datalist>
                 </div>
                 <div class="form-group">
                     <label for="trainCoach">Coach Number</label>
                     <input type="text" id="trainCoach" name="coach_number" placeholder="e.g. A1, S3, B2 (Optional)">
                 </div>
-                <div class="form-group">
-                    <label for="trainSeat">Seat Number</label>
-                    <input type="text" id="trainSeat" name="seat_number" placeholder="e.g. 12, 45 (Optional)">
-                </div>
+
             </div>
 
             <!-- Location Details Section -->
@@ -102,20 +97,16 @@
                     </select>
                 </div>
 
-                <!-- Combined Date and Time Input fields -->
-                <div class="dateTime-group">
-                    <div class="form-group">
-                        <label for="trainDate">Incident Date <span class="required-asterisk">*</span></label>
-                        <input type="date" id="trainDate" name="incident_date" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="trainTime">Incident Time <span class="required-asterisk">*</span></label>
-                        <input type="time" id="trainTime" name="incident_time" required>
-                    </div>
+                <div class="form-group full-width">
+                    <label for="trainDateTime">Incident Date & Time <span class="required-asterisk">*</span></label>
+                    <input type="datetime-local" id="trainDateTime" name="incident_datetime" required>
                 </div>
 
                 <div class="form-group full-width">
-                    <label for="trainDescription">Complaint Description <span class="required-asterisk">*</span></label>
+                    <label for="trainDescription" style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>Complaint Description <span class="required-asterisk">*</span></span>
+                        <span id="trainWordCount" class="word-counter">(0 / 150 words)</span>
+                    </label>
                     <textarea id="trainDescription" name="complaint_description" required placeholder="Provide clear description of your concern on the train..."></textarea>
                 </div>
             </div>
@@ -141,10 +132,7 @@
                     <label for="stationPhone">Phone Number <span class="required-asterisk">*</span></label>
                     <input type="tel" id="stationPhone" name="phone_number" required placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}">
                 </div>
-                <div class="form-group">
-                    <label for="stationName">Passenger Name <span class="required-asterisk">*</span></label>
-                    <input type="text" id="stationName" name="passenger_name" required placeholder="Enter passenger name">
-                </div>
+
             </div>
 
             <!-- Station Location Details Section -->
@@ -180,20 +168,16 @@
                     </select>
                 </div>
 
-                <!-- Combined Date and Time Input fields -->
-                <div class="dateTime-group">
-                    <div class="form-group">
-                        <label for="stationDate">Incident Date <span class="required-asterisk">*</span></label>
-                        <input type="date" id="stationDate" name="incident_date" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="stationTime">Incident Time <span class="required-asterisk">*</span></label>
-                        <input type="time" id="stationTime" name="incident_time" required>
-                    </div>
+                <div class="form-group full-width">
+                    <label for="stationDateTime">Incident Date & Time <span class="required-asterisk">*</span></label>
+                    <input type="datetime-local" id="stationDateTime" name="incident_datetime" required>
                 </div>
 
                 <div class="form-group full-width">
-                    <label for="stationDescription">Complaint Description <span class="required-asterisk">*</span></label>
+                    <label for="stationDescription" style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>Complaint Description <span class="required-asterisk">*</span></span>
+                        <span id="stationWordCount" class="word-counter">(0 / 150 words)</span>
+                    </label>
                     <textarea id="stationDescription" name="complaint_description" required placeholder="Provide clear description of the concern at the station..."></textarea>
                 </div>
             </div>
@@ -235,5 +219,6 @@
 
 <!-- Load Categories Configuration first, then main interaction script -->
 <script src="{{ url_for('static', filename='js/categories.js') }}"></script>
+<script src="{{ url_for('static', filename='js/trains.js') }}"></script>
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}
