@@ -13,7 +13,7 @@ def create_app():
     new_csv_path = app.config["CSV_FILE_PATH"]
     old_csv_path = os.path.join(base_dir, "complaints.csv")
 
-    # Define new columns (18 columns total, passenger_name and seat_number removed)
+    # Define new columns (21 columns total, including zone and division columns)
     NEW_HEADERS = [
         "complaint_id",
         "complaint_type",
@@ -32,7 +32,10 @@ def create_app():
         "incident_time",
         "complaint_description",
         "complaint_status",
-        "created_at"
+        "created_at",
+        "zone_code",
+        "zone_name",
+        "division_name"
     ]
 
     # Create data directory if not exists
@@ -95,7 +98,7 @@ def create_app():
                         for row in rows[start_index:]:
                             if not row or len(row) < 15:
                                 continue
-                            # Map 15 fields into 18 fields (excluding passenger_name at index 2 and seat_number at index 6)
+                            # Map 15 fields into 21 fields (excluding passenger_name and seat_number, padding new ones)
                             mapped_row = [
                                 row[0],   # complaint_id
                                 "Train",  # complaint_type
@@ -114,7 +117,10 @@ def create_app():
                                 "00:00",  # incident_time
                                 row[12],  # complaint_description
                                 row[13],  # complaint_status
-                                row[14]   # created_at
+                                row[14],  # created_at
+                                "",       # zone_code
+                                "",       # zone_name
+                                ""        # division_name
                             ]
                             migrated_rows.append(mapped_row)
                     else:

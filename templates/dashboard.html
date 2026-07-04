@@ -1,0 +1,542 @@
+{% extends 'base.html' %}
+
+{% block title %}RailAssist - Complaint Monitoring Dashboard{% endblock %}
+
+{% block content %}
+<!-- Include Chart.js via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    /* Dashboard-specific CSS layout */
+    .dashboard-container {
+        width: 100%;
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 30px 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        box-sizing: border-box;
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid var(--border-color);
+        padding-bottom: 15px;
+    }
+
+    .dashboard-header h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin: 0;
+    }
+
+    /* Stats Cards Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+
+    .stats-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 20px 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        border-left: 5px solid var(--primary-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    .stats-card.card-open { border-left-color: #f59e0b; }
+    .stats-card.card-progress { border-left-color: #3b82f6; }
+    .stats-card.card-resolved { border-left-color: #10b981; }
+
+    .stats-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stats-value {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--text-color);
+        line-height: 1;
+    }
+
+    /* Interactive Filters Panel */
+    .filters-bar {
+        background-color: #ffffff;
+        padding: 15px 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        align-items: center;
+        border: 1px solid var(--border-color);
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .filter-group label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+    }
+
+    .filter-select {
+        padding: 8px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 0.9rem;
+        background-color: #fafbfc;
+        color: var(--text-color);
+        outline: none;
+        cursor: pointer;
+        min-width: 140px;
+        transition: border-color 0.3s ease;
+    }
+
+    .filter-select:focus {
+        border-color: var(--primary-color);
+    }
+
+    /* Charts Layout Grid */
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+
+    .chart-card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+        border: 1px solid var(--border-color);
+        min-height: 340px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .chart-card.full-width {
+        grid-column: span 2;
+    }
+
+    .chart-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin: 0;
+        border-bottom: 1px dashed var(--border-color);
+        padding-bottom: 10px;
+    }
+
+    .chart-body {
+        position: relative;
+        flex-grow: 1;
+        width: 100%;
+        height: 250px;
+    }
+
+    .no-data-msg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: var(--text-muted);
+        font-style: italic;
+        font-size: 0.95rem;
+    }
+
+    /* Responsive scaling */
+    @media (max-width: 900px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
+        .chart-card.full-width {
+            grid-column: span 1;
+        }
+        .dashboard-container {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="dashboard-container">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h2>Complaint Monitoring Dashboard</h2>
+        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">
+            Live Redressal Data Overview
+        </div>
+    </div>
+
+    <!-- Stats Cards Row -->
+    <div class="stats-grid">
+        <div class="stats-card">
+            <span class="stats-label">Total Received</span>
+            <span class="stats-value" id="stat-total">0</span>
+        </div>
+        <div class="stats-card card-open">
+            <span class="stats-label">Pending (Open)</span>
+            <span class="stats-value" id="stat-open">0</span>
+        </div>
+        <div class="stats-card card-progress">
+            <span class="stats-label">In Progress</span>
+            <span class="stats-value" id="stat-progress">0</span>
+        </div>
+        <div class="stats-card card-resolved">
+            <span class="stats-label">Resolved</span>
+            <span class="stats-value" id="stat-resolved">0</span>
+        </div>
+    </div>
+
+    <!-- Filters Row -->
+    <div class="filters-bar">
+        <div class="filter-group">
+            <label for="filter-zone">Railway Zone</label>
+            <select id="filter-zone" class="filter-select">
+                <option value="ALL">All Zones</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filter-type">Grievance Type</label>
+            <select id="filter-type" class="filter-select">
+                <option value="ALL">All Types</option>
+                <option value="Train">Train Complaints</option>
+                <option value="Station">Station Complaints</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="filter-priority">Priority Level</label>
+            <select id="filter-priority" class="filter-select">
+                <option value="ALL">All Priorities</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+        </div>
+        <div class="filter-group" style="margin-left: auto;">
+            <button class="btn-submit" onclick="resetFilters()" style="margin: 0; padding: 8px 16px; font-size: 0.85rem;">Reset Filters</button>
+        </div>
+    </div>
+
+    <!-- Charts Cards Grid -->
+    <div class="charts-grid">
+        <!-- 1. Daily Trend -->
+        <div class="chart-card full-width">
+            <h3 class="chart-title">Daily Complaint Trends</h3>
+            <div class="chart-body">
+                <canvas id="chart-daily-trend"></canvas>
+            </div>
+        </div>
+
+        <!-- 2. Zone-wise Distribution -->
+        <div class="chart-card">
+            <h3 class="chart-title">Zone-wise Complaint Distribution</h3>
+            <div class="chart-body">
+                <canvas id="chart-zone"></canvas>
+            </div>
+        </div>
+
+        <!-- 3. Division-wise Distribution -->
+        <div class="chart-card">
+            <h3 class="chart-title">Division-wise Complaint Distribution</h3>
+            <div class="chart-body">
+                <canvas id="chart-division"></canvas>
+            </div>
+        </div>
+
+        <!-- 4. Department-wise Distribution -->
+        <div class="chart-card">
+            <h3 class="chart-title">Department-wise Complaint Distribution</h3>
+            <div class="chart-body">
+                <canvas id="chart-department"></canvas>
+            </div>
+        </div>
+
+        <!-- 5. Category-wise Distribution -->
+        <div class="chart-card">
+            <h3 class="chart-title">Top Complaint Categories</h3>
+            <div class="chart-body">
+                <canvas id="chart-category"></canvas>
+            </div>
+        </div>
+
+        <!-- 6. Priority distribution -->
+        <div class="chart-card">
+            <h3 class="chart-title">Priority-wise Distribution</h3>
+            <div class="chart-body" style="height: 220px; display: flex; justify-content: center;">
+                <canvas id="chart-priority" style="max-width: 250px;"></canvas>
+            </div>
+        </div>
+
+        <!-- 7. Status distribution -->
+        <div class="chart-card">
+            <h3 class="chart-title">Complaint Status Tracking</h3>
+            <div class="chart-body" style="height: 220px; display: flex; justify-content: center;">
+                <canvas id="chart-status" style="max-width: 250px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Raw complaints database parsed from backend
+    const rawComplaints = {{ complaints_json | safe }};
+    
+    // Curated design colors
+    const chartColors = {
+        primary: '#700c28',
+        gold: '#b28c3d',
+        green: '#10b981',
+        blue: '#3b82f6',
+        orange: '#f59e0b',
+        purple: '#8b5cf6',
+        cyan: '#06b6d4',
+        grey: '#9ca3af',
+        palette: ['#700c28', '#b28c3d', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6', '#64748b']
+    };
+
+    // Chart.js instances object
+    let charts = {};
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // 1. Populate Zone Filter Option List dynamically
+        const zoneFilter = document.getElementById("filter-zone");
+        const uniqueZones = new Map(); // code -> name
+        rawComplaints.forEach(item => {
+            if (item.zone_code && item.zone_name) {
+                uniqueZones.set(item.zone_code, item.zone_name);
+            }
+        });
+        
+        // Sort zones alphabetically by name
+        Array.from(uniqueZones.entries()).sort((a,b) => a[1].localeCompare(b[1])).forEach(([code, name]) => {
+            const opt = document.createElement("option");
+            opt.value = code;
+            opt.textContent = `${code} - ${name}`;
+            zoneFilter.appendChild(opt);
+        });
+
+        // 2. Add change event listeners to filters
+        document.querySelectorAll(".filter-select").forEach(select => {
+            select.addEventListener("change", updateDashboard);
+        });
+
+        // 3. Render all initial charts
+        initializeCharts();
+        
+        // 4. Populate numbers and data
+        updateDashboard();
+    });
+
+    function getFilteredData() {
+        const zoneVal = document.getElementById("filter-zone").value;
+        const typeVal = document.getElementById("filter-type").value;
+        const priorityVal = document.getElementById("filter-priority").value;
+
+        return rawComplaints.filter(item => {
+            const matchZone = zoneVal === "ALL" || item.zone_code === zoneVal;
+            const matchType = typeVal === "ALL" || item.complaint_type === typeVal;
+            const matchPriority = priorityVal === "ALL" || item.priority === priorityVal;
+            return matchZone && matchType && matchPriority;
+        });
+    }
+
+    function resetFilters() {
+        document.getElementById("filter-zone").value = "ALL";
+        document.getElementById("filter-type").value = "ALL";
+        document.getElementById("filter-priority").value = "ALL";
+        updateDashboard();
+    }
+
+    function updateDashboard() {
+        const data = getFilteredData();
+
+        // 1. Update stats cards
+        const total = data.length;
+        const open = data.filter(i => i.display_status === "Open").length;
+        const progress = data.filter(i => i.display_status === "In Progress").length;
+        const resolved = data.filter(i => i.display_status === "Resolved").length;
+
+        document.getElementById("stat-total").textContent = total;
+        document.getElementById("stat-open").textContent = open;
+        document.getElementById("stat-progress").textContent = progress;
+        document.getElementById("stat-resolved").textContent = resolved;
+
+        // 2. Re-compute chart aggregations and update charts
+        updateDailyTrendChart(data);
+        updateZoneChart(data);
+        updateDivisionChart(data);
+        updateDepartmentChart(data);
+        updateCategoryChart(data);
+        updatePriorityChart(data, open, progress, resolved);
+        updateStatusChart(data, open, progress, resolved);
+    }
+
+    function initializeCharts() {
+        // Daily Trend Chart
+        charts.dailyTrend = new Chart(document.getElementById("chart-daily-trend").getContext("2d"), {
+            type: 'line',
+            data: { labels: [], datasets: [{ label: 'Complaints Filed', data: [], borderColor: chartColors.primary, backgroundColor: 'rgba(112, 12, 40, 0.05)', fill: true, tension: 0.3 }] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
+
+        // Zone Chart
+        charts.zone = new Chart(document.getElementById("chart-zone").getContext("2d"), {
+            type: 'bar',
+            data: { labels: [], datasets: [{ label: 'Complaints', data: [], backgroundColor: chartColors.primary }] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
+
+        // Division Chart
+        charts.division = new Chart(document.getElementById("chart-division").getContext("2d"), {
+            type: 'bar',
+            data: { labels: [], datasets: [{ label: 'Complaints', data: [], backgroundColor: chartColors.gold }] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
+
+        // Department Chart
+        charts.department = new Chart(document.getElementById("chart-department").getContext("2d"), {
+            type: 'pie',
+            data: { labels: [], datasets: [{ data: [], backgroundColor: chartColors.palette }] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        // Category Chart
+        charts.category = new Chart(document.getElementById("chart-category").getContext("2d"), {
+            type: 'bar',
+            data: { labels: [], datasets: [{ label: 'Complaints', data: [], backgroundColor: chartColors.palette[2] }] },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
+
+        // Priority Chart
+        charts.priority = new Chart(document.getElementById("chart-priority").getContext("2d"), {
+            type: 'doughnut',
+            data: { labels: ['High', 'Medium', 'Low'], datasets: [{ data: [], backgroundColor: [chartColors.primary, chartColors.gold, chartColors.grey] }] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        // Status Chart
+        charts.status = new Chart(document.getElementById("chart-status").getContext("2d"), {
+            type: 'doughnut',
+            data: { labels: ['Pending', 'In Progress', 'Resolved'], datasets: [{ data: [], backgroundColor: [chartColors.orange, chartColors.blue, chartColors.green] }] },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '65%' }
+        });
+    }
+
+    function updateDailyTrendChart(data) {
+        const dailyCounts = {};
+        // Group by incident date
+        data.forEach(item => {
+            const date = item.incident_date || 'Unknown';
+            dailyCounts[date] = (dailyCounts[date] || 0) + 1;
+        });
+
+        // Sort dates chronologically
+        const sortedDates = Object.keys(dailyCounts).sort();
+        const counts = sortedDates.map(d => dailyCounts[d]);
+
+        charts.dailyTrend.data.labels = sortedDates;
+        charts.dailyTrend.data.datasets[0].data = counts;
+        charts.dailyTrend.update();
+    }
+
+    function updateZoneChart(data) {
+        const counts = {};
+        data.forEach(item => {
+            if (item.zone_code) {
+                counts[item.zone_code] = (counts[item.zone_code] || 0) + 1;
+            }
+        });
+
+        const sorted = Object.keys(counts).sort((a,b) => counts[b] - counts[a]);
+        charts.zone.data.labels = sorted;
+        charts.zone.data.datasets[0].data = sorted.map(k => counts[k]);
+        charts.zone.update();
+    }
+
+    function updateDivisionChart(data) {
+        const counts = {};
+        data.forEach(item => {
+            if (item.division_name) {
+                counts[item.division_name] = (counts[item.division_name] || 0) + 1;
+            }
+        });
+
+        // Show top 8 divisions
+        const sorted = Object.keys(counts).sort((a,b) => counts[b] - counts[a]).slice(0, 8);
+        charts.division.data.labels = sorted;
+        charts.division.data.datasets[0].data = sorted.map(k => counts[k]);
+        charts.division.update();
+    }
+
+    function updateDepartmentChart(data) {
+        const counts = {};
+        data.forEach(item => {
+            if (item.department) {
+                counts[item.department] = (counts[item.department] || 0) + 1;
+            }
+        });
+
+        const sorted = Object.keys(counts).sort((a,b) => counts[b] - counts[a]);
+        charts.department.data.labels = sorted;
+        charts.department.data.datasets[0].data = sorted.map(k => counts[k]);
+        charts.department.update();
+    }
+
+    function updateCategoryChart(data) {
+        const counts = {};
+        data.forEach(item => {
+            if (item.main_class) {
+                counts[item.main_class] = (counts[item.main_class] || 0) + 1;
+            }
+        });
+
+        // Show top 6 categories
+        const sorted = Object.keys(counts).sort((a,b) => counts[b] - counts[a]).slice(0, 6);
+        charts.category.data.labels = sorted;
+        charts.category.data.datasets[0].data = sorted.map(k => counts[k]);
+        charts.category.update();
+    }
+
+    function updatePriorityChart(data) {
+        const high = data.filter(i => i.priority === "High").length;
+        const medium = data.filter(i => i.priority === "Medium").length;
+        const low = data.filter(i => i.priority === "Low").length;
+
+        charts.priority.data.datasets[0].data = [high, medium, low];
+        charts.priority.update();
+    }
+
+    function updateStatusChart(data, open, progress, resolved) {
+        charts.status.data.datasets[0].data = [open, progress, resolved];
+        charts.status.update();
+    }
+</script>
+{% endblock %}
