@@ -3,8 +3,27 @@
 {% block title %}RailAssist - Grievance Redressal and Assistance{% endblock %}
 
 {% block content %}
-<!-- Main Content Panel -->
+<!-- Hero Section (Full Width, placed outside main-content) -->
+<div id="hero-section" class="hero-section">
+    <div class="hero-inner">
+        <div class="hero-content">
+            <h2>RailAssist: Your Journey, Our Priority</h2>
+            <p>A unified portal for grievance redressal and immediate assistance across Indian Railways trains and stations. File complaints, request emergency aid, and track resolution status in real-time.</p>
+            <div class="hero-actions">
+                <a href="#complaint-section" class="btn-hero-primary">Register Complaint</a>
+                <a href="#complaint-section" class="btn-hero-secondary" onclick="switchToTrackTab()">Track Complaint Status</a>
+            </div>
+        </div>
+        <div class="hero-image-container">
+            <img src="{{ url_for('static', filename='images/railassist_hero.png') }}" alt="RailAssist Indian Railways Journey" class="hero-image">
+        </div>
+    </div>
+</div>
+
 <main class="main-content">
+
+    <!-- Scroll anchor target for header navigation link -->
+    <div id="complaint-section" style="width: 100%; max-width: 950px; scroll-margin-top: 110px;"></div>
 
     <!-- Tab toggles at the top of the content area -->
     <div class="form-tabs-container">
@@ -68,18 +87,7 @@
 
             </div>
 
-            <!-- Location Details Section -->
-            <h3 class="form-section-title">Location Details</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="trainCurrent">Current Station</label>
-                    <input type="text" id="trainCurrent" name="current_station" placeholder="Enter current station (Optional)">
-                </div>
-                <div class="form-group">
-                    <label for="trainNext">Next Station</label>
-                    <input type="text" id="trainNext" name="next_station" placeholder="Enter next station (Optional)">
-                </div>
-            </div>
+
 
             <!-- Complaint Details Section -->
             <h3 class="form-section-title">Complaint Details</h3>

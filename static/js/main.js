@@ -299,3 +299,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+// Switch tab to Track Concern and focus
+function switchToTrackTab() {
+    const trackBtn = document.querySelector('.form-tab-btn[data-tab="track"]');
+    if (trackBtn) {
+        trackBtn.click();
+    }
+}

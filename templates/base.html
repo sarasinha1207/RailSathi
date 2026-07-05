@@ -31,14 +31,15 @@
         </div>
 
         <nav class="header-nav">
-            <a href="/" class="nav-link {% if active_page == 'portal' %}active{% endif %}">Passenger Portal</a>
+            <a href="/#complaint-section" class="nav-link">Register/Track Complaint</a>
+            <a href="/about" class="nav-link {% if active_page == 'about' %}active{% endif %}">About Us</a>
+            <a href="/faq" class="nav-link {% if active_page == 'faq' %}active{% endif %}">FAQ</a>
             {% if session.get('logged_in') %}
                 <a href="/dashboard" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">Dashboard</a>
                 <a href="/logout" class="nav-link">Logout</a>
             {% else %}
-                <a href="/login" class="nav-link {% if active_page == 'login' %}active{% endif %}">Admin Login</a>
+                <a href="/login" class="nav-link {% if active_page == 'login' %}active{% endif %}">Login/Signup</a>
             {% endif %}
-            <a href="https://railmadad.indianrailways.gov.in/" target="_blank" class="nav-link">Official Portal</a>
         </nav>
     </header>
 

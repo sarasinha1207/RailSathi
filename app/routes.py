@@ -78,7 +78,7 @@ def login():
         else:
             error = "Invalid Username or Password!"
             
-    return render_template("login.html", error=error)
+    return render_template("login.html", error=error, active_page="login")
 
 
 @bp.route("/logout")
@@ -86,6 +86,18 @@ def logout():
     """Logs out the Admin and clears the session."""
     session.pop("logged_in", None)
     return redirect(url_for("main.home"))
+
+
+@bp.route("/about")
+def about():
+    """Renders the About Us page."""
+    return render_template("about.html", active_page="about")
+
+
+@bp.route("/faq")
+def faq():
+    """Renders the FAQ page."""
+    return render_template("faq.html", active_page="faq")
 
 
 @bp.route("/dashboard")
