@@ -1,6 +1,6 @@
-# RailAssist Passenger Complaint Registration & Tracking System
+# RailSathi Passenger Complaint Registration & Tracking System
 
-This is a clean, production-ready, industry-standard implementation of the **Passenger Complaint Registration and Tracking System** (inspired by the official Indian Railways RailAssist portal).
+This is a clean, production-ready, industry-standard implementation of the **Passenger Complaint Registration and Tracking System** (inspired by the official Indian Railways RailSathi portal).
 
 ---
 
@@ -21,7 +21,7 @@ Passenger Complaint form/
 │   └── README.md            # System developer guide
 ├── static/
 │   ├── css/
-│   │   └── style.css        # Premium stylesheets (Modern variables, RailAssist burgundy theme)
+│   │   └── style.css        # Premium stylesheets (Modern variables, RailSathi burgundy theme)
 │   └── js/
 │       ├── categories.js    # Unified classes & subclasses for Train and Station complaints
 │       └── main.js          # Asynchronous form controllers and tab selectors

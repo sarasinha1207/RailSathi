@@ -1,0 +1,106 @@
+pnr_number,train_number,train_name,coach_number,berth_number,boarding_station,destination_station,journey_date,journey_class
+2876543210,12002,Bhopal Shatabdi Express,B1,20,New Delhi (NDLS),Bhopal (BPL),2026-07-18,CC
+2876543211,22436,Varanasi Vande Bharat Express,A1,64,New Delhi (NDLS),Varanasi (BSB),2026-07-10,EC
+8876543212,12951,Mumbai Rajdhani Express,S1,22,Mumbai Central (MMCT),New Delhi (NDLS),2026-07-08,2AC
+2876543213,12004,Lucknow Shatabdi Express,B2,71,New Delhi (NDLS),Lucknow (LKO),2026-07-28,CC
+4876543214,12295,Sanghamitra Express,C1,7,KSR Bengaluru (SBC),Danapur (DNR),2026-07-22,SL
+8876543215,12001,Habibganj Shatabdi Express,C1,70,Habibganj (HBJ),New Delhi (NDLS),2026-07-15,CC
+6876543216,12301,Howrah Rajdhani Express,A1,32,Howrah (HWH),New Delhi (NDLS),2026-07-15,1AC
+6876543217,12801,Purushottam Express,S1,58,Puri (PURI),New Delhi (NDLS),2026-07-16,3AC
+4876543218,12649,Karnataka Sampark Kranti Express,C2,10,Yesvantpur (YPR),Hazrat Nizamuddin (NZM),2026-07-19,SL
+4876543219,12842,Coromandel Express,EC1,25,Chennai Central (MAS),Shalimar (SHM),2026-07-03,2AC
+3876543220,12002,Bhopal Shatabdi Express,A1,7,New Delhi (NDLS),Bhopal (BPL),2026-07-16,CC
+3876543221,22436,Varanasi Vande Bharat Express,S1,2,New Delhi (NDLS),Varanasi (BSB),2026-07-08,EC
+9876543222,12951,Mumbai Rajdhani Express,A1,27,Mumbai Central (MMCT),New Delhi (NDLS),2026-07-24,2AC
+3876543223,12004,Lucknow Shatabdi Express,C2,13,New Delhi (NDLS),Lucknow (LKO),2026-07-06,CC
+5876543224,12295,Sanghamitra Express,S4,31,KSR Bengaluru (SBC),Danapur (DNR),2026-07-14,SL
+9876543225,12001,Habibganj Shatabdi Express,S2,50,Habibganj (HBJ),New Delhi (NDLS),2026-07-25,CC
+7876543226,12301,Howrah Rajdhani Express,B2,42,Howrah (HWH),New Delhi (NDLS),2026-07-24,1AC
+7876543227,12801,Purushottam Express,C2,59,Puri (PURI),New Delhi (NDLS),2026-07-28,3AC
+5876543228,12649,Karnataka Sampark Kranti Express,H1,42,Yesvantpur (YPR),Hazrat Nizamuddin (NZM),2026-07-20,SL
+5876543229,12842,Coromandel Express,B2,13,Chennai Central (MAS),Shalimar (SHM),2026-07-23,2AC
+2876543230,12002,Bhopal Shatabdi Express,A2,61,New Delhi (NDLS),Bhopal (BPL),2026-07-01,CC
+2876543231,22436,Varanasi Vande Bharat Express,C2,46,New Delhi (NDLS),Varanasi (BSB),2026-07-28,EC
+8876543232,12951,Mumbai Rajdhani Express,S4,45,Mumbai Central (MMCT),New Delhi (NDLS),2026-07-18,2AC
+2876543233,12004,Lucknow Shatabdi Express,S3,57,New Delhi (NDLS),Lucknow (LKO),2026-07-08,CC
+4876543234,12295,Sanghamitra Express,C2,9,KSR Bengaluru (SBC),Danapur (DNR),2026-07-12,SL
+8876543235,12001,Habibganj Shatabdi Express,S2,34,Habibganj (HBJ),New Delhi (NDLS),2026-07-08,CC
+6876543236,12301,Howrah Rajdhani Express,C1,46,Howrah (HWH),New Delhi (NDLS),2026-07-28,1AC
+6876543237,12801,Purushottam Express,H1,69,Puri (PURI),New Delhi (NDLS),2026-07-07,3AC
+4876543238,12649,Karnataka Sampark Kranti Express,C2,16,Yesvantpur (YPR),Hazrat Nizamuddin (NZM),2026-07-22,SL
+4876543239,12842,Coromandel Express,S3,9,Chennai Central (MAS),Shalimar (SHM),2026-07-08,2AC
+3876543240,12002,Bhopal Shatabdi Express,A2,17,New Delhi (NDLS),Bhopal (BPL),2026-07-17,CC
+3876543241,22436,Varanasi Vande Bharat Express,C1,13,New Delhi (NDLS),Varanasi (BSB),2026-07-04,EC
+9876543242,12951,Mumbai Rajdhani Express,B2,71,Mumbai Central (MMCT),New Delhi (NDLS),2026-07-05,2AC
+3876543243,12004,Lucknow Shatabdi Express,S1,59,New Delhi (NDLS),Lucknow (LKO),2026-07-13,CC
+5876543244,12295,Sanghamitra Express,A1,18,KSR Bengaluru (SBC),Danapur (DNR),2026-07-27,SL
+9876543245,12001,Habibganj Shatabdi Express,B2,61,Habibganj (HBJ),New Delhi (NDLS),2026-07-05,CC
+7876543246,12301,Howrah Rajdhani Express,S1,52,Howrah (HWH),New Delhi (NDLS),2026-07-14,1AC
+7876543247,12801,Purushottam Express,S1,41,Puri (PURI),New Delhi (NDLS),2026-07-07,3AC
+5876543248,12649,Karnataka Sampark Kranti Express,B2,9,Yesvantpur (YPR),Hazrat Nizamuddin (NZM),2026-07-18,SL
+5876543249,12842,Coromandel Express,S2,3,Chennai Central (MAS),Shalimar (SHM),2026-07-22,2AC
+2876543250,12002,Bhopal Shatabdi Express,C2,72,New Delhi (NDLS),Bhopal (BPL),2026-07-17,CC
+2876543251,22436,Varanasi Vande Bharat Express,C2,51,New Delhi (NDLS),Varanasi (BSB),2026-07-10,EC
+8876543252,12951,Mumbai Rajdhani Express,S3,24,Mumbai Central (MMCT),New Delhi (NDLS),2026-07-20,2AC
+2876543253,12004,Lucknow Shatabdi Express,C2,27,New Delhi (NDLS),Lucknow (LKO),2026-07-23,CC
+4876543254,12295,Sanghamitra Express,EC1,29,KSR Bengaluru (SBC),Danapur (DNR),2026-07-24,SL
+8876543255,12001,Habibganj Shatabdi Express,B2,47,Habibganj (HBJ),New Delhi (NDLS),2026-07-23,CC
+6876543256,12301,Howrah Rajdhani Express,C2,7,Howrah (HWH),New Delhi (NDLS),2026-07-09,1AC
+6876543257,12801,Purushottam Express,H1,46,Puri (PURI),New Delhi (NDLS),2026-07-03,3AC
+4876543258,12649,Karnataka Sampark Kranti Express,S1,48,Yesvantpur (YPR),Hazrat Nizamuddin (NZM),2026-07-16,SL
+4876543259,12842,Coromandel Express,C1,57,Chennai Central (MAS),Shalimar (SHM),2026-07-16,2AC
+3876543260,12002,Bhopal Shatabdi Express,S2,21,New Delhi (NDLS),Bhopal (BPL),2026-07-09,CC
+3876543261,22436,Varanasi Vande Bharat Express,EC1,54,New Delhi (NDLS),Varanasi (BSB),2026-07-24,EC
+9876543262,12951,Mumbai Rajdhani Express,B2,56,Mumbai Central (MMCT),New Delhi (NDLS),2026-07-02,2AC
+3876543263,12004,Lucknow Shatabdi Express,EC1,53,New Delhi (NDLS),Lucknow (LKO),2026-07-14,CC
+5876543264,12295,Sanghamitra Express,C1,16,KSR Bengaluru (SBC),Danapur (DNR),2026-07-24,SL
+9876543265,12001,Habibganj Shatabdi Express,H1,12,Habibganj (HBJ),New Delhi (NDLS),2026-07-02,CC
+7876543266,12301,Howrah Rajdhani Express,S2,9,Howrah (HWH),New Delhi (NDLS),2026-07-23,1AC
+7876543267,12801,Purushottam Express,H1,16,Puri (PURI),New Delhi (NDLS),2026-07-20,3AC
+5876543268,12649,Karnataka Sampark Kranti Express,C1,61,Yesvantpur (YPR),Hazrat Nizamuddin (NZM),2026-07-19,SL
+5876543269,12842,Coromandel Express,S3,59,Chennai Central (MAS),Shalimar (SHM),2026-07-28,2AC
+2876543270,12002,Bhopal Shatabdi Express,C2,62,New Delhi (NDLS),Bhopal (BPL),2026-07-06,CC
+2876543271,22436,Varanasi Vande Bharat Express,C2,64,New Delhi (NDLS),Varanasi (BSB),2026-07-14,EC
+8876543272,12951,Mumbai Rajdhani Express,A2,56,Mumbai Central (MMCT),New Delhi (NDLS),2026-07-25,2AC
+2876543273,12004,Lucknow Shatabdi Express,A1,4,New Delhi (NDLS),Lucknow (LKO),2026-07-05,CC
+4876543274,12295,Sanghamitra Express,EC1,19,KSR Bengaluru (SBC),Danapur (DNR),2026-07-26,SL
+8876543275,12001,Habibganj Shatabdi Express,B2,48,Habibganj (HBJ),New Delhi (NDLS),2026-07-09,CC
+6876543276,12301,Howrah Rajdhani Express,S3,66,Howrah (HWH),New Delhi (NDLS),2026-07-27,1AC
+6876543277,12801,Purushottam Express,B2,7,Puri (PURI),New Delhi (NDLS),2026-07-26,3AC
+4876543278,12649,Karnataka Sampark Kranti Express,C2,41,Yesvantpur (YPR),Hazrat Nizamuddin (NZM),2026-07-05,SL
+4876543279,12842,Coromandel Express,S1,3,Chennai Central (MAS),Shalimar (SHM),2026-07-18,2AC
+3876543280,12002,Bhopal Shatabdi Express,A2,12,New Delhi (NDLS),Bhopal (BPL),2026-07-08,CC
+3876543281,22436,Varanasi Vande Bharat Express,C1,20,New Delhi (NDLS),Varanasi (BSB),2026-07-20,EC
+9876543282,12951,Mumbai Rajdhani Express,C2,37,Mumbai Central (MMCT),New Delhi (NDLS),2026-07-28,2AC
+3876543283,12004,Lucknow Shatabdi Express,C2,67,New Delhi (NDLS),Lucknow (LKO),2026-07-27,CC
+5876543284,12295,Sanghamitra Express,A2,16,KSR Bengaluru (SBC),Danapur (DNR),2026-07-27,SL
+9876543285,12001,Habibganj Shatabdi Express,A1,28,Habibganj (HBJ),New Delhi (NDLS),2026-07-04,CC
+7876543286,12301,Howrah Rajdhani Express,S4,71,Howrah (HWH),New Delhi (NDLS),2026-07-04,1AC
+7876543287,12801,Purushottam Express,EC1,50,Puri (PURI),New Delhi (NDLS),2026-07-17,3AC
+5876543288,12649,Karnataka Sampark Kranti Express,S2,2,Yesvantpur (YPR),Hazrat Nizamuddin (NZM),2026-07-03,SL
+5876543289,12842,Coromandel Express,B1,35,Chennai Central (MAS),Shalimar (SHM),2026-07-01,2AC
+2876543290,12002,Bhopal Shatabdi Express,A1,48,New Delhi (NDLS),Bhopal (BPL),2026-07-13,CC
+2876543291,22436,Varanasi Vande Bharat Express,S3,42,New Delhi (NDLS),Varanasi (BSB),2026-07-28,EC
+8876543292,12951,Mumbai Rajdhani Express,EC1,17,Mumbai Central (MMCT),New Delhi (NDLS),2026-07-09,2AC
+2876543293,12004,Lucknow Shatabdi Express,S1,4,New Delhi (NDLS),Lucknow (LKO),2026-07-12,CC
+4876543294,12295,Sanghamitra Express,B2,64,KSR Bengaluru (SBC),Danapur (DNR),2026-07-10,SL
+8876543295,12001,Habibganj Shatabdi Express,B1,4,Habibganj (HBJ),New Delhi (NDLS),2026-07-12,CC
+6876543296,12301,Howrah Rajdhani Express,H1,43,Howrah (HWH),New Delhi (NDLS),2026-07-26,1AC
+6876543297,12801,Purushottam Express,S2,16,Puri (PURI),New Delhi (NDLS),2026-07-10,3AC
+4876543298,12649,Karnataka Sampark Kranti Express,B1,38,Yesvantpur (YPR),Hazrat Nizamuddin (NZM),2026-07-14,SL
+4876543299,12842,Coromandel Express,A1,33,Chennai Central (MAS),Shalimar (SHM),2026-07-12,2AC
+3876543300,12002,Bhopal Shatabdi Express,B1,56,New Delhi (NDLS),Bhopal (BPL),2026-07-11,CC
+3876543301,22436,Varanasi Vande Bharat Express,EC1,43,New Delhi (NDLS),Varanasi (BSB),2026-07-12,EC
+9876543302,12951,Mumbai Rajdhani Express,C2,15,Mumbai Central (MMCT),New Delhi (NDLS),2026-07-02,2AC
+3876543303,12004,Lucknow Shatabdi Express,S1,54,New Delhi (NDLS),Lucknow (LKO),2026-07-06,CC
+5876543304,12295,Sanghamitra Express,A1,44,KSR Bengaluru (SBC),Danapur (DNR),2026-07-14,SL
+9876543305,12001,Habibganj Shatabdi Express,A1,65,Habibganj (HBJ),New Delhi (NDLS),2026-07-10,CC
+7876543306,12301,Howrah Rajdhani Express,C1,51,Howrah (HWH),New Delhi (NDLS),2026-07-23,1AC
+7876543307,12801,Purushottam Express,B2,72,Puri (PURI),New Delhi (NDLS),2026-07-24,3AC
+5876543308,12649,Karnataka Sampark Kranti Express,A1,29,Yesvantpur (YPR),Hazrat Nizamuddin (NZM),2026-07-15,SL
+5876543309,12842,Coromandel Express,C2,12,Chennai Central (MAS),Shalimar (SHM),2026-07-02,2AC
+2876543310,12002,Bhopal Shatabdi Express,S4,71,New Delhi (NDLS),Bhopal (BPL),2026-07-18,CC
+2876543311,22436,Varanasi Vande Bharat Express,B2,32,New Delhi (NDLS),Varanasi (BSB),2026-07-23,EC
+8876543312,12951,Mumbai Rajdhani Express,S1,3,Mumbai Central (MMCT),New Delhi (NDLS),2026-07-08,2AC
+2876543313,12004,Lucknow Shatabdi Express,S4,59,New Delhi (NDLS),Lucknow (LKO),2026-07-08,CC
+4876543314,12295,Sanghamitra Express,H1,10,KSR Bengaluru (SBC),Danapur (DNR),2026-07-14,SL
