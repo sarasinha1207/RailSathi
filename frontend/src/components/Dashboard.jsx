@@ -256,166 +256,171 @@ export default function Dashboard() {
   }
 
   return (
-    <main className="main-content w-full">
-      <div className="dashboard-container w-full max-w-[1280px] flex flex-col gap-8 box-border">
-      {/* Header */}
-      <div className="dashboard-header flex justify-between items-center border-b-2 border-solid border-[var(--border-color)] pb-4">
-        <h2 className="text-3xl font-extrabold text-[var(--primary-color)] m-0">Complaint Monitoring Dashboard</h2>
-        <div className="text-sm text-[var(--text-muted)] font-medium">Live Redressal Data Overview</div>
-      </div>
-
-      {/* Stats Cards Row */}
-      <div className="stats-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
-        <div className="stats-card bg-white rounded-lg p-6 shadow-sm border-l-8 border-solid border-[var(--primary-color)] flex flex-col gap-2 hover:shadow-md hover:-translate-y-0.5 transition-all">
-          <span className="stats-label text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">Total Received</span>
-          <span className="stats-value text-4xl font-extrabold text-[var(--text-color)]">{stats.total}</span>
-        </div>
-        <div className="stats-card bg-white rounded-lg p-6 shadow-sm border-l-8 border-solid border-[#f59e0b] flex flex-col gap-2 hover:shadow-md hover:-translate-y-0.5 transition-all">
-          <span className="stats-label text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">Pending (Open)</span>
-          <span className="stats-value text-4xl font-extrabold text-[var(--text-color)]">{stats.open}</span>
-        </div>
-        <div className="stats-card bg-white rounded-lg p-6 shadow-sm border-l-8 border-solid border-[#3b82f6] flex flex-col gap-2 hover:shadow-md hover:-translate-y-0.5 transition-all">
-          <span className="stats-label text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">In Progress</span>
-          <span className="stats-value text-4xl font-extrabold text-[var(--text-color)]">{stats.progress}</span>
-        </div>
-        <div className="stats-card bg-white rounded-lg p-6 shadow-sm border-l-8 border-solid border-[#10b981] flex flex-col gap-2 hover:shadow-md hover:-translate-y-0.5 transition-all">
-          <span className="stats-label text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">Resolved</span>
-          <span className="stats-value text-4xl font-extrabold text-[var(--text-color)]">{stats.resolved}</span>
-        </div>
-      </div>
-
-      {/* Filters Row */}
-      <div className="filters-bar bg-white p-5 rounded-lg shadow-sm border border-solid border-[var(--border-color)] flex gap-5 flex-wrap items-center">
-        <div className="filter-group flex flex-col gap-1.5">
-          <label className="text-xs font-bold text-[var(--text-muted)] uppercase">Railway Zone</label>
-          <select 
-            value={selectedZone}
-            onChange={(e) => setSelectedZone(e.target.value)}
-            className="filter-select border border-solid border-[var(--border-color)] p-2 rounded-md bg-[#fafbfc] min-w-[150px] outline-none text-sm"
-          >
-            <option value="ALL">All Zones</option>
-            {uniqueZones.map(([code, name]) => (
-              <option key={code} value={code}>{code} - {name}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="filter-group flex flex-col gap-1.5">
-          <label className="text-xs font-bold text-[var(--text-muted)] uppercase">Grievance Type</label>
-          <select 
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="filter-select border border-solid border-[var(--border-color)] p-2 rounded-md bg-[#fafbfc] min-w-[150px] outline-none text-sm"
-          >
-            <option value="ALL">All Types</option>
-            <option value="Train">Train Complaints</option>
-            <option value="Station">Station Complaints</option>
-          </select>
-        </div>
-
-        <div className="filter-group flex flex-col gap-1.5">
-          <label className="text-xs font-bold text-[var(--text-muted)] uppercase">Priority Level</label>
-          <select 
-            value={selectedPriority}
-            onChange={(e) => setSelectedPriority(e.target.value)}
-            className="filter-select border border-solid border-[var(--border-color)] p-2 rounded-md bg-[#fafbfc] min-w-[150px] outline-none text-sm"
-          >
-            <option value="ALL">All Priorities</option>
-            <option value="High">High</option>
-            <option value="Medium">Medium</option>
-            <option value="Low">Low</option>
-          </select>
-        </div>
-
-        <div className="filter-group ml-auto">
-          <button 
-            onClick={resetFilters} 
-            className="btn-submit m-0 px-4 py-2 text-sm bg-[var(--primary-color)] text-white font-bold rounded-md hover:bg-[var(--primary-hover)] transition-all cursor-pointer border-none"
-          >
-            Reset Filters
-          </button>
-        </div>
-      </div>
-
-      {/* Charts Cards Grid */}
-      <div className="charts-grid grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* 1. Daily Trend */}
-        <div className="chart-card md:col-span-2 bg-white rounded-lg p-6 shadow-sm border border-solid border-[var(--border-color)] min-h-[340px] flex flex-col gap-4">
-          <h3 className="chart-title text-base font-bold text-[var(--primary-color)] border-b border-dashed border-[var(--border-color)] pb-2 m-0">Daily Complaint Trends</h3>
-          <div className="chart-body relative flex-grow h-[250px] w-full">
-            <Line 
-              data={dailyTrendData}
-              options={{ responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }}
-            />
+    <main className="main-content w-full bg-[var(--bg-color)]">
+      <div className="dashboard-container">
+        {/* Header */}
+        <div className="dashboard-header flex flex-col md:flex-row md:justify-between md:items-end pb-8 gap-4">
+          <div>
+            <h2>Complaint Monitoring Dashboard</h2>
+            <p>Comprehensive analytics and live redressal overview for Indian Railways administrators.</p>
+          </div>
+          <div className="text-xs font-bold text-[var(--primary-color)] bg-[#f5eef0] border border-solid border-[#ebdbe0] px-5 py-2.5 rounded-full self-start md:self-auto uppercase tracking-widest">
+            Live Redressal Data Overview
           </div>
         </div>
 
-        {/* 2. Zone-wise Distribution */}
-        <div className="chart-card bg-white rounded-lg p-6 shadow-sm border border-solid border-[var(--border-color)] min-h-[340px] flex flex-col gap-4">
-          <h3 className="chart-title text-base font-bold text-[var(--primary-color)] border-b border-dashed border-[var(--border-color)] pb-2 m-0">Zone-wise Complaint Distribution</h3>
-          <div className="chart-body relative flex-grow h-[250px] w-full">
-            <Bar 
-              data={zoneChartData}
-              options={{ responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }}
-            />
+        {/* Stats Cards Row */}
+        <div className="stats-grid">
+          <div className="stats-card">
+            <span className="stats-label">Total Received</span>
+            <span className="stats-value">{stats.total}</span>
+          </div>
+          <div className="stats-card pending">
+            <span className="stats-label">Pending (Open)</span>
+            <span className="stats-value">{stats.open}</span>
+          </div>
+          <div className="stats-card progress">
+            <span className="stats-label">In Progress</span>
+            <span className="stats-value">{stats.progress}</span>
+          </div>
+          <div className="stats-card resolved">
+            <span className="stats-label">Resolved</span>
+            <span className="stats-value">{stats.resolved}</span>
           </div>
         </div>
 
-        {/* 3. Division-wise Distribution */}
-        <div className="chart-card bg-white rounded-lg p-6 shadow-sm border border-solid border-[var(--border-color)] min-h-[340px] flex flex-col gap-4">
-          <h3 className="chart-title text-base font-bold text-[var(--primary-color)] border-b border-dashed border-[var(--border-color)] pb-2 m-0">Division-wise Complaint Distribution</h3>
-          <div className="chart-body relative flex-grow h-[250px] w-full">
-            <Bar 
-              data={divisionChartData}
-              options={{ responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }}
-            />
+        {/* Filters Row */}
+        <div className="filters-bar">
+          <div className="filter-group">
+            <label>Railway Zone</label>
+            <select 
+              value={selectedZone}
+              onChange={(e) => setSelectedZone(e.target.value)}
+              className="filter-select"
+            >
+              <option value="ALL">All Zones</option>
+              {uniqueZones.map(([code, name]) => (
+                <option key={code} value={code}>{code} - {name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label>Grievance Type</label>
+            <select 
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              className="filter-select"
+            >
+              <option value="ALL">All Types</option>
+              <option value="Train">Train Complaints</option>
+              <option value="Station">Station Complaints</option>
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label>Priority Level</label>
+            <select 
+              value={selectedPriority}
+              onChange={(e) => setSelectedPriority(e.target.value)}
+              className="filter-select"
+            >
+              <option value="ALL">All Priorities</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+
+          <div className="filter-actions">
+            <button 
+              onClick={resetFilters} 
+              className="btn-submit m-0 px-8 py-3.5 text-sm bg-[var(--primary-color)] text-white font-bold rounded-md hover:bg-[var(--primary-hover)] transition-all cursor-pointer border-none shadow-sm hover:shadow-md"
+            >
+              Reset Filters
+            </button>
           </div>
         </div>
 
-        {/* 4. Department-wise Distribution */}
-        <div className="chart-card bg-white rounded-lg p-6 shadow-sm border border-solid border-[var(--border-color)] min-h-[340px] flex flex-col gap-4">
-          <h3 className="chart-title text-base font-bold text-[var(--primary-color)] border-b border-dashed border-[var(--border-color)] pb-2 m-0">Department-wise Complaint Distribution</h3>
-          <div className="chart-body relative flex-grow h-[250px] w-full">
-            <Pie 
-              data={departmentChartData}
-              options={{ responsive: true, maintainAspectRatio: false }}
-            />
+        {/* Charts Cards Grid */}
+        <div className="charts-grid">
+          {/* 1. Daily Trend */}
+          <div className="chart-card full-width">
+            <h3 className="chart-title">Daily Complaint Trends</h3>
+            <div className="chart-body">
+              <Line 
+                data={dailyTrendData}
+                options={{ responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }}
+              />
+            </div>
           </div>
-        </div>
 
-        {/* 5. Category-wise Distribution */}
-        <div className="chart-card bg-white rounded-lg p-6 shadow-sm border border-solid border-[var(--border-color)] min-h-[340px] flex flex-col gap-4">
-          <h3 className="chart-title text-base font-bold text-[var(--primary-color)] border-b border-dashed border-[var(--border-color)] pb-2 m-0">Top Complaint Categories</h3>
-          <div className="chart-body relative flex-grow h-[250px] w-full">
-            <Bar 
-              data={categoryChartData}
-              options={{ indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }}
-            />
+          {/* 2. Zone-wise Distribution */}
+          <div className="chart-card">
+            <h3 className="chart-title">Zone-wise Complaint Distribution</h3>
+            <div className="chart-body">
+              <Bar 
+                data={zoneChartData}
+                options={{ responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }}
+              />
+            </div>
           </div>
-        </div>
 
-        {/* 6. Priority distribution */}
-        <div className="chart-card bg-white rounded-lg p-6 shadow-sm border border-solid border-[var(--border-color)] min-h-[340px] flex flex-col gap-4">
-          <h3 className="chart-title text-base font-bold text-[var(--primary-color)] border-b border-dashed border-[var(--border-color)] pb-2 m-0">Priority-wise Distribution</h3>
-          <div className="chart-body relative flex-grow h-[220px] w-full flex justify-center">
-            <Doughnut 
-              data={priorityChartData}
-              options={{ responsive: true, maintainAspectRatio: false }}
-            />
+          {/* 3. Division-wise Distribution */}
+          <div className="chart-card">
+            <h3 className="chart-title">Division-wise Complaint Distribution</h3>
+            <div className="chart-body">
+              <Bar 
+                data={divisionChartData}
+                options={{ responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }}
+              />
+            </div>
           </div>
-        </div>
 
-        {/* 7. Status distribution */}
-        <div className="chart-card bg-white rounded-lg p-6 shadow-sm border border-solid border-[var(--border-color)] min-h-[340px] flex flex-col gap-4">
-          <h3 className="chart-title text-base font-bold text-[var(--primary-color)] border-b border-dashed border-[var(--border-color)] pb-2 m-0">Complaint Status Tracking</h3>
-          <div className="chart-body relative flex-grow h-[220px] w-full flex justify-center">
-            <Doughnut 
-              data={statusChartData}
-              options={{ responsive: true, maintainAspectRatio: false, cutout: '65%' }}
-            />
+          {/* 4. Department-wise Distribution */}
+          <div className="chart-card">
+            <h3 className="chart-title">Department-wise Complaint Distribution</h3>
+            <div className="chart-body">
+              <Pie 
+                data={departmentChartData}
+                options={{ responsive: true, maintainAspectRatio: false }}
+              />
+            </div>
+          </div>
+
+          {/* 5. Category-wise Distribution */}
+          <div className="chart-card">
+            <h3 className="chart-title">Top Complaint Categories</h3>
+            <div className="chart-body">
+              <Bar 
+                data={categoryChartData}
+                options={{ indexAxis: 'y', responsive: true, maintainAspectRatio: false, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }}
+              />
+            </div>
+          </div>
+
+          {/* 6. Priority distribution */}
+          <div className="chart-card">
+            <h3 className="chart-title">Priority-wise Distribution</h3>
+            <div className="chart-body">
+              <Doughnut 
+                data={priorityChartData}
+                options={{ responsive: true, maintainAspectRatio: false }}
+              />
+            </div>
+          </div>
+
+          {/* 7. Status distribution */}
+          <div className="chart-card">
+            <h3 className="chart-title">Complaint Status Tracking</h3>
+            <div className="chart-body">
+              <Doughnut 
+                data={statusChartData}
+                options={{ responsive: true, maintainAspectRatio: false, cutout: '65%' }}
+              />
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </main>
   );

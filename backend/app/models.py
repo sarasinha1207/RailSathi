@@ -53,8 +53,6 @@ class Complaint(Base):
     pnr_number = Column(String(10), ForeignKey("pnr_tickets.pnr_number"), nullable=True)
     train_number = Column(String(100), ForeignKey("trains.train_number"), nullable=True)
     coach_number = Column(String(100), nullable=True)
-    current_station = Column(String(100), nullable=True)
-    next_station = Column(String(100), nullable=True)
     station_name = Column(String(100), nullable=True)
     platform_number = Column(String(100), nullable=True)
     station_area = Column(String(100), nullable=True)

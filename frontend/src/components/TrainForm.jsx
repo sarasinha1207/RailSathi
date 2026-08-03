@@ -7,8 +7,6 @@ export default function TrainForm({ onSwitchToTrack }) {
     pnr_number: '',
     train_number: '',
     coach_number: '',
-    current_station: '',
-    next_station: '',
     main_class: '',
     sub_class: '',
     incident_datetime: '',
@@ -228,28 +226,6 @@ export default function TrainForm({ onSwitchToTrack }) {
               name="coach_number" 
               placeholder="e.g. A1, S3, B2 (Optional)"
               value={formData.coach_number}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="trainCurrentStation">Current Station</label>
-            <input 
-              type="text" 
-              id="trainCurrentStation" 
-              name="current_station" 
-              placeholder="Enter nearest station (Optional)"
-              value={formData.current_station}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="trainNextStation">Next Station</label>
-            <input 
-              type="text" 
-              id="trainNextStation" 
-              name="next_station" 
-              placeholder="Enter next upcoming station (Optional)"
-              value={formData.next_station}
               onChange={handleChange}
             />
           </div>

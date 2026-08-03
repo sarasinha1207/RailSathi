@@ -247,8 +247,6 @@ def seed_database():
                         "pnr_number": pnr,
                         "train_number": train_num,
                         "coach_number": row.get("coach_number"),
-                        "current_station": row.get("current_station"),
-                        "next_station": row.get("next_station"),
                         "station_name": row.get("station_name"),
                         "platform_number": row.get("platform_number"),
                         "station_area": row.get("station_area"),

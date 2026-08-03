@@ -449,7 +449,7 @@ body {
 /* Main Content Panel */
 .main-content {
     flex-grow: 1;
-    padding: 40px;
+    padding: 70px 80px;
     background-color: var(--bg-color);
     display: flex;
     flex-direction: column;
@@ -461,10 +461,10 @@ body {
 .form-card {
     background-color: var(--card-bg);
     width: 100%;
-    max-width: 950px;
-    border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
-    padding: 40px;
+    max-width: 1000px;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+    padding: 50px 60px;
     position: relative;
     animation: fadeIn 0.4s ease;
 }
@@ -479,8 +479,8 @@ body {
     justify-content: space-between;
     align-items: center;
     border-bottom: 2px solid #f0f0f0;
-    padding-bottom: 20px;
-    margin-bottom: 30px;
+    padding-bottom: 24px;
+    margin-bottom: 40px;
 }
 
 .card-title {
@@ -493,7 +493,7 @@ body {
 .card-title::after {
     content: '';
     position: absolute;
-    bottom: -22px;
+    bottom: -26px;
     left: 0;
     width: 60px;
     height: 3px;
@@ -512,14 +512,14 @@ body {
 
 /* Form Layout Styles */
 .form-section-title {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: var(--primary-color);
-    margin: 25px 0 15px 0;
+    margin: 35px 0 20px 0;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
     border-bottom: 1px dashed var(--border-color);
-    padding-bottom: 8px;
+    padding-bottom: 10px;
 }
 
 .form-section-title:first-of-type {
@@ -529,14 +529,14 @@ body {
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px 25px;
-    margin-bottom: 20px;
+    gap: 30px 35px;
+    margin-bottom: 30px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
 .form-group.full-width {
@@ -547,12 +547,12 @@ body {
 .dateTime-group {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 20px;
     grid-column: span 2;
 }
 
 label {
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     font-weight: 600;
     color: #444;
 }
@@ -565,9 +565,9 @@ input[type="datetime-local"],
 select,
 textarea {
     width: 100%;
-    padding: 12px 16px;
+    padding: 14px 20px;
     border: 1px solid var(--border-color);
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 0.95rem;
     background-color: #fafbfc;
     transition: all 0.3s ease;

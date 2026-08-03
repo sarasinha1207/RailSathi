@@ -61,3 +61,8 @@ Thumbs.db
 # Local logs
 *.log
 logs/
+
+# Local helper scripts & test runners
+test_workflow.py
+start_mysql.bat
+start_backend.bat

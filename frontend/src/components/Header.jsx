@@ -21,21 +21,18 @@ export default function Header({ activePage, setActivePage, loggedIn, onLogout }
         <button 
           onClick={() => setActivePage('complaint')} 
           className={`nav-link ${activePage === 'complaint' ? 'active' : ''}`}
-          style={{ background: 'none', border: 'none' }}
         >
           Register/Track Complaint
         </button>
         <button 
           onClick={() => setActivePage('about')} 
           className={`nav-link ${activePage === 'about' ? 'active' : ''}`}
-          style={{ background: 'none', border: 'none' }}
         >
           About Us
         </button>
         <button 
           onClick={() => setActivePage('faq')} 
           className={`nav-link ${activePage === 'faq' ? 'active' : ''}`}
-          style={{ background: 'none', border: 'none' }}
         >
           FAQ
         </button>
@@ -44,14 +41,12 @@ export default function Header({ activePage, setActivePage, loggedIn, onLogout }
             <button 
               onClick={() => setActivePage('dashboard')} 
               className={`nav-link ${activePage === 'dashboard' ? 'active' : ''}`}
-              style={{ background: 'none', border: 'none' }}
             >
               Dashboard
             </button>
             <button 
               onClick={onLogout} 
               className="nav-link"
-              style={{ background: 'none', border: 'none' }}
             >
               Logout
             </button>
@@ -60,7 +55,6 @@ export default function Header({ activePage, setActivePage, loggedIn, onLogout }
           <button 
             onClick={() => setActivePage('login')} 
             className={`nav-link ${activePage === 'login' ? 'active' : ''}`}
-            style={{ background: 'none', border: 'none' }}
           >
             Login/Signup
           </button>

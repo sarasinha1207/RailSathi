@@ -39,8 +39,6 @@ class ComplaintResponse(BaseModel):
     pnr_number: Optional[str] = None
     train_number: Optional[str] = None
     coach_number: Optional[str] = None
-    current_station: Optional[str] = None
-    next_station: Optional[str] = None
     station_name: Optional[str] = None
     platform_number: Optional[str] = None
     station_area: Optional[str] = None
