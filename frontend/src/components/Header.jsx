@@ -19,6 +19,12 @@ export default function Header({ activePage, setActivePage, loggedIn, onLogout }
 
       <nav className="header-nav">
         <button 
+          onClick={() => setActivePage('home')} 
+          className={`nav-link ${activePage === 'home' ? 'active' : ''}`}
+        >
+          Home
+        </button>
+        <button 
           onClick={() => setActivePage('complaint')} 
           className={`nav-link ${activePage === 'complaint' ? 'active' : ''}`}
         >

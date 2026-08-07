@@ -195,13 +195,14 @@ async def get_pnr_details(pnr_number: str, db: Session = Depends(get_db)):
         "boarding_station": ticket.boarding_station.station_name if ticket.boarding_station else "",
         "destination_station": ticket.destination_station.station_name if ticket.destination_station else "",
         "journey_date": ticket.journey_date.strftime("%Y-%m-%d") if ticket.journey_date else "",
-        "journey_class": ticket.journey_class
+        "journey_class": ticket.journey_class,
+        "phone_number": ticket.phone_number
     }
 
 @router.post("/api/v1/submit-train")
 async def submit_train_complaint(
     phone_number: str = Form(...),
-    pnr_number: Optional[str] = Form(None),
+    pnr_number: str = Form(...),
     train_number: str = Form(...),
     coach_number: Optional[str] = Form(None),
     main_class: str = Form(...),

@@ -48,7 +48,8 @@ export default function TrainForm({ onSwitchToTrack }) {
             setFormData(prev => ({
               ...prev,
               train_number: `${data.train_number} - ${data.train_name}`,
-              coach_number: data.coach_number || ''
+              coach_number: data.coach_number || '',
+              phone_number: data.phone_number || prev.phone_number
             }));
           } else {
             setPnrStatus('✗ PNR not found');
@@ -165,6 +166,25 @@ export default function TrainForm({ onSwitchToTrack }) {
         <h3 className="form-section-title">Passenger Details</h3>
         <div className="form-grid">
           <div className="form-group">
+            <label htmlFor="trainPnr" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>PNR Number <span className="required-asterisk">*</span></span>
+              <span id="pnrStatus" style={{ fontSize: '0.8rem', fontWeight: 700, color: pnrStatusColor }}>
+                {pnrStatus}
+              </span>
+            </label>
+            <input 
+              type="text" 
+              id="trainPnr" 
+              name="pnr_number" 
+              required
+              placeholder="Enter 10-digit PNR"
+              pattern="[0-9]{10}"
+              value={formData.pnr_number}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="form-group">
             <label htmlFor="trainPhone">Phone Number <span className="required-asterisk">*</span></label>
             <input 
               type="tel" 
@@ -174,24 +194,6 @@ export default function TrainForm({ onSwitchToTrack }) {
               placeholder="Enter 10-digit mobile number" 
               pattern="[0-9]{10}"
               value={formData.phone_number}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="trainPnr" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>PNR Number</span>
-              <span id="pnrStatus" style={{ fontSize: '0.8rem', fontWeight: 700, color: pnrStatusColor }}>
-                {pnrStatus}
-              </span>
-            </label>
-            <input 
-              type="text" 
-              id="trainPnr" 
-              name="pnr_number" 
-              placeholder="Enter 10-digit PNR"
-              pattern="[0-9]{10}"
-              value={formData.pnr_number}
               onChange={handleChange}
             />
           </div>

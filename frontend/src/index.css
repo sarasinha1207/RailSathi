@@ -22,14 +22,25 @@
     box-sizing: border-box;
 }
 
+html {
+    height: 100%;
+}
+
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
     font-family: var(--font-family);
-    min-height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 /* App Container */
@@ -38,6 +49,14 @@ body {
     flex-direction: column;
     width: 100%;
     flex-grow: 1;
+}
+
+/* Main wrapper stretching to push footer to bottom */
+.main-wrapper {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 /* Horizontal Segmented Tabs Container */
@@ -454,7 +473,6 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow-y: auto;
     width: 100%;
 }
 
@@ -786,6 +804,7 @@ textarea {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-grow: 1;
     min-height: 60vh;
     padding: 20px;
 }
@@ -1227,4 +1246,54 @@ html {
     content: "•";
     color: var(--accent-gold);
     font-weight: bold;
+}
+
+/* Responsive FAQ Table Styles */
+.faq-table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    background-color: var(--card-bg);
+}
+
+.faq-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+    text-align: left;
+}
+
+.faq-table th {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-bottom: 2px solid var(--accent-color);
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+}
+
+.faq-table td {
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+    vertical-align: middle;
+    line-height: 1.4;
+}
+
+.faq-table td:first-child,
+.faq-table th:first-child {
+    width: 35%;
+    border-right: 1px solid var(--border-color);
+}
+
+.faq-table tr:last-child td {
+    border-bottom: none;
+}
+
+.faq-table tr:nth-child(even) {
+    background-color: #fafbfc;
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { TRAIN_CATEGORIES, STATION_CATEGORIES } from '../constants';
 
 export default function Faq() {
   return (
@@ -14,6 +15,57 @@ export default function Faq() {
         </div>
 
         <div className="faq-container" style={{ display: 'flex', flexDirection: 'column', gap: '15px', width: '100%' }}>
+
+          <details className="faq-item">
+            <summary className="faq-question">What complaint categories and subcategories are available for Train Complaints?</summary>
+            <div className="faq-answer">
+              <p>The following table lists all available categories and their respective subcategories for train-related grievances:</p>
+              <div className="faq-table-container">
+                <table className="faq-table">
+                  <thead>
+                    <tr>
+                      <th>Category ({Object.keys(TRAIN_CATEGORIES).length})</th>
+                      <th>Subcategory ({Object.values(TRAIN_CATEGORIES).flat().length})</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.keys(TRAIN_CATEGORIES).sort().map((category) => (
+                      <tr key={category}>
+                        <td style={{ fontWeight: 'bold' }}>{category} ({TRAIN_CATEGORIES[category].length})</td>
+                        <td>{TRAIN_CATEGORIES[category].join(', ')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </details>
+
+          <details className="faq-item">
+            <summary className="faq-question">What complaint categories and subcategories are available for Station Complaints?</summary>
+            <div className="faq-answer">
+              <p>The following table lists all available categories and their respective subcategories for station-related grievances:</p>
+              <div className="faq-table-container">
+                <table className="faq-table">
+                  <thead>
+                    <tr>
+                      <th>Category ({Object.keys(STATION_CATEGORIES).length})</th>
+                      <th>Subcategory ({Object.values(STATION_CATEGORIES).flat().length})</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.keys(STATION_CATEGORIES).sort().map((category) => (
+                      <tr key={category}>
+                        <td style={{ fontWeight: 'bold' }}>{category} ({STATION_CATEGORIES[category].length})</td>
+                        <td>{STATION_CATEGORIES[category].join(', ')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </details>
+
           <details className="faq-item">
             <summary className="faq-question">What complaints fall under passenger amenities?</summary>
             <div className="faq-answer">

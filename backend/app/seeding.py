@@ -664,76 +664,176 @@ def seed_database():
             depts_map[d_name] = dept.id
 
         # 5. Seed Complaint Categories ( Taxonomy mapping )
-        category_sub_data = {
-            "Security (RPF)": {
-                "dept": "Security (RPF)",
-                "priority": "High",
-                "subs": ["Theft / Snatching", "Harassment", "Unauthorized Passenger", "Suspicious Activity", "General Security"]
-            },
-            "Sanitation / Cleanliness": {
-                "dept": "Mechanical (Cleanliness)",
-                "priority": "Low",
-                "subs": ["Dirty Coach", "Toilet Choked", "No Water", "Dustbin Overflow", "Pest Control", "Platform"]
-            },
-            "Catering / Vending (Commercial)": {
-                "dept": "Commercial (Catering)",
-                "priority": "Medium",
-                "subs": ["Food Quality", "Overcharging", "No Menu Card", "Unhygienic Pantry", "Water Bottle Issue"]
-            },
-            "Electrical Equipment": {
-                "dept": "Electrical",
-                "priority": "Medium",
-                "subs": ["AC Not Working", "Fan Not Working", "Lighting Issue", "Charging Point Dead"]
-            },
-            "Coach Maintenance (Coaching)": {
-                "dept": "Mechanical (Coaching)",
-                "priority": "Low",
-                "subs": ["Bed Roll / Linen", "Window Broken", "Seat Damaged", "Door Lock Choked", "Dirty / Torn"]
-            },
-            "Medical Assistance": {
-                "dept": "Medical",
-                "priority": "High",
-                "subs": ["Emergency Medical Help", "First Aid Request", "Medicines Requirement"]
-            },
-            "Passenger Amenities": {
-                "dept": "Other",
-                "priority": "Medium",
-                "subs": ["Platform Cleaning", "Waiting Room Issue", "Water Cooler Issue", "Display Board Dead"]
-            },
-            "Staff Behavior (Commercial)": {
-                "dept": "Commercial (Staff)",
-                "priority": "Medium",
-                "subs": ["Rude Behavior", "TTE Absence", "Bribery Complaint"]
-            },
-            "Operating Concerns": {
-                "dept": "Operating",
-                "priority": "Medium",
-                "subs": ["Train Delay", "Wrong Announcement", "Coach Mismatch"]
-            },
-            "Engineering Issues": {
-                "dept": "Engineering",
-                "priority": "Medium",
-                "subs": ["Track Concern", "Signal Issue", "Bridge Maintenance"]
-            },
-            "Other": {
-                "dept": "Other",
-                "priority": "Low",
-                "subs": ["General Complaint", "Query", "Feedback"]
-            }
-        }
+        category_tuples = [
+            # Bed Roll
+            ("Bed Roll", "Dirty / Torn", "Mechanical (Coaching)", "Low"),
+            ("Bed Roll", "Non Availability", "Mechanical (Coaching)", "Medium"),
+            ("Bed Roll", "Others", "Mechanical (Coaching)", "Low"),
+            ("Bed Roll", "Overcharging", "Mechanical (Coaching)", "Medium"),
+            # Catering & Vending Services
+            ("Catering & Vending Services", "E-Catering", "Commercial (Catering)", "Low"),
+            ("Catering & Vending Services", "Food & Water Not Available", "Commercial (Catering)", "High"),
+            ("Catering & Vending Services", "Food Quality", "Commercial (Catering)", "Medium"),
+            ("Catering & Vending Services", "Food Quality & Quantity", "Commercial (Catering)", "Medium"),
+            ("Catering & Vending Services", "Food Quantity", "Commercial (Catering)", "Low"),
+            ("Catering & Vending Services", "Hygiene", "Commercial (Catering)", "Medium"),
+            ("Catering & Vending Services", "Others", "Commercial (Catering)", "Low"),
+            ("Catering & Vending Services", "Overcharging", "Commercial (Catering)", "Medium"),
+            ("Catering & Vending Services", "Service Quality", "Commercial (Catering)", "Low"),
+            ("Catering & Vending Services", "Service Quality & Hygiene", "Commercial (Catering)", "Medium"),
+            # Coach - Cleanliness
+            ("Coach - Cleanliness", "Coach Exterior", "Mechanical (Cleanliness)", "Low"),
+            ("Coach - Cleanliness", "Coach Interior", "Mechanical (Cleanliness)", "Low"),
+            ("Coach - Cleanliness", "Cockroach / Rodents", "Mechanical (Cleanliness)", "Medium"),
+            ("Coach - Cleanliness", "Others", "Mechanical (Cleanliness)", "Low"),
+            ("Coach - Cleanliness", "Toilet", "Mechanical (Cleanliness)", "Medium"),
+            ("Coach - Cleanliness", "Washbasin", "Mechanical (Cleanliness)", "Low"),
+            # Cleanliness (Station)
+            ("Cleanliness", "Others", "Mechanical (Cleanliness)", "Low"),
+            ("Cleanliness", "Platform", "Mechanical (Cleanliness)", "Low"),
+            ("Cleanliness", "Stalls", "Mechanical (Cleanliness)", "Low"),
+            ("Cleanliness", "Station Entrance / Building", "Mechanical (Cleanliness)", "Low"),
+            ("Cleanliness", "Toilet", "Mechanical (Cleanliness)", "Medium"),
+            ("Cleanliness", "Waiting Room / Retiring Room", "Mechanical (Cleanliness)", "Low"),
+            # Coach - Maintenance
+            ("Coach - Maintenance", "Broken/Missing Toilet Fittings", "Mechanical (Coaching)", "Medium"),
+            ("Coach - Maintenance", "Jerks/Abnormal Sound", "Mechanical (Coaching)", "High"),
+            ("Coach - Maintenance", "Others", "Mechanical (Coaching)", "Low"),
+            ("Coach - Maintenance", "Tap leaking/Tap not working", "Mechanical (Coaching)", "Medium"),
+            ("Coach - Maintenance", "Window/Door locking problem", "Mechanical (Coaching)", "High"),
+            ("Coach - Maintenance", "Window/Seat Broken", "Mechanical (Coaching)", "Medium"),
+            # Corruption / Bribery
+            ("Corruption / Bribery", "Corruption / Bribery", "Commercial (Staff)", "High"),
+            # Divyangjan Facilities
+            ("Divyangjan Facilities", "Braille signage in coach", "Mechanical (Coaching)", "Low"),
+            ("Divyangjan Facilities", "Divyangjan coach unavailability", "Mechanical (Coaching)", "High"),
+            ("Divyangjan Facilities", "Divyangjan toilet /washbasin", "Mechanical (Coaching)", "Medium"),
+            ("Divyangjan Facilities", "Others", "Other", "Low"),
+            ("Divyangjan Facilities", "Low height ticket counter", "Other", "Low"),
+            ("Divyangjan Facilities", "Low height water booth", "Other", "Low"),
+            ("Divyangjan Facilities", "Low seat toilet", "Other", "Low"),
+            ("Divyangjan Facilities", "Parking", "Other", "Low"),
+            ("Divyangjan Facilities", "Ramp at Entry/Exit gates", "Other", "Medium"),
+            ("Divyangjan Facilities", "Seating arrangement at Station/Waiting area", "Other", "Low"),
+            ("Divyangjan Facilities", "Tactile Pathway", "Other", "Low"),
+            ("Divyangjan Facilities", "Travel Concession", "Other", "Low"),
+            ("Divyangjan Facilities", "Wheel Chair/Battery operated car/Divyang Sahayak (On Payment, Feasible)", "Other", "Medium"),
+            # Electrical Equipment
+            ("Electrical Equipment", "Air Conditioner", "Electrical", "High"),
+            ("Electrical Equipment", "Charging Points", "Electrical", "Low"),
+            ("Electrical Equipment", "Fans", "Electrical", "Medium"),
+            ("Electrical Equipment", "Lights", "Electrical", "Medium"),
+            ("Electrical Equipment", "Others", "Electrical", "Low"),
+            ("Electrical Equipment", "Display / Coach Indicator Board", "Electrical", "Medium"),
+            ("Electrical Equipment", "Fans / Lights", "Electrical", "Medium"),
+            ("Electrical Equipment", "Lifts / Escalators", "Electrical", "Medium"),
+            # Facilities for Women with Special needs
+            ("Facilities for Women with Special needs", "Baby Food", "Other", "High"),
+            ("Facilities for Women with Special needs", "Others", "Other", "Low"),
+            ("Facilities for Women with Special needs", "Segregated area for lactating mothers in waiting hall", "Other", "Medium"),
+            # Goods
+            ("Goods", "Booking", "Other", "Low"),
+            ("Goods", "Delivery", "Other", "Low"),
+            ("Goods", "Demurrage / Wharfage", "Other", "Low"),
+            ("Goods", "Freight Facilitation", "Other", "Low"),
+            ("Goods", "Others", "Other", "Low"),
+            ("Goods", "Overcharging", "Other", "Low"),
+            ("Goods", "Staff Not Available", "Other", "Low"),
+            ("Goods", "Touts", "Other", "Low"),
+            # Luggage / Parcels
+            ("Luggage / Parcels", "Booking", "Other", "Low"),
+            ("Luggage / Parcels", "Delivery", "Other", "Low"),
+            ("Luggage / Parcels", "Others", "Other", "Low"),
+            ("Luggage / Parcels", "Overcharging", "Other", "Low"),
+            ("Luggage / Parcels", "Parcel Facilitation", "Other", "Low"),
+            ("Luggage / Parcels", "Staff Not Available", "Other", "Low"),
+            ("Luggage / Parcels", "Touts", "Other", "Low"),
+            # Medical Assistance
+            ("Medical Assistance", "Medical Assistance", "Medical", "High"),
+            # Miscellaneous
+            ("Miscellaneous", "Miscellaneous", "Other", "Low"),
+            # Passenger Amenities
+            ("Passenger Amenities", "139", "Other", "Low"),
+            ("Passenger Amenities", "Benches/Sheds", "Other", "Low"),
+            ("Passenger Amenities", "Enquiry Office/Inadequate Counter", "Other", "Low"),
+            ("Passenger Amenities", "Foot over/under Bridge", "Other", "Medium"),
+            ("Passenger Amenities", "Others", "Other", "Low"),
+            ("Passenger Amenities", "PA (Public Announcement) System", "Other", "Medium"),
+            ("Passenger Amenities", "Parking", "Other", "Low"),
+            ("Passenger Amenities", "Wi-Fi", "Other", "Low"),
+            # Punctuality
+            ("Punctuality", "Late Running", "Operating", "Low"),
+            ("Punctuality", "NTES APP", "Operating", "Low"),
+            ("Punctuality", "Others", "Operating", "Low"),
+            # Refund of Tickets
+            ("Refund of Tickets", "Counter Ticket", "Other", "Low"),
+            ("Refund of Tickets", "Online Ticket", "Other", "Low"),
+            ("Refund of Tickets", "Others", "Other", "Low"),
+            # Reserved Ticketing
+            ("Reserved Ticketing", "E-Ticketing", "Other", "Low"),
+            ("Reserved Ticketing", "Inadequate Counters", "Other", "Low"),
+            ("Reserved Ticketing", "Others", "Other", "Low"),
+            ("Reserved Ticketing", "Overcharging", "Other", "Low"),
+            ("Reserved Ticketing", "Tatkal", "Other", "Low"),
+            ("Reserved Ticketing", "touts", "Other", "Medium"),
+            # Security
+            ("Security", "Dacoity/Robbery/Murder/Riots", "Security (RPF)", "High"),
+            ("Security", "Eve-teasing", "Security (RPF)", "High"),
+            ("Security", "Eveteasing/Misbehaviour with lady passengers/Rape", "Security (RPF)", "High"),
+            ("Security", "Harassment/Extortion by Security Personnel/Railway personnel", "Security (RPF)", "High"),
+            ("Security", "Luggage Left Behind/Unclaimed/Suspected Articles", "Security (RPF)", "High"),
+            ("Security", "Misbehaviour", "Security (RPF)", "Medium"),
+            ("Security", "Misbehaviour with lady passenger", "Security (RPF)", "High"),
+            ("Security", "Misbehaviour with lady passengers", "Security (RPF)", "High"),
+            ("Security", "Nuisance by Hawkers/Beggar/Eunuch", "Security (RPF)", "Medium"),
+            ("Security", "Nuisance by passenger", "Security (RPF)", "Medium"),
+            ("Security", "Others", "Security (RPF)", "Low"),
+            ("Security", "Passenger Missing/Not responding call", "Security (RPF)", "High"),
+            ("Security", "Passenger fallen down", "Security (RPF)", "High"),
+            ("Security", "Quarrelling/Hooliganism", "Security (RPF)", "High"),
+            ("Security", "Rape", "Security (RPF)", "High"),
+            ("Security", "Smoking/Drinking Alcohol/Narcotics", "Security (RPF)", "High"),
+            ("Security", "Theft of Passengers Belongings/Snatching", "Security (RPF)", "High"),
+            ("Security", "Unauthorized person in Ladies/Disabled Coach/SLR/Reserve Coach", "Security (RPF)", "High"),
+            # Staff Behaviour
+            ("Staff Behaviour", "Staff Behaviour", "Commercial (Staff)", "Medium"),
+            # Unreserved Ticketing
+            ("Unreserved Ticketing", "ATVM", "Other", "Low"),
+            ("Unreserved Ticketing", "Inadequate Counters", "Other", "Low"),
+            ("Unreserved Ticketing", "MST", "Other", "Low"),
+            ("Unreserved Ticketing", "Others", "Other", "Low"),
+            ("Unreserved Ticketing", "Overcharging", "Other", "Low"),
+            ("Unreserved Ticketing", "UTS App Login Issue", "Other", "Low"),
+            ("Unreserved Ticketing", "UTS App Mobile Handset Change", "Other", "Low"),
+            ("Unreserved Ticketing", "UTS RWallet", "Other", "Low"),
+            ("Unreserved Ticketing", "UTS/ATVM - Digital Payment", "Other", "Low"),
+            # Water Availability
+            ("Water Availability", "Others", "Mechanical (Cleanliness)", "Low"),
+            ("Water Availability", "Packaged Drinking Water / Rail Neer", "Mechanical (Cleanliness)", "Medium"),
+            ("Water Availability", "Toilet", "Mechanical (Cleanliness)", "High"),
+            ("Water Availability", "Washbasin", "Mechanical (Cleanliness)", "Medium"),
+            ("Water Availability", "Drinking Water at Platform", "Mechanical (Cleanliness)", "High"),
+            ("Water Availability", "Retiring Room / Waiting Room", "Mechanical (Cleanliness)", "Low"),
+            ("Water Availability", "Water Vending Machines", "Mechanical (Cleanliness)", "Low"),
+        ]
 
-        categories_map = {} # sub_name.lower() -> category_id
-        for cat_name, info in category_sub_data.items():
-            for sub_name in info["subs"]:
-                cat = ComplaintCategory(
-                    category_name=cat_name,
-                    subcategory_name=sub_name,
-                    department_id=depts_map[info["dept"]],
-                    default_priority=info["priority"]
-                )
-                db.add(cat)
-                db.flush()
-                categories_map[sub_name.lower()] = cat.id
+        categories_map = {}
+        seen_pairs = set()
+        for cat_name, sub_name, dept_name, priority in category_tuples:
+            pair_key = (cat_name.lower(), sub_name.lower())
+            if pair_key in seen_pairs:
+                continue
+            seen_pairs.add(pair_key)
+            
+            cat = ComplaintCategory(
+                category_name=cat_name,
+                subcategory_name=sub_name,
+                department_id=depts_map[dept_name],
+                default_priority=priority
+            )
+            db.add(cat)
+            db.flush()
+            categories_map[pair_key] = (cat.id, cat.default_priority)
 
         # 6. Seed Users
         admin_user = User(
@@ -926,44 +1026,59 @@ def seed_database():
                 station_id = stations_map["ndls"]
 
             # Map category and subcategory to consolidated row
+            csv_dept_to_db_dept = {
+                "Security (RPF)": "Security (RPF)",
+                "Security": "Security (RPF)",
+                "Sanitation / Cleanliness": "Mechanical (Cleanliness)",
+                "Cleanliness": "Mechanical (Cleanliness)",
+                "Coach - Cleanliness": "Mechanical (Cleanliness)",
+                "Catering / Vending (Commercial)": "Commercial (Catering)",
+                "Catering & Vending Services": "Commercial (Catering)",
+                "Electrical Equipment": "Electrical",
+                "Coach Maintenance (Coaching)": "Mechanical (Coaching)",
+                "Coach - Maintenance": "Mechanical (Coaching)",
+                "Bed Roll": "Mechanical (Coaching)",
+                "Medical Assistance": "Medical",
+                "Passenger Amenities": "Other",
+                "Staff Behavior (Commercial)": "Commercial (Staff)",
+                "Staff Behaviour": "Commercial (Staff)",
+                "Operating Concerns": "Operating",
+                "Punctuality": "Operating",
+                "Engineering Issues": "Engineering",
+                "Divyangjan Facilities": "Other",
+                "Facilities for Women with Special needs": "Other",
+                "Corruption / Bribery": "Commercial (Staff)",
+                "Water Availability": "Mechanical (Cleanliness)",
+                "Goods": "Other",
+                "Luggage / Parcels": "Other",
+                "Refund of Tickets": "Other",
+                "Reserved Ticketing": "Other",
+                "Unreserved Ticketing": "Other",
+                "Miscellaneous": "Other",
+                "Other": "Other"
+            }
+
+            main_class_val = row.get("main_class", "Other").strip()
             sub_name = row.get("sub_class", "General Complaint").strip()
-            category_id = categories_map.get(sub_name.lower())
-            if not category_id:
-                # Add default inline category
+            
+            cat_info = categories_map.get((main_class_val.lower(), sub_name.lower()))
+            if not cat_info:
+                db_dept_name = csv_dept_to_db_dept.get(main_class_val, "Other")
                 new_cat = ComplaintCategory(
-                    category_name=row.get("main_class", "Other"),
+                    category_name=main_class_val,
                     subcategory_name=sub_name,
-                    department_id=depts_map["Other"],
-                    default_priority="Low"
+                    department_id=depts_map[db_dept_name],
+                    default_priority="Medium"
                 )
                 db.add(new_cat)
                 db.flush()
-                categories_map[sub_name.lower()] = new_cat.id
+                categories_map[(main_class_val.lower(), sub_name.lower())] = (new_cat.id, new_cat.default_priority)
                 category_id = new_cat.id
-
-            csv_dept = row.get("main_class", "Other").strip()
-            if csv_dept == "Sanitation / Cleanliness":
-                csv_dept_key = "Sanitation / Cleanliness"
-            elif csv_dept == "Catering / Vending (Commercial)":
-                csv_dept_key = "Catering / Vending (Commercial)"
-            elif csv_dept == "Electrical Equipment":
-                csv_dept_key = "Electrical Equipment"
-            elif csv_dept == "Coach Maintenance (Coaching)":
-                csv_dept_key = "Coach Maintenance (Coaching)"
-            elif csv_dept == "Medical Assistance":
-                csv_dept_key = "Medical Assistance"
-            elif csv_dept == "Staff Behavior (Commercial)":
-                csv_dept_key = "Staff Behavior (Commercial)"
-            elif csv_dept == "Security (RPF)":
-                csv_dept_key = "Security (RPF)"
-            elif csv_dept == "Operating Concerns":
-                csv_dept_key = "Operating Concerns"
-            elif csv_dept == "Engineering Issues":
-                csv_dept_key = "Engineering Issues"
+                priority = new_cat.default_priority
             else:
-                csv_dept_key = "Other"
+                category_id, priority = cat_info
 
-            dept_id = depts_map[category_sub_data[csv_dept_key]["dept"]]
+            dept_id = depts_map[csv_dept_to_db_dept.get(main_class_val, "Other")]
             csv_div = row.get("division_name", "Delhi").strip()
             div_id = divisions_map.get(csv_div.lower(), divisions_map["delhi"])
 
@@ -972,18 +1087,6 @@ def seed_database():
                 status_str = "Open"
 
             created_at = parse_datetime(row.get("created_at")) or datetime.now()
-
-            # Dynamic Priority
-            priority = "Medium"
-            category_lower = csv_dept.lower()
-            if "security" in category_lower or "theft" in category_lower or "harassment" in category_lower:
-                priority = "High"
-            elif "cleanliness" in category_lower or "dirty" in category_lower or "toilet" in category_lower or "waste" in category_lower:
-                priority = "Low"
-            elif "bed roll" in category_lower or "linen" in category_lower or "blanket" in category_lower:
-                priority = "Low"
-            elif "medical" in category_lower or "emergency" in category_lower or "first aid" in category_lower:
-                priority = "High"
 
             resolved_at = None
             assigned_at = None

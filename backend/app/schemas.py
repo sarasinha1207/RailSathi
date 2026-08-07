@@ -67,6 +67,7 @@ class PnrResponse(BaseModel):
     destination_station: Optional[str] = None
     journey_date: Optional[date] = None
     journey_class: Optional[str] = None
+    phone_number: Optional[str] = None
     
     class Config:
         from_attributes = True
