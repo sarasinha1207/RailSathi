@@ -6,7 +6,6 @@ export default function StationForm({ onSwitchToTrack }) {
     phone_number: '',
     station_name: '',
     platform_number: '',
-    station_area: '',
     main_class: '',
     sub_class: '',
     incident_datetime: '',
@@ -17,6 +16,24 @@ export default function StationForm({ onSwitchToTrack }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [registeredId, setRegisteredId] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [stations, setStations] = useState([]);
+  const [selectedStation, setSelectedStation] = useState(null);
+
+  // Fetch stations list on mount
+  useEffect(() => {
+    const fetchStations = async () => {
+      try {
+        const res = await fetch('/api/v1/stations');
+        if (res.ok) {
+          const data = await res.json();
+          setStations(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch stations:', err);
+      }
+    };
+    fetchStations();
+  }, []);
 
   // Set default datetime value to local datetime
   useEffect(() => {
@@ -45,6 +62,17 @@ export default function StationForm({ onSwitchToTrack }) {
         }
       }
       setWordCount(words.length);
+    }
+
+    if (name === 'station_name') {
+      const st = stations.find(s => s.station_name === value);
+      setSelectedStation(st || null);
+      setFormData(prev => ({
+        ...prev,
+        station_name: value,
+        platform_number: '' // reset platform number
+      }));
+      return;
     }
 
     setFormData(prev => ({
@@ -142,37 +170,40 @@ export default function StationForm({ onSwitchToTrack }) {
         <div className="form-grid">
           <div className="form-group">
             <label htmlFor="stationLocName">Station Name <span className="required-asterisk">*</span></label>
-            <input 
-              type="text" 
+            <select 
               id="stationLocName" 
               name="station_name" 
               required
-              placeholder="Enter Railway Station Name"
               value={formData.station_name}
               onChange={handleChange}
-            />
+            >
+              <option value="">Select Station</option>
+              {stations.map((st) => (
+                <option key={st.id} value={st.station_name}>
+                  {st.station_name}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="form-group">
-            <label htmlFor="stationPlat">Platform Number</label>
-            <input 
-              type="text" 
+            <label htmlFor="stationPlat">Platform Number <span className="required-asterisk">*</span></label>
+            <select 
               id="stationPlat" 
               name="platform_number" 
-              placeholder="Enter Platform No (Optional)"
+              required
               value={formData.platform_number}
               onChange={handleChange}
-            />
-          </div>
-          <div className="form-group full-width">
-            <label htmlFor="stationArea">Station Area / Facility</label>
-            <input 
-              type="text" 
-              id="stationArea" 
-              name="station_area" 
-              placeholder="e.g. Waiting Room, Counter No 3, Foot Over Bridge (Optional)"
-              value={formData.station_area}
-              onChange={handleChange}
-            />
+              disabled={!selectedStation}
+            >
+              <option value="">Select Platform</option>
+              {selectedStation && 
+                Array.from({ length: selectedStation.platforms_count }, (_, i) => i + 1).map((num) => (
+                  <option key={num} value={num}>
+                    Platform {num}
+                  </option>
+                ))
+              }
+            </select>
           </div>
         </div>
 

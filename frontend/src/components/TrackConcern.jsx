@@ -196,7 +196,7 @@ export default function TrackConcern({ initialComplaintId }) {
                 <div>
                   {complaintData.complaint_type === 'Train' 
                     ? `Train No: ${complaintData.train_number} | Coach: ${complaintData.coach_number || 'N/A'}`
-                    : `Station: ${complaintData.station_name} | Platform: ${complaintData.platform_number || 'N/A'} | Area: ${complaintData.station_area || 'N/A'}`
+                    : `Station: ${complaintData.station_name} | Platform: ${complaintData.platform_number || 'N/A'}`
                   }
                 </div>
               </div>
