@@ -1,3 +1,154 @@
+CATEGORY_CODE_MAP = {
+    ("bed roll", "dirty / torn"): "BED_DIRTY/TORN",
+    ("bed roll", "non availability"): "BED_NOT_AVAIL",
+    ("bed roll", "others"): "BED_OTHER",
+    ("bed roll", "overcharging"): "BED_OVERCHARGE",
+
+    ("catering & vending services", "e-catering"): "CAT_ECATER",
+    ("catering & vending services", "food & water not available"): "CAT_FOOD_WATER",
+    ("catering & vending services", "food quality"): "CAT_FOOD_QLTY",
+    ("catering & vending services", "food quality & quantity"): "CAT_FOOD_QLTY_QTY",
+    ("catering & vending services", "food quantity"): "CAT_FOOD_QTY",
+    ("catering & vending services", "hygiene"): "CAT_HYGIENE",
+    ("catering & vending services", "others"): "CAT_OTHER",
+    ("catering & vending services", "overcharging"): "CAT_OVERCHARGE",
+    ("catering & vending services", "service quality"): "CAT_SERVICE",
+    ("catering & vending services", "service quality & hygiene"): "CAT_SERVICE_HYGIENE",
+
+    ("cleanliness", "others"): "CLN_OTHER",
+    ("cleanliness", "platform"): "CLN_PLATFORM",
+    ("cleanliness", "stalls"): "CLN_STALL",
+    ("cleanliness", "station entrance / building"): "CLN_ENTRANCE",
+    ("cleanliness", "toilet"): "CLN_TOILET",
+    ("cleanliness", "waiting room / retiring room"): "CLN_WAITING_ROOM",
+
+    ("coach - cleanliness", "coach exterior"): "COACH_EXT_CLEAN",
+    ("coach - cleanliness", "coach interior"): "COACH_INT_CLEAN",
+    ("coach - cleanliness", "cockroach / rodents"): "COACH_PEST",
+    ("coach - cleanliness", "others"): "COACH_OTHER",
+    ("coach - cleanliness", "toilet"): "COACH_TOILET",
+    ("coach - cleanliness", "washbasin"): "COACH_WASHBASIN",
+
+    ("coach - maintenance", "broken/missing toilet fittings"): "COACH_TOILET_BROKEN",
+    ("coach - maintenance", "jerks/abnormal sound"): "COACH_JERK_SOUND",
+    ("coach - maintenance", "others"): "COACH_OTHER_MAINT",
+    ("coach - maintenance", "tap leaking/tap not working"): "COACH_TAP_LEAK",
+    ("coach - maintenance", "window/door locking problem"): "COACH_DOOR_WINDOW",
+    ("coach - maintenance", "window/seat broken"): "COACH_SEAT_WINDOW",
+
+    ("corruption / bribery", "corruption / bribery"): "CORRUPTION",
+
+    ("divyangjan facilities", "braille signage in coach"): "DIV_BRAILLE",
+    ("divyangjan facilities", "divyangjan coach unavailability"): "DIV_COACH",
+    ("divyangjan facilities", "divyangjan toilet /washbasin"): "DIV_TOILET",
+    ("divyangjan facilities", "others"): "DIV_OTHER",
+    ("divyangjan facilities", "low height ticket counter"): "DIV_TICKET_COUNTER",
+    ("divyangjan facilities", "low height water booth"): "DIV_WATER_BOOTH",
+    ("divyangjan facilities", "low seat toilet"): "DIV_LOW_TOILET",
+    ("divyangjan facilities", "parking"): "DIV_PARKING",
+    ("divyangjan facilities", "ramp at entry/exit gates"): "DIV_RAMP",
+    ("divyangjan facilities", "seating arrangement at station/waiting area"): "DIV_SEATING",
+    ("divyangjan facilities", "tactile pathway"): "DIV_TACTILE",
+    ("divyangjan facilities", "travel concession"): "DIV_CONCESSION",
+    ("divyangjan facilities", "wheel chair/battery operated car/divyang sahayak (on payment, feasible)"): "DIV_WHEELCHAIR",
+
+    ("electrical equipment", "air conditioner"): "ELEC_AC",
+    ("electrical equipment", "charging points"): "ELEC_CHARGING",
+    ("electrical equipment", "fans"): "ELEC_FAN",
+    ("electrical equipment", "lights"): "ELEC_LIGHT",
+    ("electrical equipment", "others"): "ELEC_OTHER",
+    ("electrical equipment", "display / coach indicator board"): "ELEC_DISPLAY",
+    ("electrical equipment", "fans / lights"): "ELEC_FAN_LIGHT",
+    ("electrical equipment", "lifts / escalators"): "ELEC_LIFT",
+
+    ("facilities for women with special needs", "baby food"): "FAC_BABY_FOOD",
+    ("facilities for women with special needs", "others"): "FAC_OTHER",
+    ("facilities for women with special needs", "segregated area for lactating mothers in waiting hall"): "FAC_SEGREGATED_AREA",
+
+    ("goods", "booking"): "GOODS_BOOKING",
+    ("goods", "delivery"): "GOODS_DELIVERY",
+    ("goods", "demurrage / wharfage"): "GOODS_DEMURRAGE",
+    ("goods", "freight facilitation"): "GOODS_FREIGHT",
+    ("goods", "others"): "GOODS_OTHER",
+    ("goods", "overcharging"): "GOODS_OVERCHARGE",
+    ("goods", "staff not available"): "GOODS_NO_STAFF",
+    ("goods", "touts"): "GOODS_TOUT",
+
+    ("luggage / parcels", "booking"): "LUG_BOOKING",
+    ("luggage / parcels", "delivery"): "LUG_DELIVERY",
+    ("luggage / parcels", "others"): "LUG_OTHER",
+    ("luggage / parcels", "overcharging"): "LUG_OVERCHARGE",
+    ("luggage / parcels", "parcel facilitation"): "LUG_PARCEL",
+    ("luggage / parcels", "staff not available"): "LUG_NO_STAFF",
+    ("luggage / parcels", "touts"): "LUG_TOUT",
+
+    ("medical assistance", "medical assistance"): "MED_ASSISTANCE",
+    ("miscellaneous", "miscellaneous"): "MISC",
+
+    ("passenger amenities", "139"): "PASS_139",
+    ("passenger amenities", "benches/sheds"): "PASS_BENCH_SHED",
+    ("passenger amenities", "enquiry office/inadequate counter"): "PASS_ENQUIRY",
+    ("passenger amenities", "foot over/under bridge"): "PASS_FOOT_BRIDGE",
+    ("passenger amenities", "others"): "PASS_OTHER",
+    ("passenger amenities", "pa (public announcement) system"): "PASS_ANNOUNCEMENT",
+    ("passenger amenities", "parking"): "PASS_PARKING",
+    ("passenger amenities", "wi-fi"): "PASS_WIFI",
+
+    ("punctuality", "late running"): "PUNC_LATE",
+    ("punctuality", "ntes app"): "PUNC_NTES",
+    ("punctuality", "others"): "PUNC_OTHER",
+
+    ("refund of tickets", "counter ticket"): "REFUND_COUNTER",
+    ("refund of tickets", "online ticket"): "REFUND_ONLINE",
+    ("refund of tickets", "others"): "REFUND_OTHER",
+
+    ("reserved ticketing", "e-ticketing"): "RES_E_TICKET",
+    ("reserved ticketing", "inadequate counters"): "RES_COUNTER",
+    ("reserved ticketing", "others"): "RES_OTHER",
+    ("reserved ticketing", "overcharging"): "RES_OVERCHARGE",
+    ("reserved ticketing", "tatkal"): "RES_TATKAL",
+    ("reserved ticketing", "touts"): "RES_TOUT",
+
+    ("security", "dacoity/robbery/murder/riots"): "SEC_ROBBERY",
+    ("security", "eve-teasing"): "SEC_EVE_TEASING",
+    ("security", "eveteasing/misbehaviour with lady passengers/rape"): "SEC_EVE_MISBEHAV",
+    ("security", "harassment/extortion by security personnel/railway personnel"): "SEC_HARASS",
+    ("security", "luggage left behind/unclaimed/suspected articles"): "SEC_LUGGAGE_LEFT",
+    ("security", "misbehaviour"): "SEC_MISBEHAV",
+    ("security", "misbehaviour with lady passenger"): "SEC_MISBEHAV_LADY",
+    ("security", "misbehaviour with lady passengers"): "SEC_MISBEHAV_LADY_2",
+    ("security", "nuisance by hawkers/beggar/eunuch"): "SEC_HAWKER",
+    ("security", "nuisance by passenger"): "SEC_PASSENGER_NUISANCE",
+    ("security", "others"): "SEC_OTHER",
+    ("security", "passenger missing/not responding call"): "SEC_PASS_MISSING",
+    ("security", "passenger fallen down"): "SEC_PASS_FALL",
+    ("security", "quarrelling/hooliganism"): "SEC_HOOLIGAN",
+    ("security", "rape"): "SEC_RAPE",
+    ("security", "smoking/drinking alcohol/narcotics"): "SEC_SMOKING_DRINKING",
+    ("security", "theft of passengers belongings/snatching"): "SEC_THEFT",
+    ("security", "unauthorized person in ladies/disabled coach/slr/reserve coach"): "SEC_UNAUTHORIZED",
+
+    ("staff behaviour", "staff behaviour"): "STAFF_BEHAV",
+
+    ("unreserved ticketing", "atvm"): "UNRES_ATVM",
+    ("unreserved ticketing", "inadequate counters"): "UNRES_COUNTER",
+    ("unreserved ticketing", "mst"): "UNRES_MST",
+    ("unreserved ticketing", "others"): "UNRES_OTHER",
+    ("unreserved ticketing", "overcharging"): "UNRES_OVERCHARGE",
+    ("unreserved ticketing", "uts app login issue"): "UNRES_APP_LOGIN",
+    ("unreserved ticketing", "uts app mobile handset change"): "UNRES_APP_MOBILE",
+    ("unreserved ticketing", "uts rwallet"): "UNRES_R_WALLET",
+    ("unreserved ticketing", "uts/atvm - digital payment"): "UNRES_DIGITAL_PAY",
+
+    ("water availability", "others"): "WATER_OTHER",
+    ("water availability", "packaged drinking water / rail neer"): "WATER_PACKAGED",
+    ("water availability", "toilet"): "WATER_TOILET",
+    ("water availability", "washbasin"): "WATER_WASHBASIN",
+    ("water availability", "drinking water at platform"): "WATER_PLATFORM",
+    ("water availability", "retiring room / waiting room"): "WATER_RETIRING_ROOM",
+    ("water availability", "water vending machines"): "WATER_VENDING",
+}
+
 import os
 import csv
 import re
@@ -565,7 +716,7 @@ def seed_database():
             conn.execute(text(f"DROP TABLE IF EXISTS `{table}`"))
         conn.execute(text("SET FOREIGN_KEY_CHECKS = 1;"))
         
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=engine, checkfirst=True)
     
     db: Session = SessionLocal()
     try:
@@ -597,7 +748,7 @@ def seed_database():
             zone = Zone(zone_code=z_code, zone_name=z_name, headquarters=hq)
             db.add(zone)
             db.flush()
-            zones_map[z_code] = zone.id
+            zones_map[z_code] = zone.zone_code
 
         # 2. Seed Divisions (with their administrative codes)
         divisions_data = [
@@ -622,10 +773,10 @@ def seed_database():
         ]
         divisions_map = {}
         for d_name, z_code, d_code in divisions_data:
-            division = Division(division_name=d_name, division_code=d_code, zone_id=zones_map[z_code])
+            division = Division(division_code=d_code, division_name=d_name, zone_code=zones_map[z_code])
             db.add(division)
             db.flush()
-            divisions_map[d_name.lower()] = division.id
+            divisions_map[d_name.lower()] = division.division_code
 
         # 3. Seed Stations (Top 500 Real Stations with exact divisions)
         stations_map = {}
@@ -633,15 +784,15 @@ def seed_database():
             station = Station(
                 station_code=s_code,
                 station_name=s_name,
-                division_id=divisions_map[div_name.lower()],
+                division_code=divisions_map[div_name.lower()],
                 latitude=lat,
                 longitude=lon,
                 platforms_count=plat
             )
             db.add(station)
             db.flush()
-            stations_map[s_name.lower()] = station.id
-            stations_map[s_code.lower()] = station.id
+            stations_map[s_name.lower()] = station.station_code
+            stations_map[s_code.lower()] = station.station_code
 
         # 4. Seed Departments (with standard CRIS codes)
         departments_list = [
@@ -658,10 +809,10 @@ def seed_database():
         ]
         depts_map = {}
         for d_name, d_code in departments_list:
-            dept = Department(name=d_name, department_code=d_code)
+            dept = Department(department_code=d_code, department_name=d_name)
             db.add(dept)
             db.flush()
-            depts_map[d_name] = dept.id
+            depts_map[d_name] = dept.department_code
 
         # 5. Seed Complaint Categories ( Taxonomy mapping )
         category_tuples = [
@@ -819,24 +970,51 @@ def seed_database():
 
         categories_map = {}
         seen_pairs = set()
+        seen_codes = set()
+        import re as _re
+        def _make_cat_code(cat_name, sub_name, existing_codes=None):
+            key = (cat_name.lower().strip(), sub_name.lower().strip())
+            if key in CATEGORY_CODE_MAP:
+                code = CATEGORY_CODE_MAP[key]
+                if existing_codes is not None:
+                    existing_codes.add(code)
+                return code
+            def clean(s):
+                s = s.upper().strip()
+                s = _re.sub(r'[^A-Z0-9/]', '_', s)
+                s = _re.sub(r'_+', '_', s).strip('_')
+                return s
+            base = f"{clean(cat_name)[:12]}_{clean(sub_name)[:20]}"
+            code = base
+            counter = 2
+            if existing_codes is not None:
+                while code in existing_codes:
+                    suffix = str(counter)
+                    code = f"{base[:(32-len(suffix))]}_{suffix}"
+                    counter += 1
+                existing_codes.add(code)
+            return code
+
         for cat_name, sub_name, dept_name, priority in category_tuples:
             pair_key = (cat_name.lower(), sub_name.lower())
             if pair_key in seen_pairs:
                 continue
             seen_pairs.add(pair_key)
-            
+            cat_code = _make_cat_code(cat_name, sub_name, seen_codes)
             cat = ComplaintCategory(
+                category_code=cat_code,
                 category_name=cat_name,
                 subcategory_name=sub_name,
-                department_id=depts_map[dept_name],
+                department_code=depts_map[dept_name],
                 default_priority=priority
             )
             db.add(cat)
             db.flush()
-            categories_map[pair_key] = (cat.id, cat.default_priority)
+            categories_map[pair_key] = (cat.category_code, cat.default_priority)
 
         # 6. Seed Users
         admin_user = User(
+            user_id="USR_ADMIN",
             username="admin",
             password_hash="admin123",
             role="Admin",
@@ -846,7 +1024,8 @@ def seed_database():
         db.flush()
 
         admin_staff = Staff(
-            user_id=admin_user.id,
+            staff_id="STF_ADMIN",
+            user_id=admin_user.user_id,
             name="System Administrator",
             is_on_duty=True
         )
@@ -913,7 +1092,7 @@ def seed_database():
                 stations_to_add.append({
                     "station_code": code.upper(),
                     "station_name": cl_name,
-                    "division_id": divisions_map["delhi"],
+                    "division_code": divisions_map["delhi"],
                     "latitude": 28.6143,
                     "longitude": 77.2090,
                     "platforms_count": 2
@@ -924,9 +1103,9 @@ def seed_database():
             db.bulk_insert_mappings(Station, stations_to_add)
             db.flush()
 
-        stations_map = {s.station_name.lower(): s.id for s in db.query(Station).all()}
+        stations_map = {s.station_name.lower(): s.station_code for s in db.query(Station).all()}
         for s in db.query(Station).all():
-            stations_map[s.station_code.lower()] = s.id
+            stations_map[s.station_code.lower()] = s.station_code
 
         # 7.4 Bulk insert trains
         trains_to_add = []
@@ -934,13 +1113,13 @@ def seed_database():
             trains_to_add.append({
                 "train_number": t_num,
                 "train_name": t_name,
-                "source_station_id": stations_map["ndls"],
-                "destination_station_id": stations_map["bpl"]
+                "source_station_code": stations_map["ndls"],
+                "destination_station_code": stations_map["bpl"]
             })
         if trains_to_add:
             db.bulk_insert_mappings(Train, trains_to_add)
             db.flush()
-        trains_map = {t.train_number: t.id for t in db.query(Train).all()}
+        trains_map = {t.train_number: t.train_number for t in db.query(Train).all()}
 
         # 7.5 Bulk insert PNR Bookings
         pnr_seen = set()
@@ -959,7 +1138,7 @@ def seed_database():
             
             pnr_bookings_to_add.append({
                 "pnr_number": pnr_num,
-                "train_id": trains_map[train_num],
+                "train_number": trains_map[train_num],
                 "passenger_name": "Passenger A",
                 "phone_number": phone_dummy,
                 "coach_number": row.get("coach_number", "S1"),
@@ -967,8 +1146,8 @@ def seed_database():
                 "gender": "M",
                 "age": 35,
                 "journey_date": parse_date(row.get("journey_date")) or date.today(),
-                "boarding_station_id": stations_map.get(boarding_st_name.lower(), stations_map["ndls"]),
-                "destination_station_id": stations_map.get(dest_st_name.lower(), stations_map["bpl"]),
+                "boarding_station_code": stations_map.get(boarding_st_name.lower(), stations_map["ndls"]),
+                "destination_station_code": stations_map.get(dest_st_name.lower(), stations_map["bpl"]),
                 "journey_class": row.get("journey_class", "SL")
             })
 
@@ -998,7 +1177,7 @@ def seed_database():
                 stub_train_num = train_num_raw.split(" - ")[0].strip() if train_num_raw else "12002"
                 db.execute(PnrBooking.__table__.insert().values(
                     pnr_number=pnr,
-                    train_id=trains_map[stub_train_num],
+                    train_number=trains_map[stub_train_num],
                     passenger_name="Passenger A",
                     phone_number=phone,
                     coach_number=row.get("coach_number", "S1"),
@@ -1006,24 +1185,23 @@ def seed_database():
                     gender="F",
                     age=28,
                     journey_date=date.today(),
-                    boarding_station_id=stations_map["ndls"],
-                    destination_station_id=stations_map["bpl"],
+                    boarding_station_code=stations_map["ndls"],
+                    destination_station_code=stations_map["bpl"],
                     journey_class="SL"
                 ))
             
-            train_id = None
-            train_number_clean = None
+            train_num_str = None
             if train_num_raw:
                 train_number_clean = train_num_raw.split(" - ")[0].strip()
-                train_id = trains_map.get(train_number_clean)
+                train_num_str = trains_map.get(train_number_clean)
 
             csv_station = row.get("station_name")
-            station_id = None
+            station_code_val = None
             if csv_station:
                 st_cl, _ = clean_station_name(csv_station)
-                station_id = stations_map.get(st_cl.lower(), stations_map["ndls"])
+                station_code_val = stations_map.get(st_cl.lower(), stations_map["ndls"])
             else:
-                station_id = stations_map["ndls"]
+                station_code_val = stations_map["ndls"]
 
             # Map category and subcategory to consolidated row
             csv_dept_to_db_dept = {
@@ -1064,23 +1242,25 @@ def seed_database():
             cat_info = categories_map.get((main_class_val.lower(), sub_name.lower()))
             if not cat_info:
                 db_dept_name = csv_dept_to_db_dept.get(main_class_val, "Other")
+                new_cat_code = _make_cat_code(main_class_val, sub_name, seen_codes)
                 new_cat = ComplaintCategory(
+                    category_code=new_cat_code,
                     category_name=main_class_val,
                     subcategory_name=sub_name,
-                    department_id=depts_map[db_dept_name],
+                    department_code=depts_map[db_dept_name],
                     default_priority="Medium"
                 )
                 db.add(new_cat)
                 db.flush()
-                categories_map[(main_class_val.lower(), sub_name.lower())] = (new_cat.id, new_cat.default_priority)
-                category_id = new_cat.id
+                categories_map[(main_class_val.lower(), sub_name.lower())] = (new_cat.category_code, new_cat.default_priority)
+                category_code_val = new_cat.category_code
                 priority = new_cat.default_priority
             else:
-                category_id, priority = cat_info
+                category_code_val, priority = cat_info
 
-            dept_id = depts_map[csv_dept_to_db_dept.get(main_class_val, "Other")]
+            dept_code_val = depts_map[csv_dept_to_db_dept.get(main_class_val, "Other")]
             csv_div = row.get("division_name", "Delhi").strip()
-            div_id = divisions_map.get(csv_div.lower(), divisions_map["delhi"])
+            div_code_val = divisions_map.get(csv_div.lower(), divisions_map["delhi"])
 
             status_str = row.get("complaint_status", "Open")
             if status_str not in ["Open", "In Progress", "Resolved", "Closed"]:
@@ -1100,18 +1280,17 @@ def seed_database():
                 "complaint_type": row["complaint_type"],
                 "phone_number": phone,
                 "pnr_number": pnr,
-                "train_id": train_id,
-                "train_number": train_number_clean,
+                "train_number": train_num_str,
                 "coach_number": row.get("coach_number"),
-                "station_id": station_id,
+                "station_code": station_code_val,
                 "platform_number": row.get("platform_number") or None,
-                "category_id": category_id,
+                "category_code": category_code_val,
                 "incident_date": parse_date(row.get("incident_date")) or created_at.date(),
                 "incident_time": parse_time(row.get("incident_time")),
                 "complaint_description": row.get("complaint_description", "No description"),
                 "status": status_str,
-                "assigned_department_id": dept_id,
-                "assigned_division_id": div_id,
+                "assigned_department_code": dept_code_val,
+                "assigned_division_code": div_code_val,
                 "priority": priority,
                 "complaint_source": "Passenger Portal",
                 "created_at": created_at,
@@ -1124,7 +1303,7 @@ def seed_database():
                 "complaint_id": comp_id,
                 "from_status": status_str,
                 "to_status": status_str,
-                "updated_by_user_id": admin_user.id,
+                "updated_by_user_id": admin_user.user_id,
                 "remarks": "Grievance registered automatically.",
                 "updated_at": created_at
             })
@@ -1148,6 +1327,7 @@ def seed_database():
 
         # 8. Seed Staff Accounts, duty rosters, and GPS Telemetry locations
         inspect_user = User(
+            user_id="USR_INSPECTOR",
             username="inspector",
             password_hash="inspector123",
             role="Inspector",
@@ -1157,21 +1337,22 @@ def seed_database():
         db.flush()
 
         inspector_staff = Staff(
-            user_id=inspect_user.id,
+            staff_id="STF_INSPECTOR",
+            user_id=inspect_user.user_id,
             name="Rajesh Kumar (TTE)",
-            department_id=depts_map["Commercial (Staff)"],
-            division_id=divisions_map["delhi"],
+            department_code=depts_map["Commercial (Staff)"],
+            division_code=divisions_map["delhi"],
             is_on_duty=True,
-            active_train_id=trains_map["12002"]
+            active_train_number=trains_map.get("12002")
         )
         db.add(inspector_staff)
         db.flush()
 
         gps = StaffGpsLocation(
-            staff_id=inspector_staff.id,
+            staff_id=inspector_staff.staff_id,
             latitude=23.2500,
             longitude=77.4100,
-            current_station_id=stations_map["bpl"]
+            current_station_code=stations_map["bpl"]
         )
         db.add(gps)
         db.flush()

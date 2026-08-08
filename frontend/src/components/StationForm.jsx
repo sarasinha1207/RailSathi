@@ -186,16 +186,15 @@ export default function StationForm({ onSwitchToTrack }) {
             </select>
           </div>
           <div className="form-group">
-            <label htmlFor="stationPlat">Platform Number <span className="required-asterisk">*</span></label>
+            <label htmlFor="stationPlat">Platform Number</label>
             <select 
               id="stationPlat" 
               name="platform_number" 
-              required
               value={formData.platform_number}
               onChange={handleChange}
               disabled={!selectedStation}
             >
-              <option value="">Select Platform</option>
+              <option value="">Select Platform (Optional)</option>
               {selectedStation && 
                 Array.from({ length: selectedStation.platforms_count }, (_, i) => i + 1).map((num) => (
                   <option key={num} value={num}>
