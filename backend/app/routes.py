@@ -511,3 +511,14 @@ async def get_stations_api(db: Session = Depends(get_db)):
         {"station_code": s.station_code, "station_name": f"{s.station_name} ({s.station_code})", "platforms_count": s.platforms_count}
         for s in stations
     ]
+
+
+# Trains Autocomplete / List
+@router.get("/api/v1/trains")
+async def get_trains_api(db: Session = Depends(get_db)):
+    """Lists all seeded railway trains."""
+    trains = db.query(Train).order_by(Train.train_number.asc()).all()
+    return [
+        {"train_number": t.train_number, "train_name": t.train_name}
+        for t in trains
+    ]

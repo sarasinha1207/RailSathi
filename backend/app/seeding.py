@@ -1107,18 +1107,125 @@ def seed_database():
         for s in db.query(Station).all():
             stations_map[s.station_code.lower()] = s.station_code
 
-        # 7.4 Bulk insert trains
-        trains_to_add = []
+        # 7.4 Load and bulk insert trains and routes from real dataset
+        import json
+        from datetime import time
+        trains_json_path = os.path.join(base_dir, "data", "real_trains_and_routes.json")
+        if os.path.exists(trains_json_path):
+            with open(trains_json_path, "r", encoding="utf-8") as f:
+                real_trains_data = json.load(f)
+        else:
+            real_trains_data = []
+
+        # Ensure PNR and complaint trains are in the list to prevent KeyError
+        existing_numbers = {t["train_number"] for t in real_trains_data}
         for t_num, t_name in unique_trains.items():
+            if t_num not in existing_numbers:
+                real_trains_data.append({
+                    "train_number": t_num,
+                    "train_name": t_name,
+                    "source_station_code": "NDLS",
+                    "destination_station_code": "BPL",
+                    "stops": []
+                })
+
+        # Get existing division code fallback
+        default_division = db.query(Division).first()
+        default_div_code = default_division.division_code if default_division else "delhi"
+
+        # Ensure all stations used in source, destination, or route exist in database
+        seeded_station_codes = {s.station_code.upper() for s in db.query(Station).all()}
+        
+        # Prepare missing stations to insert
+        new_stations_to_add = []
+        station_codes_to_add = set()
+        
+        for t in real_trains_data:
+            src = t["source_station_code"].upper().strip()
+            dest = t["destination_station_code"].upper().strip()
+            if src not in seeded_station_codes and src not in station_codes_to_add:
+                station_codes_to_add.add(src)
+                new_stations_to_add.append({
+                    "station_code": src,
+                    "station_name": src,
+                    "division_code": default_div_code,
+                    "latitude": 28.6143,
+                    "longitude": 77.2090,
+                    "platforms_count": 2
+                })
+            if dest not in seeded_station_codes and dest not in station_codes_to_add:
+                station_codes_to_add.add(dest)
+                new_stations_to_add.append({
+                    "station_code": dest,
+                    "station_name": dest,
+                    "division_code": default_div_code,
+                    "latitude": 28.6143,
+                    "longitude": 77.2090,
+                    "platforms_count": 2
+                })
+            for s in t["stops"]:
+                st_code = s["station_code"].upper().strip()
+                if st_code not in seeded_station_codes and st_code not in station_codes_to_add:
+                    station_codes_to_add.add(st_code)
+                    new_stations_to_add.append({
+                        "station_code": st_code,
+                        "station_name": s["station_name"] or st_code,
+                        "division_code": default_div_code,
+                        "latitude": 28.6143,
+                        "longitude": 77.2090,
+                        "platforms_count": 2
+                    })
+
+        if new_stations_to_add:
+            db.bulk_insert_mappings(Station, new_stations_to_add)
+            db.flush()
+
+        # Re-fetch stations map
+        stations_map = {s.station_name.lower(): s.station_code for s in db.query(Station).all()}
+        for s in db.query(Station).all():
+            stations_map[s.station_code.lower()] = s.station_code
+
+        trains_to_add = []
+        train_routes_to_add = []
+        
+        def parse_time(t_str):
+            if not t_str:
+                return None
+            try:
+                parts = [int(x) for x in t_str.split(":")]
+                if len(parts) >= 2:
+                    return time(parts[0], parts[1])
+            except Exception:
+                pass
+            return None
+
+        for t in real_trains_data:
+            train_number = t["train_number"].strip()
             trains_to_add.append({
-                "train_number": t_num,
-                "train_name": t_name,
-                "source_station_code": stations_map["ndls"],
-                "destination_station_code": stations_map["bpl"]
+                "train_number": train_number,
+                "train_name": t["train_name"],
+                "source_station_code": t["source_station_code"].upper().strip(),
+                "destination_station_code": t["destination_station_code"].upper().strip()
             })
+            
+            for stop in t["stops"]:
+                train_routes_to_add.append({
+                    "train_number": train_number,
+                    "station_code": stop["station_code"].upper().strip(),
+                    "stop_sequence": stop["stop_sequence"],
+                    "arrival_time": parse_time(stop["arrival_time"]),
+                    "departure_time": parse_time(stop["departure_time"]),
+                    "distance_km": stop["distance_km"],
+                    "halt_duration_minutes": stop["halt_duration_minutes"]
+                })
+
         if trains_to_add:
             db.bulk_insert_mappings(Train, trains_to_add)
             db.flush()
+        if train_routes_to_add:
+            db.bulk_insert_mappings(TrainRoute, train_routes_to_add)
+            db.flush()
+            
         trains_map = {t.train_number: t.train_number for t in db.query(Train).all()}
 
         # 7.5 Bulk insert PNR Bookings

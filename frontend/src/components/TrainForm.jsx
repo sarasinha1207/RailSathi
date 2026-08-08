@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TRAIN_CATEGORIES, FAMOUS_TRAINS } from '../constants';
+import { TRAIN_CATEGORIES } from '../constants';
 
 export default function TrainForm({ onSwitchToTrack }) {
   const [formData, setFormData] = useState({
@@ -19,6 +19,22 @@ export default function TrainForm({ onSwitchToTrack }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [registeredId, setRegisteredId] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [trains, setTrains] = useState([]);
+
+  useEffect(() => {
+    const fetchTrains = async () => {
+      try {
+        const res = await fetch('/api/v1/trains');
+        if (res.ok) {
+          const data = await res.json();
+          setTrains(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch trains:', err);
+      }
+    };
+    fetchTrains();
+  }, []);
 
   // Set default datetime value to local datetime
   useEffect(() => {
@@ -215,8 +231,8 @@ export default function TrainForm({ onSwitchToTrack }) {
               onChange={handleChange}
             />
             <datalist id="trainList">
-              {FAMOUS_TRAINS.map((train, idx) => (
-                <option key={idx} value={`${train.number} - ${train.name}`} />
+              {trains.map((train, idx) => (
+                <option key={idx} value={`${train.train_number} - ${train.train_name}`} />
               ))}
             </datalist>
           </div>

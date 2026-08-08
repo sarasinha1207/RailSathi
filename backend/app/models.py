@@ -89,13 +89,14 @@ class ComplaintCategory(Base):
 
 class TrainRoute(Base):
     __tablename__ = "train_routes"
-    train_route_id = Column(Integer, primary_key=True, autoincrement=True)
-    train_number   = Column(String(10), ForeignKey("trains.train_number",   ondelete="CASCADE"), nullable=False)
-    station_code   = Column(String(10), ForeignKey("stations.station_code", ondelete="CASCADE"), nullable=False)
-    stop_sequence  = Column(Integer, nullable=False)
-    arrival_time   = Column(Time, nullable=True)
-    departure_time = Column(Time, nullable=True)
-    distance_km    = Column(Numeric(6, 1), default=0.0)
+    train_route_id        = Column(Integer, primary_key=True, autoincrement=True)
+    train_number          = Column(String(10), ForeignKey("trains.train_number",   ondelete="CASCADE"), nullable=False)
+    station_code          = Column(String(10), ForeignKey("stations.station_code", ondelete="CASCADE"), nullable=False)
+    stop_sequence         = Column(Integer, nullable=False)
+    arrival_time          = Column(Time, nullable=True)
+    departure_time        = Column(Time, nullable=True)
+    distance_km           = Column(Numeric(6, 1), default=0.0)
+    halt_duration_minutes = Column(Integer, nullable=True)
 
     train   = relationship("Train",   back_populates="route_stations")
     station = relationship("Station", back_populates="route_mappings")
