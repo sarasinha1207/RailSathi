@@ -1,5 +1,6 @@
 import React from 'react';
 import Hero from './Hero';
+import RailwayZonesSlider from './RailwayZonesSlider';
 
 export default function Home({ onRegisterClick, onTrackClick }) {
   return (
@@ -487,6 +488,9 @@ export default function Home({ onRegisterClick, onTrackClick }) {
           </div>
         </div>
       </section>
+
+      {/* Railway Zones Image Slider */}
+      <RailwayZonesSlider />
 
       {/* Section 2: How It Works */}
       <section className="home-section-wrapper" style={{ backgroundColor: '#f0f4f8' }}>

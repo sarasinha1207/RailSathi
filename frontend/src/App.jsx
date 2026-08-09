@@ -170,7 +170,7 @@ export default function App() {
         {activePage === 'about' && <About />}
         {activePage === 'faq' && <Faq />}
         {activePage === 'login' && <Login onLoginSuccess={handleLoginSuccess} />}
-        {activePage === 'dashboard' && <Dashboard />}
+        {activePage === 'dashboard' && <Dashboard user={user} onLogout={handleLogout} />}
       </div>
 
       <Footer />
