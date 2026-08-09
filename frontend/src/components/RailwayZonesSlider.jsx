@@ -38,115 +38,115 @@ const IconChevronRight = () => (
 );
 
 // ── Zone data ────────────────────────────────────────────────────────────────
-// Images: 8 unique generated, best-matched by geography/character
+// All 18 Zonal Railways mapped to dedicated unique /zone_<abbr>.jpg images
 const RAILWAY_ZONES = [
   {
     name: 'Northern Railway', abbr: 'NR', hq: 'New Delhi',
     established: '14 Apr 1952', routeKm: '6,968 km', divisions: 5, stations: 713,
     description: 'One of the oldest and busiest zones, spanning Delhi, Punjab, Haryana, Himachal Pradesh and J&K. Anchored by New Delhi and Old Delhi, it handles the heaviest passenger traffic in the country.',
-    image: '/zn_nr.jpg', accent: '#1a3a6b',
+    image: '/zone_nr.jpg', accent: '#1a3a6b',
   },
   {
     name: 'North Eastern Railway', abbr: 'NER', hq: 'Gorakhpur',
     established: '14 Apr 1952', routeKm: '3,667 km', divisions: 3, stations: 520,
     description: 'Headquartered at Gorakhpur, home to the world\'s longest railway platform at 1,366 m. NER connects eastern Uttar Pradesh and Bihar through dense Indo-Gangetic agricultural plains.',
-    image: '/zn_ner.jpg', accent: '#1a3a6b',
+    image: '/zone_ner.jpg', accent: '#1a3a6b',
   },
   {
     name: 'Northeast Frontier Railway', abbr: 'NFR', hq: 'Maligaon, Guwahati',
     established: '15 Jan 1958', routeKm: '3,907 km', divisions: 5, stations: 692,
     description: 'Connecting India\'s Seven Sisters through extraordinary terrain — river valleys, dense forests, and high altitude. The Bogibeel Bridge on the Brahmaputra is a crowning achievement of NFR.',
-    image: '/zn_nfr.jpg', accent: '#1e5631',
+    image: '/zone_nfr.jpg', accent: '#1e5631',
   },
   {
     name: 'North Central Railway', abbr: 'NCR', hq: 'Prayagraj',
     established: '01 Apr 2003', routeKm: '3,151 km', divisions: 3, stations: 345,
     description: 'Commands the strategic Delhi–Kolkata and Delhi–Mumbai trunk routes. Headquartered at the Sangam city of Prayagraj, with one of the most critical rail junctions in the country.',
-    image: '/zn_ncr.jpg', accent: '#1a3a6b',
+    image: '/zone_ncr.jpg', accent: '#1a3a6b',
   },
   {
     name: 'North Western Railway', abbr: 'NWR', hq: 'Jaipur',
     established: '01 Oct 2002', routeKm: '5,459 km', divisions: 4, stations: 609,
     description: 'Headquartered in the Pink City of Jaipur, NWR covers Rajasthan\'s vast desert and semi-arid terrain. Famous for the Palace on Wheels luxury train and the scenic Shekhawati rail route.',
-    image: '/zn_nwr.jpg', accent: '#8b1a1a',
+    image: '/zone_nwr.jpg', accent: '#8b1a1a',
   },
   {
     name: 'Central Railway', abbr: 'CR', hq: 'CSMT, Mumbai',
     established: '05 Nov 1951', routeKm: '3,905 km', divisions: 5, stations: 282,
     description: 'Its headquarters CSMT Mumbai is a UNESCO World Heritage Site. Central Railway operates the world\'s busiest suburban rail corridor and connects Mumbai to Pune, Nagpur and beyond.',
-    image: '/zn_cr.jpg', accent: '#6b1a1a',
+    image: '/zone_cr.jpg', accent: '#6b1a1a',
   },
   {
     name: 'South Central Railway', abbr: 'SCR', hq: 'Secunderabad',
     established: '02 Oct 1966', routeKm: '5,803 km', divisions: 5, stations: 698,
     description: 'Serving the Deccan plateau across Telangana and Andhra Pradesh, SCR is known for high-speed Rajdhani and Shatabdi operations and manages the twin-city hub of Hyderabad–Secunderabad.',
-    image: '/zn_scr.jpg', accent: '#6b4a1a',
+    image: '/zone_scr.jpg', accent: '#6b4a1a',
   },
   {
     name: 'Southern Railway', abbr: 'SR', hq: 'Chennai',
     established: '14 Apr 1951', routeKm: '5,098 km', divisions: 6, stations: 689,
     description: 'Serving Tamil Nadu, Kerala, and Puducherry. SR operates the Nilgiri Mountain Railway — a UNESCO World Heritage Site — along with major suburban networks in Chennai.',
-    image: '/zn_sr.jpg', accent: '#1e5631',
+    image: '/zone_sr.jpg', accent: '#1e5631',
   },
   {
     name: 'South Western Railway', abbr: 'SWR', hq: 'Hubli',
     established: '01 Apr 2003', routeKm: '3,177 km', divisions: 3, stations: 514,
     description: 'Covering Karnataka, connecting the tech capital Bengaluru with the rest of India. Manages the Bengaluru Suburban Rail Project and the stunning approaches to the Kerala hills.',
-    image: '/zn_scr.jpg', accent: '#1e5631',
+    image: '/zone_swr.jpg', accent: '#1e5631',
   },
   {
     name: 'South Eastern Railway', abbr: 'SER', hq: 'Kolkata',
     established: '01 Aug 1955', routeKm: '2,631 km', divisions: 4, stations: 492,
     description: 'A freight powerhouse spanning West Bengal, Jharkhand and Odisha. SER handles the highest freight loading among all zones — primarily coal from Jharkhand\'s mineral belt.',
-    image: '/zn_nfr.jpg', accent: '#1a3a6b',
+    image: '/zone_ser.jpg', accent: '#1a3a6b',
   },
   {
     name: 'South East Central Railway', abbr: 'SECR', hq: 'Bilaspur',
     established: '01 Apr 2003', routeKm: '2,447 km', divisions: 3, stations: 286,
     description: 'Covering the mineral-rich Chhattisgarh and parts of Madhya Pradesh, SECR is an important zone for coal and steel freight. Bilaspur is its vibrant railway hub.',
-    image: '/zn_ncr.jpg', accent: '#5c4a1a',
+    image: '/zone_secr.jpg', accent: '#5c4a1a',
   },
   {
     name: 'East Central Railway', abbr: 'ECR', hq: 'Hajipur',
     established: '01 Oct 2002', routeKm: '3,628 km', divisions: 5, stations: 555,
     description: 'Spanning Bihar and Jharkhand, ECR commands the Varanasi–Patna–Hajipur corridor. The Mahatma Gandhi Setu bridge near Hajipur was once the longest river bridge in Asia.',
-    image: '/zn_ner.jpg', accent: '#1a3a6b',
+    image: '/zone_ecr.jpg', accent: '#1a3a6b',
   },
   {
     name: 'Eastern Railway', abbr: 'ER', hq: 'Kolkata',
     established: '14 Apr 1952', routeKm: '2,414 km', divisions: 4, stations: 521,
     description: 'One of India\'s oldest zones, centred on the iconic Howrah and Sealdah stations in Kolkata. ER runs extensive suburban and long-distance services across West Bengal and Bihar.',
-    image: '/zn_nfr.jpg', accent: '#1a3a6b',
+    image: '/zone_er.jpg', accent: '#1a3a6b',
   },
   {
     name: 'East Coast Railway', abbr: 'ECoR', hq: 'Bhubaneswar',
     established: '01 Apr 2003', routeKm: '2,572 km', divisions: 3, stations: 313,
     description: 'Covering scenic coastal Odisha and parts of Andhra Pradesh. ECoR manages significant freight including steel and iron ore, and operates through culturally rich temple-town corridors.',
-    image: '/zn_sr.jpg', accent: '#1a5c6b',
+    image: '/zone_ecor.jpg', accent: '#1a5c6b',
   },
   {
     name: 'Western Railway', abbr: 'WR', hq: 'Mumbai',
     established: '05 Nov 1951', routeKm: '6,182 km', divisions: 6, stations: 786,
     description: 'One of the highest revenue-earning zones. WR runs the densest suburban rail network in Mumbai. Its reach spans Gujarat\'s industrial heartland including Ahmedabad, Surat and Vadodara.',
-    image: '/zn_cr.jpg', accent: '#1a3a6b',
+    image: '/zone_wr.jpg', accent: '#1a3a6b',
   },
   {
     name: 'West Central Railway', abbr: 'WCR', hq: 'Jabalpur',
     established: '01 Apr 2003', routeKm: '2,965 km', divisions: 3, stations: 284,
     description: 'Covering Madhya Pradesh, WCR handles the strategic Itarsi–Bhopal corridor — one of the busiest trunk routes in India. Jabalpur sits near the stunning Marble Rocks of Bhedaghat.',
-    image: '/zn_nwr.jpg', accent: '#5c4a1a',
+    image: '/zone_wcr.jpg', accent: '#5c4a1a',
   },
   {
     name: 'Konkan Railway', abbr: 'KR', hq: 'Navi Mumbai',
     established: '26 Jan 1998', routeKm: '741 km', divisions: 1, stations: 58,
     description: 'An engineering marvel, threading through 91 tunnels and over 2,000 bridges along the breathtaking Konkan coastline. It connects Mumbai to Mangaluru through Maharashtra, Goa and Karnataka.',
-    image: '/zn_sr.jpg', accent: '#1a5c6b',
+    image: '/zone_kr.jpg', accent: '#1a5c6b',
   },
   {
     name: 'Metro Railway, Kolkata', abbr: 'MR', hq: 'Kolkata',
     established: '24 Oct 1984', routeKm: '60.01 km', divisions: 1, stations: 45,
     description: 'India\'s first metro railway. Operating under the Ministry of Railways, Kolkata Metro continues to expand its underground and elevated network through the cultural capital of India.',
-    image: '/zn_ner.jpg', accent: '#1a3a6b',
+    image: '/zone_mr.jpg', accent: '#1a3a6b',
   },
 ];
 
