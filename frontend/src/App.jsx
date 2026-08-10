@@ -108,6 +108,10 @@ export default function App() {
     setTimeout(scrollToForm, 100);
   };
 
+  if (activePage === 'dashboard') {
+    return <Dashboard user={user} onLogout={handleLogout} />;
+  }
+
   return (
     <div className="app-container">
       <Header 
@@ -170,7 +174,6 @@ export default function App() {
         {activePage === 'about' && <About />}
         {activePage === 'faq' && <Faq />}
         {activePage === 'login' && <Login onLoginSuccess={handleLoginSuccess} />}
-        {activePage === 'dashboard' && <Dashboard user={user} onLogout={handleLogout} />}
       </div>
 
       <Footer />

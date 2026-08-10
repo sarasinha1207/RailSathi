@@ -62,7 +62,7 @@ export default function Header({ activePage, setActivePage, loggedIn, onLogout }
             onClick={() => setActivePage('login')} 
             className={`nav-link ${activePage === 'login' ? 'active' : ''}`}
           >
-            Login/Signup
+            Login
           </button>
         )}
       </nav>
