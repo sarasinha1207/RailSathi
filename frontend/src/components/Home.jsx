@@ -229,10 +229,10 @@ export default function Home({ onRegisterClick, onTrackClick }) {
         }
 
         .category-icon-box {
-            width: 48px;
-            height: 48px;
-            border-radius: 8px;
-            background-color: rgba(26, 54, 93, 0.05);
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+            background-color: rgba(112, 12, 40, 0.06);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -245,10 +245,9 @@ export default function Home({ onRegisterClick, onTrackClick }) {
             color: #ffffff;
         }
 
-        .category-icon {
-            width: 24px;
-            height: 24px;
-            fill: currentColor;
+        .category-icon-svg {
+            width: 26px;
+            height: 26px;
         }
 
         .category-title {
@@ -291,27 +290,30 @@ export default function Home({ onRegisterClick, onTrackClick }) {
         .benefit-card:hover {
             transform: translateY(-4px);
             border-color: var(--accent-color);
-            box-shadow: 0 10px 30px rgba(249, 115, 22, 0.06);
+            box-shadow: 0 10px 30px rgba(230, 92, 0, 0.08);
         }
 
         .benefit-badge {
-            width: 52px;
-            height: 52px;
+            width: 54px;
+            height: 54px;
             border-radius: 50%;
-            background-color: rgba(249, 115, 22, 0.08);
-            color: var(--accent-color);
+            background-color: rgba(230, 92, 0, 0.08);
+            color: #e65c00;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 22px;
-            font-size: 1.4rem;
-            font-weight: 800;
             transition: all 0.3s ease;
         }
 
         .benefit-card:hover .benefit-badge {
-            background-color: var(--accent-color);
+            background-color: #e65c00;
             color: #ffffff;
+        }
+
+        .benefit-icon-svg {
+            width: 24px;
+            height: 24px;
         }
 
         .benefit-title {
@@ -525,7 +527,7 @@ export default function Home({ onRegisterClick, onTrackClick }) {
         </div>
       </section>
 
-      {/* Section 3: Railway Complaint Categories */}
+      {/* Section 3: Railway Complaint Categories (Updated SVG Icons) */}
       <section className="home-section-wrapper" style={{ backgroundColor: '#ffffff' }}>
         <div className="home-section-container">
           <div className="section-title-wrapper">
@@ -537,8 +539,8 @@ export default function Home({ onRegisterClick, onTrackClick }) {
             {/* Medical Assistance */}
             <div className="category-card">
               <div className="category-icon-box">
-                <svg className="category-icon" viewBox="0 0 24 24">
-                  <path d="M19 10.5h-5.5V5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v5.5H5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5h5.5V19c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-5.5H19c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5z" />
+                <svg className="category-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <h4 className="category-title">Medical Assistance</h4>
@@ -548,8 +550,8 @@ export default function Home({ onRegisterClick, onTrackClick }) {
             {/* Security & Protection */}
             <div className="category-card">
               <div className="category-icon-box">
-                <svg className="category-icon" viewBox="0 0 24 24">
-                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
+                <svg className="category-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
               <h4 className="category-title">Security & Protection</h4>
@@ -559,8 +561,8 @@ export default function Home({ onRegisterClick, onTrackClick }) {
             {/* Cleanliness & Hygiene */}
             <div className="category-card">
               <div className="category-icon-box">
-                <svg className="category-icon" viewBox="0 0 24 24">
-                  <path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.2c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.22 19.58 10.57 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z" />
+                <svg className="category-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                 </svg>
               </div>
               <h4 className="category-title">Cleanliness & Hygiene</h4>
@@ -570,8 +572,8 @@ export default function Home({ onRegisterClick, onTrackClick }) {
             {/* Electrical Equipment */}
             <div className="category-card">
               <div className="category-icon-box">
-                <svg className="category-icon" viewBox="0 0 24 24">
-                  <path d="M7 2v11h3v9l7-12h-4l4-8H7zm6 8h3l-5 8.5V11H8.5L13 3.5V10z" />
+                <svg className="category-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
               <h4 className="category-title">Electrical Equipment</h4>
@@ -581,8 +583,8 @@ export default function Home({ onRegisterClick, onTrackClick }) {
             {/* Bedroll & Linen Services */}
             <div className="category-card">
               <div className="category-icon-box">
-                <svg className="category-icon" viewBox="0 0 24 24">
-                  <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 11.5H5v-2h7v2zm8-4H5v-2h15v2zm0-4H5V6h15v2z" />
+                <svg className="category-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M3 7l9 6 9-6M3 7l9-4 9 4" />
                 </svg>
               </div>
               <h4 className="category-title">Bedroll & Linen Services</h4>
@@ -592,8 +594,8 @@ export default function Home({ onRegisterClick, onTrackClick }) {
             {/* Catering & Water Supply */}
             <div className="category-card">
               <div className="category-icon-box">
-                <svg className="category-icon" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z" />
+                <svg className="category-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
               </div>
               <h4 className="category-title">Catering & Water Supply</h4>
@@ -603,7 +605,7 @@ export default function Home({ onRegisterClick, onTrackClick }) {
         </div>
       </section>
 
-      {/* Section 4: Why Choose RailSathi */}
+      {/* Section 4: Why Choose RailSathi (Emojis Replaced with Premium SVGs) */}
       <section className="home-section-wrapper" style={{ backgroundColor: '#f0f4f8' }}>
         <div className="home-section-container">
           <div className="section-title-wrapper">
@@ -612,30 +614,46 @@ export default function Home({ onRegisterClick, onTrackClick }) {
           </div>
 
           <div className="benefits-grid">
-            {/* Real-time Tracking */}
+            {/* Real-Time Updates (Replaced checkmark emoji with live pulse clock SVG) */}
             <div className="benefit-card">
-              <div className="benefit-badge">✓</div>
+              <div className="benefit-badge">
+                <svg className="benefit-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
               <h4 className="benefit-title">Real-Time Updates</h4>
               <p className="benefit-desc">Track status changes of your concern immediately, with SMS alerts and progress tracking.</p>
             </div>
 
-            {/* Automated Routing */}
+            {/* Automated Routing (Replaced gear emoji with smart route network SVG) */}
             <div className="benefit-card">
-              <div className="benefit-badge">⚙</div>
+              <div className="benefit-badge">
+                <svg className="benefit-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+              </div>
               <h4 className="benefit-title">Automated Routing</h4>
               <p className="benefit-desc">Advanced algorithms route complaints instantly to the nearest station master or train supervisor based on GPS.</p>
             </div>
 
-            {/* 24/7 Availability */}
+            {/* 24/7 Support (Replaced star emoji with 24/7 support headset SVG) */}
             <div className="benefit-card">
-              <div className="benefit-badge">★</div>
+              <div className="benefit-badge">
+                <svg className="benefit-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              </div>
               <h4 className="benefit-title">24/7 On-Trip Support</h4>
               <p className="benefit-desc">Whether travelling late at night or early in the morning, our teams are active to ensure help is always nearby.</p>
             </div>
 
-            {/* Transparency & Logs */}
+            {/* Transparent Logging (Replaced chat emoji with audit checklist SVG) */}
             <div className="benefit-card">
-              <div className="benefit-badge">💬</div>
+              <div className="benefit-badge">
+                <svg className="benefit-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
               <h4 className="benefit-title">Transparent Logging</h4>
               <p className="benefit-desc">All remarks and resolution details by division staffs are logged and open to passenger feedback ratings.</p>
             </div>

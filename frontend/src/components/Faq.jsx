@@ -5,13 +5,10 @@ export default function Faq() {
   return (
     <main className="main-content w-full">
       <div className="form-card" style={{ marginBottom: '40px' }}>
-        <div className="card-header" style={{ borderBottom: '2px solid var(--border-color)', paddingBottom: '15px', marginBottom: '25px' }}>
-          <h2 className="card-title" style={{ fontSize: '1.8rem', color: 'var(--primary-color)' }}>
+        <div className="card-header" style={{ borderBottom: 'none', paddingBottom: '10px', marginBottom: '25px', justifyContent: 'center' }}>
+          <h2 className="card-title faq-heading" style={{ fontSize: '1.8rem', color: 'var(--primary-color)', textAlign: 'center', margin: '0 auto' }}>
             Frequently Asked Questions (FAQ)
           </h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '5px' }}>
-            Common inquiries about RailSathi and passenger support services
-          </p>
         </div>
 
         <div className="faq-container" style={{ display: 'flex', flexDirection: 'column', gap: '15px', width: '100%' }}>

@@ -25,16 +25,16 @@ export default function Header({ activePage, setActivePage, loggedIn, onLogout }
           Home
         </button>
         <button 
-          onClick={() => setActivePage('complaint')} 
-          className={`nav-link ${activePage === 'complaint' ? 'active' : ''}`}
-        >
-          Register/Track Complaint
-        </button>
-        <button 
           onClick={() => setActivePage('about')} 
           className={`nav-link ${activePage === 'about' ? 'active' : ''}`}
         >
           About Us
+        </button>
+        <button 
+          onClick={() => setActivePage('complaint')} 
+          className={`nav-link ${activePage === 'complaint' ? 'active' : ''}`}
+        >
+          Register/Track Concern
         </button>
         <button 
           onClick={() => setActivePage('faq')} 

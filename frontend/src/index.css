@@ -481,14 +481,79 @@ html, body {
     width: 100%;
 }
 
-.form-card {
-    background-color: var(--card-bg);
+/* Segmented Form Tabs Header with NO BORDERS */
+.form-tabs-container {
+    display: flex;
     width: 100%;
     max-width: 1000px;
-    border-radius: 16px;
+    margin-bottom: 0;
+    border-radius: 14px 14px 0 0;
+    overflow: hidden;
+    background-color: #700c28;
+    border: none !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    gap: 0;
+}
+
+.form-tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 18px 24px;
+    border: none !important; /* NO BORDERS AT ALL */
+    border-radius: 0 !important;
+    background-color: #700c28;
+    color: #ffffff;
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.form-tab-btn:first-child {
+    border-top-left-radius: 14px !important;
+}
+
+.form-tab-btn:last-child {
+    border-top-right-radius: 14px !important;
+}
+
+.form-tab-btn:hover:not(.active) {
+    background-color: #58081f;
+    color: #ffffff;
+}
+
+/* Active tab: Pure White Background, Black/Dark Burgundy Text, NO borders */
+.form-tab-btn.active {
+    background-color: #ffffff !important;
+    color: #700c28 !important;
+    font-weight: 800;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.tab-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+.form-card {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 1000px;
+    border-radius: 0 0 16px 16px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
     padding: 50px 60px;
     position: relative;
+    border: 1px solid #e0e0e0;
+    border-top: none;
     animation: fadeIn 0.4s ease;
 }
 
@@ -1105,6 +1170,10 @@ html {
 .faq-item[open] {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
     border-color: var(--primary-color);
+}
+
+.faq-heading::after {
+    display: none !important;
 }
 
 .faq-question {

@@ -126,9 +126,9 @@ export default function StationForm({ onSwitchToTrack }) {
           <div className="id-badge">{registeredId}</div>
         </div>
         <div className="submit-container" style={{ gap: '15px', justifyContent: 'center' }}>
-          <button 
-            className="btn-submit" 
-            style={{ backgroundColor: '#555' }} 
+          <button
+            className="btn-submit"
+            style={{ backgroundColor: '#555' }}
             onClick={() => onSwitchToTrack(registeredId)}
           >
             Track Status
@@ -153,12 +153,12 @@ export default function StationForm({ onSwitchToTrack }) {
         <div className="form-grid">
           <div className="form-group">
             <label htmlFor="stationPhone">Phone Number <span className="required-asterisk">*</span></label>
-            <input 
-              type="tel" 
-              id="stationPhone" 
-              name="phone_number" 
+            <input
+              type="tel"
+              id="stationPhone"
+              name="phone_number"
               required
-              placeholder="Enter 10-digit mobile number" 
+              placeholder="Enter 10-digit mobile number"
               pattern="[0-9]{10}"
               value={formData.phone_number}
               onChange={handleChange}
@@ -170,9 +170,9 @@ export default function StationForm({ onSwitchToTrack }) {
         <div className="form-grid">
           <div className="form-group">
             <label htmlFor="stationLocName">Station Name <span className="required-asterisk">*</span></label>
-            <select 
-              id="stationLocName" 
-              name="station_name" 
+            <select
+              id="stationLocName"
+              name="station_name"
               required
               value={formData.station_name}
               onChange={handleChange}
@@ -187,15 +187,15 @@ export default function StationForm({ onSwitchToTrack }) {
           </div>
           <div className="form-group">
             <label htmlFor="stationPlat">Platform Number</label>
-            <select 
-              id="stationPlat" 
-              name="platform_number" 
+            <select
+              id="stationPlat"
+              name="platform_number"
               value={formData.platform_number}
               onChange={handleChange}
               disabled={!selectedStation}
             >
-              <option value="">Select Platform (Optional)</option>
-              {selectedStation && 
+              <option value="">Select Platform</option>
+              {selectedStation &&
                 Array.from({ length: selectedStation.platforms_count }, (_, i) => i + 1).map((num) => (
                   <option key={num} value={num}>
                     Platform {num}
@@ -210,9 +210,9 @@ export default function StationForm({ onSwitchToTrack }) {
         <div className="form-grid">
           <div className="form-group">
             <label htmlFor="stationClass">Complaint Class <span className="required-asterisk">*</span></label>
-            <select 
-              id="stationClass" 
-              name="main_class" 
+            <select
+              id="stationClass"
+              name="main_class"
               required
               value={formData.main_class}
               onChange={handleChange}
@@ -225,15 +225,15 @@ export default function StationForm({ onSwitchToTrack }) {
           </div>
           <div className="form-group">
             <label htmlFor="stationSubClass">Complaint Subclass <span className="required-asterisk">*</span></label>
-            <select 
-              id="stationSubClass" 
-              name="sub_class" 
+            <select
+              id="stationSubClass"
+              name="sub_class"
               required
               value={formData.sub_class}
               onChange={handleChange}
             >
               <option value="">Select Subcategory</option>
-              {formData.main_class && STATION_CATEGORIES[formData.main_class] && 
+              {formData.main_class && STATION_CATEGORIES[formData.main_class] &&
                 STATION_CATEGORIES[formData.main_class].sort().map((sub, idx) => (
                   <option key={idx} value={sub}>{sub}</option>
                 ))
@@ -243,14 +243,14 @@ export default function StationForm({ onSwitchToTrack }) {
 
           <div className="form-group full-width">
             <label htmlFor="stationDateTime">Incident Date & Time <span className="required-asterisk">*</span></label>
-            <input 
-              type="datetime-local" 
-              id="stationDateTime" 
-              name="incident_datetime" 
+            <input
+              type="datetime-local"
+              id="stationDateTime"
+              name="incident_datetime"
               required
               value={formData.incident_datetime}
               onChange={handleChange}
-              max={new Date(new Date() - new Date().getTimezoneOffset()*60000).toISOString().slice(0, 16)}
+              max={new Date(new Date() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
             />
           </div>
 
@@ -261,9 +261,9 @@ export default function StationForm({ onSwitchToTrack }) {
                 ({wordCount} / 100 words)
               </span>
             </label>
-            <textarea 
-              id="stationDescription" 
-              name="complaint_description" 
+            <textarea
+              id="stationDescription"
+              name="complaint_description"
               required
               placeholder="Provide clear description of the concern at the station..."
               value={formData.complaint_description}

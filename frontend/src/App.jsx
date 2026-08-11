@@ -133,34 +133,36 @@ export default function App() {
           <main className="main-content">
             <div id="complaint-section" style={{ width: '100%', maxWidth: '950px', scrollMarginTop: '110px' }} />
             
-            {/* Horizontal Subtabs */}
+            {/* Horizontal Subtabs matching official government style */}
             <div className="form-tabs-container">
               <button 
                 onClick={() => handleSubTabChange('train')} 
                 className={`form-tab-btn ${activeSubTab === 'train' ? 'active' : ''}`}
               >
-                <svg viewBox="0 0 24 24" className="tab-icon">
+                <svg viewBox="0 0 24 24" className="tab-icon" fill="currentColor">
                   <path d="M12 2c-4 0-8 .5-8 4v9.5C4 17.43 5.57 19 7.5 19L6 20.5v.5h12v-.5L16.5 19c1.93 0 3.5-1.57 3.5-3.5V6c0-3.5-4-4-8-4zm0 2c3.51 0 5.66.41 5.96 1.4L18 6H6L6.04 5.4C6.34 4.41 8.49 4 12 4zm6 11.5c0 .83-.67 1.5-1.5 1.5h-9C6.67 17 6 16.33 6 15.5V8h12v7.5zM7.5 10c-.83 0-1.5.67-1.5 1.5S6.67 13 7.5 13 9 12.33 9 11.5 8.33 10 7.5 10zm9 0c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z" />
                 </svg>
-                <span>Train Complaint</span>
+                <span>Train</span>
               </button>
+
               <button 
                 onClick={() => handleSubTabChange('station')} 
                 className={`form-tab-btn ${activeSubTab === 'station' ? 'active' : ''}`}
               >
-                <svg viewBox="0 0 24 24" className="tab-icon">
-                  <path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm5 15h-2v-6H9v6H7v-7.81l5-4.5 5 4.5V18zM7 7h2v2H7V7zm8 0h2v2h-2V7z" />
+                <svg viewBox="0 0 24 24" className="tab-icon" fill="currentColor">
+                  <path d="M12 2L2 7v13h20V7L12 2zm8 16H4V8.5l8-4 8 4V18zm-9-9h2v7h-2v-7zm4 0h2v7h-2v-7zm-8 0h2v7H7v-7z" />
                 </svg>
-                <span>Station Complaint</span>
+                <span>Station</span>
               </button>
+
               <button 
                 onClick={() => handleSubTabChange('track')} 
                 className={`form-tab-btn ${activeSubTab === 'track' ? 'active' : ''}`}
               >
-                <svg viewBox="0 0 24 24" className="tab-icon">
+                <svg viewBox="0 0 24 24" className="tab-icon" fill="currentColor">
                   <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
                 </svg>
-                <span>Track Concern</span>
+                <span>Track complaint</span>
               </button>
             </div>
 

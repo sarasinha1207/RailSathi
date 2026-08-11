@@ -1,4 +1,4 @@
-# Python caches & build artifacts
+# Python & Bytecode
 __pycache__/
 *.pyc
 *.pyo
@@ -17,38 +17,36 @@ ENV/
 env/
 ENV_DIR/
 
-# Node.js dependencies & builds
+# Node.js Dependencies & Builds
+node_modules/
 frontend/node_modules/
 frontend/dist/
-frontend/.svelte-kit/
-frontend/.next/
-frontend/out/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .eslintcache
 
-# Databases & local servers (MySQL data folder)
-data/mysql/
+# Local Database & Storage
+data/mysql/*
+!data/mysql/.gitkeep
 *.sqlite
 *.db
 
-# Environment & Private files
+# Environment & Config Credentials
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-config/settings.local.py
 
-# System & OS junk files
+# OS & Editor Junk
 .DS_Store
 Thumbs.db
+desktop.ini
 *.tmp
 *.bak
-*.bak*
 
-# IDEs and Editors
+# IDE Configurations
 .vscode/
 .idea/
 *.suo
@@ -58,11 +56,6 @@ Thumbs.db
 *.swp
 *.swo
 
-# Local logs
+# System Logs
 *.log
 logs/
-
-# Local helper scripts & test runners
-test_workflow.py
-start_mysql.bat
-start_backend.bat
