@@ -80,7 +80,7 @@ class ComplaintCategory(Base):
     default_priority = Column(Enum("Low", "Medium", "High", name="category_priorities"), nullable=False, default="Medium")
 
     department = relationship("Department", back_populates="categories")
-    complaints = relationship("Complaint",  back_populates="category", cascade="all, delete-orphan")
+    complaints = relationship("Complaint",  foreign_keys="[Complaint.category_code]", back_populates="category", cascade="all, delete-orphan")
 
 
 # ---------------------------------------------------------------------------
@@ -107,16 +107,21 @@ class User(Base):
     user_id       = Column(String(50), primary_key=True)
     username      = Column(String(50),  unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
-    role          = Column(Enum("Admin", "Inspector", "StationMaster", name="user_roles"), nullable=False)
+    role          = Column(Enum("Admin", "ComplaintOfficer", "Staff", "Passenger", "Inspector", "StationMaster", name="user_roles"), nullable=False)
     email         = Column(String(100), unique=True, nullable=True)
     phone_number  = Column(String(15),  nullable=True)
     is_active     = Column(Boolean, default=True)
     created_at    = Column(DateTime, default=datetime.utcnow)
     updated_at    = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    staff          = relationship("Staff",                  uselist=False, back_populates="user", cascade="all, delete-orphan")
-    notifications  = relationship("Notification",           back_populates="user", cascade="all, delete-orphan")
-    status_updates = relationship("ComplaintStatusHistory", back_populates="updated_by_user")
+    staff                 = relationship("Staff",                      uselist=False, back_populates="user", cascade="all, delete-orphan")
+    notifications         = relationship("Notification",               back_populates="user", cascade="all, delete-orphan")
+    status_updates        = relationship("ComplaintStatusHistory",     back_populates="updated_by_user")
+    verified_complaints   = relationship("Complaint",                  foreign_keys="Complaint.verified_by_user_id", back_populates="verified_by_user")
+    resolved_complaints   = relationship("Complaint",                  foreign_keys="Complaint.resolved_by_user_id", back_populates="resolved_by_user")
+    assigned_histories    = relationship("ComplaintAssignmentHistory", foreign_keys="ComplaintAssignmentHistory.assigned_by_user_id", back_populates="assigned_by_user")
+    escalated_histories   = relationship("ComplaintEscalationHistory", foreign_keys="ComplaintEscalationHistory.escalated_by_user_id", back_populates="escalated_by_user")
+    received_escalations  = relationship("ComplaintEscalationHistory", foreign_keys="ComplaintEscalationHistory.escalated_to_user_id", back_populates="escalated_to_user")
 
 
 class Staff(Base):
@@ -129,12 +134,13 @@ class Staff(Base):
     is_on_duty          = Column(Boolean, default=False)
     active_train_number = Column(String(10),  ForeignKey("trains.train_number"),         nullable=True)
 
-    user                = relationship("User",             back_populates="staff")
-    department          = relationship("Department",       back_populates="staff")
-    division            = relationship("Division",         back_populates="staff")
-    active_train        = relationship("Train",            back_populates="staff_assignments")
-    gps_location        = relationship("StaffGpsLocation", uselist=False, back_populates="staff", cascade="all, delete-orphan")
-    assigned_complaints = relationship("Complaint",        back_populates="assigned_staff")
+    user                = relationship("User",                       back_populates="staff")
+    department          = relationship("Department",                 back_populates="staff")
+    division            = relationship("Division",                   back_populates="staff")
+    active_train        = relationship("Train",                      back_populates="staff_assignments")
+    gps_location        = relationship("StaffGpsLocation",           uselist=False, back_populates="staff", cascade="all, delete-orphan")
+    assigned_complaints = relationship("Complaint",                  back_populates="assigned_staff")
+    assignment_history  = relationship("ComplaintAssignmentHistory", back_populates="staff")
 
 
 class StaffGpsLocation(Base):
@@ -180,29 +186,79 @@ class Complaint(Base):
     coach_number             = Column(String(100), nullable=True)
     station_code             = Column(String(10),  ForeignKey("stations.station_code"),              nullable=True)
     platform_number          = Column(String(10),  nullable=True)
+    
+    # Passenger-submitted category selection
     category_code            = Column(String(100), ForeignKey("complaint_categories.category_code"), nullable=False)
+    
+    # Complaint Management Officer verified fields
+    verified_category_code   = Column(String(100), ForeignKey("complaint_categories.category_code"), nullable=True)
+    verified_by_user_id      = Column(String(50),  ForeignKey("users.user_id"),                        nullable=True)
+    verified_at              = Column(DateTime,                                                       nullable=True)
+    verification_remarks     = Column(Text,                                                           nullable=True)
+
     incident_date            = Column(Date,  nullable=False)
     incident_time            = Column(Time,  nullable=True)
     complaint_description    = Column(Text,  nullable=False)
-    status                   = Column(Enum("Open", "In Progress", "Resolved", "Closed", name="complaint_statuses"), nullable=False, default="Open")
+    
+    # Single source of truth: internal lifecycle status
+    internal_status          = Column(Enum(
+        "Pending Review", "Under Review", "Assigned", "Accepted",
+        "In Progress", "Unable to Resolve", "Reassignment Requested",
+        "Reassigned", "Escalated", "Resolved", "Closed",
+        name="internal_complaint_statuses"
+    ), nullable=False, default="Pending Review")
+
+    is_critical              = Column(Boolean, default=False, nullable=False)
+
+    # Current assignment pointers
     assigned_department_code = Column(String(20), ForeignKey("departments.department_code"), nullable=True)
     assigned_division_code   = Column(String(20), ForeignKey("divisions.division_code"),    nullable=True)
+    assigned_staff_id        = Column(String(50), ForeignKey("staff.staff_id"),          nullable=True)
+
     priority                 = Column(Enum("Low", "Medium", "High", name="complaint_priorities"), nullable=False, default="Medium")
-    assigned_staff_id        = Column(String(50), ForeignKey("staff.staff_id"), nullable=True)
     complaint_source         = Column(Enum("Passenger Portal", "Staff Portal", "Admin Portal", "Mobile App", "API", name="complaint_sources"), nullable=False, default="Passenger Portal")
     created_at               = Column(DateTime, default=datetime.utcnow)
     updated_at               = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     assigned_at              = Column(DateTime, nullable=True)
+    
+    # Resolution fields
+    resolution_remarks       = Column(Text, nullable=True)
+    resolved_by_user_id      = Column(String(50), ForeignKey("users.user_id"), nullable=True)
     resolved_at              = Column(DateTime, nullable=True)
 
-    train               = relationship("Train",             back_populates="complaints")
-    station             = relationship("Station",           back_populates="complaints")
-    category            = relationship("ComplaintCategory", back_populates="complaints")
-    assigned_department = relationship("Department",        back_populates="complaints")
-    assigned_division   = relationship("Division",          back_populates="complaints")
-    assigned_staff      = relationship("Staff",             back_populates="assigned_complaints")
-    feedback            = relationship("Feedback",               uselist=False, back_populates="complaint", cascade="all, delete-orphan")
-    status_history      = relationship("ComplaintStatusHistory",  back_populates="complaint",  cascade="all, delete-orphan")
+    # Relationships
+    train               = relationship("Train",                      back_populates="complaints")
+    station             = relationship("Station",                    back_populates="complaints")
+    category            = relationship("ComplaintCategory",          foreign_keys=[category_code], back_populates="complaints")
+    verified_category   = relationship("ComplaintCategory",          foreign_keys=[verified_category_code])
+    verified_by_user    = relationship("User",                       foreign_keys=[verified_by_user_id], back_populates="verified_complaints")
+    assigned_department = relationship("Department",                 back_populates="complaints")
+    assigned_division   = relationship("Division",                   back_populates="complaints")
+    assigned_staff      = relationship("Staff",                      back_populates="assigned_complaints")
+    resolved_by_user    = relationship("User",                       foreign_keys=[resolved_by_user_id], back_populates="resolved_complaints")
+    feedback            = relationship("Feedback",                   uselist=False, back_populates="complaint", cascade="all, delete-orphan")
+    status_history      = relationship("ComplaintStatusHistory",     back_populates="complaint", cascade="all, delete-orphan")
+    assignment_history  = relationship("ComplaintAssignmentHistory", back_populates="complaint", cascade="all, delete-orphan")
+    escalation_history  = relationship("ComplaintEscalationHistory", back_populates="complaint", cascade="all, delete-orphan")
+
+    @property
+    def status(self) -> str:
+        """Alias for internal_status to preserve backward compatibility."""
+        return self.internal_status
+
+    @status.setter
+    def status(self, value: str):
+        self.internal_status = value
+
+    @property
+    def passenger_status(self) -> str:
+        """Dynamically maps internal_status to the 3 passenger-facing statuses: OPEN, IN-PROGRESS, RESOLVED."""
+        if self.internal_status in ("Pending Review", "Under Review"):
+            return "OPEN"
+        elif self.internal_status in ("Resolved", "Closed"):
+            return "RESOLVED"
+        else:
+            return "IN-PROGRESS"
 
 
 class Feedback(Base):
@@ -220,14 +276,61 @@ class ComplaintStatusHistory(Base):
     __tablename__ = "complaint_status_history"
     history_id         = Column(Integer, primary_key=True, autoincrement=True)
     complaint_id       = Column(String(20), ForeignKey("complaints.complaint_id", ondelete="CASCADE"), nullable=False)
-    from_status        = Column(String(50), nullable=False)
+    from_status        = Column(String(50), nullable=True) # Nullable for initial creation
     to_status          = Column(String(50), nullable=False)
-    updated_by_user_id = Column(String(50), ForeignKey("users.user_id"), nullable=False)
+    updated_by_user_id = Column(String(50), ForeignKey("users.user_id"), nullable=True) # Nullable for passenger registration
     remarks            = Column(Text, nullable=True)
     updated_at         = Column(DateTime, default=datetime.utcnow)
 
     complaint       = relationship("Complaint", back_populates="status_history")
     updated_by_user = relationship("User",      back_populates="status_updates")
+
+    @property
+    def previous_status(self):
+        return self.from_status
+
+    @property
+    def new_status(self):
+        return self.to_status
+
+
+class ComplaintAssignmentHistory(Base):
+    __tablename__ = "complaint_assignment_history"
+    assignment_id       = Column(Integer, primary_key=True, autoincrement=True)
+    complaint_id        = Column(String(20), ForeignKey("complaints.complaint_id", ondelete="CASCADE"), nullable=False)
+    staff_id            = Column(String(50), ForeignKey("staff.staff_id", ondelete="CASCADE"), nullable=False)
+    department_code     = Column(String(20), ForeignKey("departments.department_code"), nullable=False)
+    assigned_by_user_id = Column(String(50), ForeignKey("users.user_id"), nullable=False)
+    status              = Column(Enum(
+        "ASSIGNED", "ACCEPTED", "IN_PROGRESS", "COMPLETED",
+        "REASSIGNMENT_REQUESTED", "REASSIGNED", "CANCELLED",
+        name="assignment_statuses"
+    ), nullable=False, default="ASSIGNED")
+    assigned_at         = Column(DateTime, default=datetime.utcnow, nullable=False)
+    reassignment_reason = Column(Text, nullable=True)
+    completed_at        = Column(DateTime, nullable=True)
+
+    complaint        = relationship("Complaint",  back_populates="assignment_history")
+    staff            = relationship("Staff",      back_populates="assignment_history")
+    department       = relationship("Department")
+    assigned_by_user = relationship("User",       back_populates="assigned_histories")
+
+
+class ComplaintEscalationHistory(Base):
+    __tablename__ = "complaint_escalation_history"
+    escalation_id        = Column(Integer, primary_key=True, autoincrement=True)
+    complaint_id         = Column(String(20), ForeignKey("complaints.complaint_id", ondelete="CASCADE"), nullable=False)
+    escalated_by_user_id = Column(String(50), ForeignKey("users.user_id"), nullable=False)
+    escalated_to_user_id = Column(String(50), ForeignKey("users.user_id"), nullable=True)
+    escalated_to_role    = Column(String(50), default="Admin", nullable=False)
+    reason               = Column(Text, nullable=False)
+    status               = Column(Enum("OPEN", "UNDER_REVIEW", "RESOLVED", name="escalation_statuses"), nullable=False, default="OPEN")
+    created_at           = Column(DateTime, default=datetime.utcnow, nullable=False)
+    resolved_at          = Column(DateTime, nullable=True)
+
+    complaint         = relationship("Complaint", back_populates="escalation_history")
+    escalated_by_user = relationship("User",      foreign_keys=[escalated_by_user_id], back_populates="escalated_histories")
+    escalated_to_user = relationship("User",      foreign_keys=[escalated_to_user_id], back_populates="received_escalations")
 
 
 class OtpVerification(Base):

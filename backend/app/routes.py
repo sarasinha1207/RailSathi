@@ -196,31 +196,41 @@ def enrich_complaint_dict(c: Complaint, db: Session) -> dict:
     ).order_by(ComplaintStatusHistory.updated_at.desc()).first()
     remarks_val = latest_history.remarks if latest_history else ""
     return {
-        "complaint_id":          c.complaint_id,
-        "complaint_type":        c.complaint_type,
-        "phone_number":          c.phone_number,
-        "pnr_number":            c.pnr_number or "",
-        "train_number":          c.train_number or "",
-        "coach_number":          c.coach_number or "",
-        "station_name":          c.station.station_name if c.station else "",
-        "platform_number":       c.platform_number or "",
-        "station_area":          "",
-        "main_class":            c.category.category_name    if c.category else "Other",
-        "sub_class":             c.category.subcategory_name if c.category else "General",
-        "incident_date":         c.incident_date.strftime("%Y-%m-%d"),
-        "incident_time":         c.incident_time.strftime("%H:%M") if c.incident_time else "",
-        "complaint_description": c.complaint_description,
-        "complaint_status":      c.status,
-        "created_at":            c.created_at.strftime("%Y-%m-%d %H:%M:%S"),
-        "zone_code":             c.assigned_division.zone.zone_code if (c.assigned_division and c.assigned_division.zone) else "",
-        "zone_name":             c.assigned_division.zone.zone_name if (c.assigned_division and c.assigned_division.zone) else "",
-        "division_name":         c.assigned_division.division_name if c.assigned_division else "",
-        "remarks":               remarks_val,
-        "feedback":              feedback_val,
-        "rating":                rating_val,
-        "department":            c.assigned_department.department_name if c.assigned_department else "Other",
-        "priority":              c.priority,
-        "display_status":        c.status,
+        "complaint_id":            c.complaint_id,
+        "complaint_type":          c.complaint_type,
+        "phone_number":            c.phone_number,
+        "pnr_number":              c.pnr_number or "",
+        "train_number":            c.train_number or "",
+        "coach_number":            c.coach_number or "",
+        "station_name":            c.station.station_name if c.station else "",
+        "platform_number":         c.platform_number or "",
+        "station_area":            "",
+        "main_class":              c.category.category_name    if c.category else "Other",
+        "sub_class":               c.category.subcategory_name if c.category else "General",
+        "verified_category_code":  c.verified_category_code or "",
+        "verified_category_name":  c.verified_category.category_name if c.verified_category else "",
+        "verified_subcategory":   c.verified_category.subcategory_name if c.verified_category else "",
+        "verified_by_user_id":     c.verified_by_user_id or "",
+        "verification_remarks":    c.verification_remarks or "",
+        "incident_date":           c.incident_date.strftime("%Y-%m-%d"),
+        "incident_time":           c.incident_time.strftime("%H:%M") if c.incident_time else "",
+        "complaint_description":   c.complaint_description,
+        "internal_status":         c.internal_status,
+        "complaint_status":        c.passenger_status,
+        "passenger_status":        c.passenger_status,
+        "display_status":          c.passenger_status,
+        "is_critical":             c.is_critical,
+        "created_at":              c.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+        "zone_code":               c.assigned_division.zone.zone_code if (c.assigned_division and c.assigned_division.zone) else "",
+        "zone_name":               c.assigned_division.zone.zone_name if (c.assigned_division and c.assigned_division.zone) else "",
+        "division_name":           c.assigned_division.division_name if c.assigned_division else "",
+        "remarks":                 remarks_val,
+        "feedback":                feedback_val,
+        "rating":                  rating_val,
+        "department":              c.assigned_department.department_name if c.assigned_department else "Other",
+        "priority":                c.priority,
+        "assigned_staff_id":      c.assigned_staff_id or "",
+        "resolution_remarks":      c.resolution_remarks or "",
     }
 
 
@@ -375,14 +385,14 @@ async def submit_train_complaint(
             train_number=train.train_number, coach_number=coach_number,
             station_code=station.station_code if station else None,
             category_code=category.category_code, incident_date=incident_date, incident_time=incident_time,
-            complaint_description=complaint_description, status="Open",
+            complaint_description=complaint_description, internal_status="Pending Review",
             assigned_department_code=category.department_code,
             assigned_division_code=station.division_code if station else None,
             priority=category.default_priority, complaint_source="Passenger Portal",)
         db.add(complaint); db.flush()
-        db.add(ComplaintStatusHistory(complaint_id=complaint_id, from_status="Open", to_status="Open", updated_by_user_id="USR_ADMIN", remarks="Grievance registered automatically."))
+        db.add(ComplaintStatusHistory(complaint_id=complaint_id, from_status=None, to_status="Pending Review", updated_by_user_id=None, remarks="Grievance registered by passenger."))
         db.commit()
-        return {"status": "success", "complaint_id": complaint_id}
+        return {"status": "success", "complaint_id": complaint_id, "passenger_status": "OPEN"}
     except Exception as e:
         db.rollback(); raise HTTPException(status_code=500, detail=f"Submission error: {str(e)}")
 
@@ -444,13 +454,13 @@ async def submit_station_complaint(
             complaint_id=complaint_id, complaint_type="Station", phone_number=phone_number,
             station_code=station.station_code, platform_number=platform_number,
             category_code=category.category_code, incident_date=incident_date, incident_time=incident_time,
-            complaint_description=complaint_description, status="Open",
+            complaint_description=complaint_description, internal_status="Pending Review",
             assigned_department_code=category.department_code, assigned_division_code=station.division_code,
             priority=category.default_priority, complaint_source="Passenger Portal",)
         db.add(complaint); db.flush()
-        db.add(ComplaintStatusHistory(complaint_id=complaint_id, from_status="Open", to_status="Open", updated_by_user_id="USR_ADMIN", remarks="Grievance registered automatically."))
+        db.add(ComplaintStatusHistory(complaint_id=complaint_id, from_status=None, to_status="Pending Review", updated_by_user_id=None, remarks="Grievance registered by passenger."))
         db.commit()
-        return {"status": "success", "complaint_id": complaint_id}
+        return {"status": "success", "complaint_id": complaint_id, "passenger_status": "OPEN"}
     except Exception as e:
         db.rollback(); raise HTTPException(status_code=500, detail=f"Submission error: {str(e)}")
 

@@ -814,6 +814,57 @@ def seed_database():
             db.flush()
             depts_map[d_name] = dept.department_code
 
+        # Seed Users & Default Accounts
+        admin_user = User(
+            user_id="USR_ADMIN",
+            username="admin",
+            password_hash="admin123",
+            role="Admin",
+            email="admin@railsathi.gov.in"
+        )
+        db.add(admin_user)
+        db.flush()
+
+        admin_staff = Staff(
+            staff_id="STF_ADMIN",
+            user_id=admin_user.user_id,
+            name="System Administrator",
+            is_on_duty=True
+        )
+        db.add(admin_staff)
+        db.flush()
+
+        # Seed Complaint Management Officers
+        officer1 = User(
+            user_id="USR_OFFICER1",
+            username="officer1",
+            password_hash="officer123",
+            role="ComplaintOfficer",
+            email="officer1@railsathi.gov.in"
+        )
+        officer2 = User(
+            user_id="USR_OFFICER2",
+            username="officer2",
+            password_hash="officer123",
+            role="ComplaintOfficer",
+            email="officer2@railsathi.gov.in"
+        )
+        db.add_all([officer1, officer2])
+        db.flush()
+
+        # Seed Departmental Staff Accounts
+        staff_elec = User(user_id="USR_STAFF_ELEC", username="staff_elec", password_hash="staff123", role="Staff", email="elec@railsathi.gov.in")
+        staff_hyg  = User(user_id="USR_STAFF_HYG",  username="staff_hyg",  password_hash="staff123", role="Staff", email="hyg@railsathi.gov.in")
+        staff_sec  = User(user_id="USR_STAFF_SEC",  username="staff_sec",  password_hash="staff123", role="Staff", email="sec@railsathi.gov.in")
+        db.add_all([staff_elec, staff_hyg, staff_sec])
+        db.flush()
+
+        stf_elec_profile = Staff(staff_id="STF_ELEC1", user_id=staff_elec.user_id, name="Rajesh Kumar (Electrical)", department_code="ELEC",       division_code="DLI", is_on_duty=True)
+        stf_hyg_profile  = Staff(staff_id="STF_HYG1",  user_id=staff_hyg.user_id,  name="Suresh Verma (Hygiene)",    department_code="MECH_CLEAN", division_code="DLI", is_on_duty=True)
+        stf_sec_profile  = Staff(staff_id="STF_SEC1",  user_id=staff_sec.user_id,  name="Vikram Singh (Security)",   department_code="RPF",        division_code="DLI", is_on_duty=True)
+        db.add_all([stf_elec_profile, stf_hyg_profile, stf_sec_profile])
+        db.flush()
+
         # 5. Seed Complaint Categories ( Taxonomy mapping )
         category_tuples = [
             # Bed Roll
@@ -1011,26 +1062,6 @@ def seed_database():
             db.add(cat)
             db.flush()
             categories_map[pair_key] = (cat.category_code, cat.default_priority)
-
-        # 6. Seed Users
-        admin_user = User(
-            user_id="USR_ADMIN",
-            username="admin",
-            password_hash="admin123",
-            role="Admin",
-            email="admin@railsathi.gov.in"
-        )
-        db.add(admin_user)
-        db.flush()
-
-        admin_staff = Staff(
-            staff_id="STF_ADMIN",
-            user_id=admin_user.user_id,
-            name="System Administrator",
-            is_on_duty=True
-        )
-        db.add(admin_staff)
-        db.flush()
 
         # 7. Scan and pre-process CSV files for bulk insertion
         base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -1369,17 +1400,23 @@ def seed_database():
             csv_div = row.get("division_name", "Delhi").strip()
             div_code_val = divisions_map.get(csv_div.lower(), divisions_map["delhi"])
 
-            status_str = row.get("complaint_status", "Open")
-            if status_str not in ["Open", "In Progress", "Resolved", "Closed"]:
-                status_str = "Open"
+            status_str = row.get("complaint_status", "Pending Review")
+            status_map = {
+                "Open": "Pending Review",
+                "Pending Review": "Pending Review",
+                "In Progress": "In Progress",
+                "Resolved": "Resolved",
+                "Closed": "Closed"
+            }
+            internal_stat = status_map.get(status_str, "Pending Review")
 
             created_at = parse_datetime(row.get("created_at")) or datetime.now()
 
             resolved_at = None
             assigned_at = None
-            if status_str in ["In Progress", "Resolved", "Closed"]:
+            if internal_stat in ["In Progress", "Resolved", "Closed"]:
                 assigned_at = created_at
-            if status_str in ["Resolved", "Closed"]:
+            if internal_stat in ["Resolved", "Closed"]:
                 resolved_at = created_at
 
             complaints_to_add.append({
@@ -1395,7 +1432,7 @@ def seed_database():
                 "incident_date": parse_date(row.get("incident_date")) or created_at.date(),
                 "incident_time": parse_time(row.get("incident_time")),
                 "complaint_description": row.get("complaint_description", "No description"),
-                "status": status_str,
+                "internal_status": internal_stat,
                 "assigned_department_code": dept_code_val,
                 "assigned_division_code": div_code_val,
                 "priority": priority,
@@ -1408,8 +1445,8 @@ def seed_database():
 
             histories_to_add.append({
                 "complaint_id": comp_id,
-                "from_status": status_str,
-                "to_status": status_str,
+                "from_status": None,
+                "to_status": internal_stat,
                 "updated_by_user_id": admin_user.user_id,
                 "remarks": "Grievance registered automatically.",
                 "updated_at": created_at
