@@ -385,14 +385,14 @@ async def submit_train_complaint(
             train_number=train.train_number, coach_number=coach_number,
             station_code=station.station_code if station else None,
             category_code=category.category_code, incident_date=incident_date, incident_time=incident_time,
-            complaint_description=complaint_description, internal_status="Pending Review",
+            complaint_description=complaint_description, internal_status="Assigned",
             assigned_department_code=category.department_code,
             assigned_division_code=station.division_code if station else None,
             priority=category.default_priority, complaint_source="Passenger Portal",)
         db.add(complaint); db.flush()
-        db.add(ComplaintStatusHistory(complaint_id=complaint_id, from_status=None, to_status="Pending Review", updated_by_user_id=None, remarks="Grievance registered by passenger."))
+        db.add(ComplaintStatusHistory(complaint_id=complaint_id, from_status=None, to_status="Assigned", updated_by_user_id=None, remarks="Grievance registered by passenger."))
         db.commit()
-        return {"status": "success", "complaint_id": complaint_id, "passenger_status": "OPEN"}
+        return {"status": "success", "complaint_id": complaint_id, "passenger_status": "IN-PROGRESS"}
     except Exception as e:
         db.rollback(); raise HTTPException(status_code=500, detail=f"Submission error: {str(e)}")
 
@@ -454,13 +454,13 @@ async def submit_station_complaint(
             complaint_id=complaint_id, complaint_type="Station", phone_number=phone_number,
             station_code=station.station_code, platform_number=platform_number,
             category_code=category.category_code, incident_date=incident_date, incident_time=incident_time,
-            complaint_description=complaint_description, internal_status="Pending Review",
+            complaint_description=complaint_description, internal_status="Assigned",
             assigned_department_code=category.department_code, assigned_division_code=station.division_code,
             priority=category.default_priority, complaint_source="Passenger Portal",)
         db.add(complaint); db.flush()
-        db.add(ComplaintStatusHistory(complaint_id=complaint_id, from_status=None, to_status="Pending Review", updated_by_user_id=None, remarks="Grievance registered by passenger."))
+        db.add(ComplaintStatusHistory(complaint_id=complaint_id, from_status=None, to_status="Assigned", updated_by_user_id=None, remarks="Grievance registered by passenger."))
         db.commit()
-        return {"status": "success", "complaint_id": complaint_id, "passenger_status": "OPEN"}
+        return {"status": "success", "complaint_id": complaint_id, "passenger_status": "IN-PROGRESS"}
     except Exception as e:
         db.rollback(); raise HTTPException(status_code=500, detail=f"Submission error: {str(e)}")
 
@@ -548,6 +548,319 @@ from .services import (
 )
 
 
+# ---------------------------------------------------------------------------
+# Phase 3 / CMO Dashboard Analytics GET Endpoint
+# ---------------------------------------------------------------------------
+@router.get("/api/v1/officer/analytics")
+async def get_cmo_analytics(
+    request: Request,
+    zone_code: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    user_role = request.session.get("role")
+    if user_role not in ("Admin", "ComplaintOfficer", "ZoneHead", "DivisionHead", "DepartmentHead"):
+        raise HTTPException(status_code=403, detail="Permission denied: Officer or Admin role required.")
+
+    all_raw = db.query(Complaint).all()
+
+    # Section A — KPI Cards
+    kpis = {
+        "pending_complaints": sum(1 for c in all_raw if c.internal_status == "Assigned" and not c.assigned_staff_id),
+        "assigned_complaints": sum(1 for c in all_raw if c.assigned_staff_id is not None or c.internal_status == "In Progress"),
+        "reassignment_requests": sum(1 for c in all_raw if c.internal_status == "Reassignment Requested"),
+        "resolved_complaints": sum(1 for c in all_raw if c.internal_status in ["Resolved", "Closed"]),
+        "critical_complaints": sum(1 for c in all_raw if c.is_critical and c.internal_status not in ["Resolved", "Closed"])
+    }
+
+    # Section B — Zone-wise Overview Table Data
+    zones = db.query(Zone).all()
+    divisions = db.query(Division).order_by(Division.zone_code, Division.division_name).all()
+    zone_map = {z.zone_code: z for z in zones}
+
+    overview_table = []
+    for d in divisions:
+        parent_zone = zone_map.get(d.zone_code)
+        z_name = parent_zone.zone_name if parent_zone else d.zone_code
+        
+        # Complaints belonging to this specific division
+        d_complaints = [c for c in all_raw if c.assigned_division_code == d.division_code or (c.station and c.station.division_code == d.division_code)]
+        d_open = [c for c in d_complaints if c.internal_status not in ["Resolved", "Closed"]]
+        
+        high_c = sum(1 for c in d_complaints if c.priority == "High" or c.is_critical)
+        med_c  = sum(1 for c in d_complaints if c.priority == "Medium" and not c.is_critical)
+        low_c  = sum(1 for c in d_complaints if c.priority == "Low" and not c.is_critical)
+
+        overview_table.append({
+            "zone_code": d.zone_code,
+            "zone_name": z_name,
+            "division_code": d.division_code,
+            "division_name": d.division_name,
+            "total_received": len(d_complaints),
+            "total_open": len(d_open),
+            "priority_distribution": {
+                "high": high_c,
+                "medium": med_c,
+                "low": low_c
+            }
+        })
+
+    # Section C — Open Complaint Analytics Charts (internal_status NOT IN ['Resolved', 'Closed'])
+    open_complaints = [c for c in all_raw if c.internal_status not in ["Resolved", "Closed"]]
+
+    # If zone_code filter selected
+    filtered_open = open_complaints
+    if zone_code and zone_code != "all":
+        z_target_divs = [d.division_code for d in divisions if d.zone_code == zone_code]
+        filtered_open = [c for c in open_complaints if c.assigned_division_code in z_target_divs or (c.station and c.station.division_code in z_target_divs)]
+
+    # 1. Zone-wise Open Complaints Chart
+    zone_chart_data = []
+    for z in zones:
+        z_div_codes = [d.division_code for d in divisions if d.zone_code == z.zone_code]
+        z_open = [c for c in filtered_open if c.assigned_division_code in z_div_codes or (c.station and c.station.division_code in z_div_codes)]
+        if z_open or not zone_code or zone_code == "all" or zone_code == z.zone_code:
+            zone_chart_data.append({
+                "zone_code": z.zone_code,
+                "zone_name": z.zone_name,
+                "high": sum(1 for c in z_open if c.priority == "High" or c.is_critical),
+                "medium": sum(1 for c in z_open if c.priority == "Medium" and not c.is_critical),
+                "low": sum(1 for c in z_open if c.priority == "Low" and not c.is_critical),
+                "total": len(z_open)
+            })
+
+    # 2. Division-wise Open Complaints Chart
+    div_chart_data = []
+    target_divisions = divisions
+    if zone_code and zone_code != "all":
+        target_divisions = [d for d in divisions if d.zone_code == zone_code]
+
+    for d in target_divisions:
+        d_open = [c for c in filtered_open if c.assigned_division_code == d.division_code or (c.station and c.station.division_code == d.division_code)]
+        if d_open or zone_code:
+            div_chart_data.append({
+                "division_code": d.division_code,
+                "division_name": d.division_name,
+                "zone_code": d.zone_code,
+                "high": sum(1 for c in d_open if c.priority == "High" or c.is_critical),
+                "medium": sum(1 for c in d_open if c.priority == "Medium" and not c.is_critical),
+                "low": sum(1 for c in d_open if c.priority == "Low" and not c.is_critical),
+                "total": len(d_open)
+            })
+
+    # Limit divisions to top 15 if "All Zones" to keep chart clean
+    if not zone_code or zone_code == "all":
+        div_chart_data.sort(key=lambda x: x["total"], reverse=True)
+        div_chart_data = div_chart_data[:15]
+
+    # 3. Department-wise Open Complaints Chart
+    depts = db.query(Department).all()
+    dept_chart_data = []
+    for dept in depts:
+        d_open = [c for c in filtered_open if c.assigned_department_code == dept.department_code or (c.verified_category and c.verified_category.department_code == dept.department_code)]
+        dept_chart_data.append({
+            "department_code": dept.department_code,
+            "department_name": dept.department_name,
+            "total_open": len(d_open)
+        })
+
+    return {
+        "status": "success",
+        "kpis": kpis,
+        "overview_table": overview_table,
+        "analytics": {
+            "selected_zone": zone_code or "all",
+            "zone_chart": zone_chart_data,
+            "division_chart": div_chart_data,
+            "department_chart": dept_chart_data
+        }
+    }
+
+
+# ---------------------------------------------------------------------------
+# Phase 3 Officer Workflow GET Endpoints
+# ---------------------------------------------------------------------------
+@router.get("/api/v1/officer/complaints")
+async def get_officer_complaints(
+    request: Request,
+    status: Optional[str] = None,
+    priority: Optional[str] = None,
+    zone_code: Optional[str] = None,
+    division_code: Optional[str] = None,
+    department_code: Optional[str] = None,
+    category_code: Optional[str] = None,
+    train_number: Optional[str] = None,
+    station_code: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    search: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    user_role = request.session.get("role")
+    if user_role not in ("Admin", "ComplaintOfficer", "ZoneHead", "DivisionHead", "DepartmentHead"):
+        raise HTTPException(status_code=403, detail="Permission denied: Officer or Admin role required.")
+
+    query = db.query(Complaint)
+
+    if status and status != "all":
+        if status in ("Assigned", "Pending Review", "Pending"):
+            query = query.filter(Complaint.internal_status == "Assigned")
+        elif status == "In Progress":
+            query = query.filter(Complaint.internal_status == "In Progress")
+        elif status == "Reassignment Requested":
+            query = query.filter(Complaint.internal_status == "Reassignment Requested")
+        elif status == "Escalated":
+            query = query.filter(Complaint.internal_status == "Escalated")
+        elif status == "Resolved":
+            query = query.filter(Complaint.internal_status.in_(["Resolved", "Closed"]))
+        else:
+            query = query.filter(Complaint.internal_status == status)
+
+    if priority and priority != "all":
+        if priority == "Critical":
+            query = query.filter(Complaint.is_critical == True)
+        else:
+            query = query.filter(Complaint.priority == priority)
+
+    if department_code and department_code != "all":
+        query = query.filter(Complaint.assigned_department_code == department_code)
+
+    if division_code and division_code != "all":
+        query = query.filter(Complaint.assigned_division_code == division_code)
+
+    if zone_code and zone_code != "all":
+        div_codes = [d.division_code for d in db.query(Division).filter(Division.zone_code == zone_code).all()]
+        query = query.filter(Complaint.assigned_division_code.in_(div_codes))
+
+    if category_code and category_code != "all":
+        query = query.filter(
+            (Complaint.category_code == category_code) |
+            (Complaint.verified_category_code == category_code)
+        )
+
+    if train_number and train_number != "all":
+        query = query.filter(Complaint.train_number == train_number)
+
+    if station_code and station_code != "all":
+        query = query.filter(Complaint.station_code == station_code)
+
+    if start_date:
+        try:
+            sd = datetime.strptime(start_date, "%Y-%m-%d")
+            query = query.filter(Complaint.created_at >= sd)
+        except ValueError:
+            pass
+
+    if end_date:
+        try:
+            ed = datetime.strptime(end_date, "%Y-%m-%d").replace(hour=23, minute=59, second=59)
+            query = query.filter(Complaint.created_at <= ed)
+        except ValueError:
+            pass
+
+    if search and search.strip():
+        term = f"%{search.strip()}%"
+        query = query.filter(
+            (Complaint.complaint_id.like(term)) |
+            (Complaint.pnr_number.like(term)) |
+            (Complaint.phone_number.like(term)) |
+            (Complaint.train_number.like(term)) |
+            (Complaint.station_code.like(term))
+        )
+
+    all_complaints = query.order_by(Complaint.created_at.desc()).all()
+
+    # Calculate operational metrics summary across all complaints
+    all_raw = db.query(Complaint).all()
+    summary_metrics = {
+        "total_pending": sum(1 for c in all_raw if c.internal_status == "Assigned" and not c.assigned_staff_id),
+        "under_review": 0,
+        "assigned": sum(1 for c in all_raw if c.assigned_staff_id is not None or c.internal_status == "In Progress"),
+        "high_critical": sum(1 for c in all_raw if c.is_critical or c.priority == "High"),
+        "reassignment_requests": sum(1 for c in all_raw if c.internal_status == "Reassignment Requested")
+    }
+
+    enriched_list = [enrich_complaint_dict(c, db) for c in all_complaints]
+
+    return {
+        "status": "success",
+        "metrics": summary_metrics,
+        "count": len(enriched_list),
+        "data": enriched_list
+    }
+
+
+@router.get("/api/v1/officer/complaints/{complaint_id}/available-staff")
+async def get_available_staff_for_complaint(
+    complaint_id: str,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    user_role = request.session.get("role")
+    if user_role not in ("Admin", "ComplaintOfficer", "ZoneHead", "DivisionHead", "DepartmentHead"):
+        raise HTTPException(status_code=403, detail="Permission denied: Officer or Admin role required.")
+
+    complaint = db.query(Complaint).filter(Complaint.complaint_id == complaint_id).first()
+    if not complaint:
+        raise HTTPException(status_code=404, detail="Complaint not found")
+
+    target_dept = complaint.verified_category.department_code if (complaint.verified_category and complaint.verified_category.department_code) else complaint.assigned_department_code
+
+    # Query all active staff
+    staff_query = db.query(Staff).filter(Staff.is_on_duty == True)
+    if target_dept:
+        staff_query = staff_query.filter(Staff.department_code == target_dept)
+
+    staff_list = staff_query.all()
+
+    # If department filter yields no staff, fallback to all on-duty staff
+    if not staff_list:
+        staff_list = db.query(Staff).filter(Staff.is_on_duty == True).all()
+
+    result_staff = []
+    for s in staff_list:
+        if not s.user or not s.user.is_active:
+            continue
+
+        active_workload = db.query(Complaint).filter(
+            Complaint.assigned_staff_id == s.staff_id,
+            Complaint.internal_status.in_(["Assigned", "Accepted", "In Progress"])
+        ).count()
+
+        dept_name = s.department.department_name if s.department else (s.department_code or "General")
+
+        result_staff.append({
+            "staff_id": s.staff_id,
+            "name": s.name,
+            "department_code": s.department_code,
+            "department_name": dept_name,
+            "division_code": s.division_code,
+            "active_train_number": s.active_train_number,
+            "is_on_duty": s.is_on_duty,
+            "active_workload": active_workload,
+            "is_available": active_workload < 5
+        })
+
+    # Sort by active_workload ascending (least loaded first)
+    result_staff.sort(key=lambda x: x["active_workload"])
+
+    return {
+        "status": "success",
+        "complaint_id": complaint_id,
+        "recommended_department_code": target_dept,
+        "count": len(result_staff),
+        "data": result_staff
+    }
+
+
 @router.post("/api/v1/officer/complaints/{complaint_id}/verify")
 async def verify_complaint_endpoint(
     complaint_id: str,
@@ -584,7 +897,10 @@ async def assign_complaint_endpoint(
         db=db,
         complaint_id=complaint_id,
         officer_user_id=officer_user_id,
-        staff_id=payload.staff_id
+        staff_id=payload.staff_id,
+        verified_category_code=payload.verified_category_code,
+        priority=payload.priority,
+        is_critical=payload.is_critical
     )
     return {"status": "success", "message": "Complaint assigned successfully", "data": enrich_complaint_dict(c, db)}
 
@@ -598,12 +914,12 @@ async def accept_assignment_endpoint(
     if not request.session.get("logged_in"):
         raise HTTPException(status_code=401, detail="Authentication required")
     staff_user_id = request.session.get("user_id")
-    c = accept_assignment_service(
+    c = start_work_service(
         db=db,
         complaint_id=complaint_id,
         staff_user_id=staff_user_id
     )
-    return {"status": "success", "message": "Assignment accepted successfully", "data": enrich_complaint_dict(c, db)}
+    return {"status": "success", "message": "Assignment accepted and work started", "data": enrich_complaint_dict(c, db)}
 
 
 @router.post("/api/v1/staff/complaints/{complaint_id}/start")

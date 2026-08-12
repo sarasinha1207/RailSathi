@@ -9,15 +9,10 @@ from .models import (
 
 # Strict allowed status transitions map
 ALLOWED_TRANSITIONS = {
-    "Pending Review": ["Under Review", "Assigned", "Escalated", "Closed"],
-    "Under Review": ["Assigned", "Escalated", "Closed"],
-    "Assigned": ["Accepted", "Reassigned", "Escalated", "Closed"],
-    "Accepted": ["In Progress", "Reassignment Requested", "Escalated", "Closed"],
-    "In Progress": ["Resolved", "Unable to Resolve", "Reassignment Requested", "Escalated", "Closed"],
-    "Reassignment Requested": ["Reassigned", "Assigned", "Escalated", "Closed"],
-    "Reassigned": ["Accepted", "Escalated", "Closed"],
-    "Unable to Resolve": ["Reassignment Requested", "Reassigned", "Escalated", "Closed"],
-    "Escalated": ["Assigned", "Reassigned", "Resolved", "Closed"],
+    "Assigned": ["Assigned", "In Progress", "Reassignment Requested", "Escalated", "Closed"],
+    "In Progress": ["Reassignment Requested", "Escalated", "Resolved", "Closed"],
+    "Reassignment Requested": ["Assigned", "In Progress", "Escalated", "Closed"],
+    "Escalated": ["Assigned", "In Progress", "Resolved", "Closed"],
     "Resolved": ["Closed"],
     "Closed": []
 }
@@ -53,8 +48,6 @@ def verify_complaint_service(
     if complaint.internal_status in ("Resolved", "Closed"):
         raise HTTPException(status_code=400, detail="Cannot verify a resolved or closed complaint.")
 
-    validate_status_transition(complaint.internal_status, "Under Review")
-
     try:
         if verified_category_code:
             cat = db.query(ComplaintCategory).filter(ComplaintCategory.category_code == verified_category_code).first()
@@ -77,13 +70,10 @@ def verify_complaint_service(
         if verification_remarks:
             complaint.verification_remarks = verification_remarks
 
-        prev_st = complaint.internal_status
-        complaint.internal_status = "Under Review"
-
         db.add(ComplaintStatusHistory(
             complaint_id=complaint.complaint_id,
-            from_status=prev_st,
-            to_status="Under Review",
+            from_status=complaint.internal_status,
+            to_status=complaint.internal_status,
             updated_by_user_id=officer_user_id,
             remarks=verification_remarks or "Complaint verified by officer."
         ))
@@ -102,9 +92,12 @@ def assign_complaint_service(
     db: Session,
     complaint_id: str,
     officer_user_id: str,
-    staff_id: str
+    staff_id: str,
+    verified_category_code: Optional[str] = None,
+    priority: Optional[str] = None,
+    is_critical: Optional[bool] = None
 ) -> Complaint:
-    """Complaint Officer assigns an eligible, on-duty staff member."""
+    """Complaint Officer assigns complaint to field staff, optionally updating verified category/priority."""
     user = db.query(User).filter(User.user_id == officer_user_id).first()
     if not user or user.role not in ("Admin", "ComplaintOfficer"):
         raise HTTPException(status_code=403, detail="Permission denied: Only Complaint Officers or Admins can assign staff.")
@@ -112,9 +105,6 @@ def assign_complaint_service(
     complaint = db.query(Complaint).filter(Complaint.complaint_id == complaint_id).first()
     if not complaint:
         raise HTTPException(status_code=404, detail="Complaint not found.")
-
-    if complaint.internal_status in ("Resolved", "Closed"):
-        raise HTTPException(status_code=400, detail="Cannot assign a resolved or closed complaint.")
 
     validate_status_transition(complaint.internal_status, "Assigned")
 
@@ -141,6 +131,20 @@ def assign_complaint_service(
         complaint.assigned_staff_id = staff.staff_id
         if staff.department_code:
             complaint.assigned_department_code = staff.department_code
+
+        if verified_category_code:
+            cat = db.query(ComplaintCategory).filter(ComplaintCategory.category_code == verified_category_code).first()
+            if cat:
+                complaint.verified_category_code = cat.category_code
+                complaint.verified_by_user_id = officer_user_id
+                complaint.verified_at = datetime.utcnow()
+                if not complaint.assigned_department_code:
+                    complaint.assigned_department_code = cat.department_code
+        if priority:
+            complaint.priority = priority
+        if is_critical is not None:
+            complaint.is_critical = is_critical
+
         complaint.assigned_at = datetime.utcnow()
         complaint.internal_status = "Assigned"
 
@@ -344,7 +348,7 @@ def reassign_complaint_service(
     if not complaint:
         raise HTTPException(status_code=404, detail="Complaint not found.")
 
-    validate_status_transition(complaint.internal_status, "Reassigned")
+    validate_status_transition(complaint.internal_status, "Assigned")
 
     new_staff = db.query(Staff).filter(Staff.staff_id == new_staff_id).first()
     if not new_staff:
@@ -358,6 +362,7 @@ def reassign_complaint_service(
 
     try:
         prev_st = complaint.internal_status
+        old_staff_id = complaint.assigned_staff_id
 
         old_assign = db.query(ComplaintAssignmentHistory).filter(
             ComplaintAssignmentHistory.complaint_id == complaint.complaint_id,
@@ -373,7 +378,7 @@ def reassign_complaint_service(
         if new_staff.department_code:
             complaint.assigned_department_code = new_staff.department_code
         complaint.assigned_at = datetime.utcnow()
-        complaint.internal_status = "Reassigned"
+        complaint.internal_status = "Assigned"
 
         db.add(ComplaintAssignmentHistory(
             complaint_id=complaint.complaint_id,
@@ -387,9 +392,9 @@ def reassign_complaint_service(
         db.add(ComplaintStatusHistory(
             complaint_id=complaint.complaint_id,
             from_status=prev_st,
-            to_status="Reassigned",
+            to_status="Assigned",
             updated_by_user_id=officer_user_id,
-            remarks=f"Reassigned to staff {new_staff.name} ({new_staff.staff_id}). Reason: {reason or 'N/A'}"
+            remarks=f"Reassigned from {old_staff_id} to {new_staff.name} ({new_staff.staff_id}). Reason: {reason or 'Officer reassignment'}"
         ))
 
         db.commit()

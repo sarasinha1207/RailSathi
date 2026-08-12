@@ -193,7 +193,10 @@ class VerifyComplaintRequest(BaseModel):
     verification_remarks:   Optional[str] = None
 
 class AssignComplaintRequest(BaseModel):
-    staff_id: str
+    staff_id:               str
+    verified_category_code: Optional[str] = None
+    priority:               Optional[str] = None
+    is_critical:            Optional[bool] = None
 
 class RequestReassignmentRequest(BaseModel):
     reason: str

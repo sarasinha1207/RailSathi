@@ -1401,15 +1401,19 @@ def seed_database():
             csv_div = row.get("division_name", "Delhi").strip()
             div_code_val = divisions_map.get(csv_div.lower(), divisions_map["delhi"])
 
-            status_str = row.get("complaint_status", "Pending Review")
+            status_str = row.get("complaint_status", "Assigned")
             status_map = {
-                "Open": "Pending Review",
-                "Pending Review": "Pending Review",
+                "Open": "Assigned",
+                "Pending Review": "Assigned",
+                "Under Review": "Assigned",
+                "Assigned": "Assigned",
                 "In Progress": "In Progress",
+                "Reassignment Requested": "Reassignment Requested",
+                "Escalated": "Escalated",
                 "Resolved": "Resolved",
                 "Closed": "Closed"
             }
-            internal_stat = status_map.get(status_str, "Pending Review")
+            internal_stat = status_map.get(status_str, "Assigned")
 
             created_at = parse_datetime(row.get("created_at")) or datetime.now()
 

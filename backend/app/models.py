@@ -209,11 +209,10 @@ class Complaint(Base):
     
     # Single source of truth: internal lifecycle status
     internal_status          = Column(Enum(
-        "Pending Review", "Under Review", "Assigned", "Accepted",
-        "In Progress", "Unable to Resolve", "Reassignment Requested",
-        "Reassigned", "Escalated", "Resolved", "Closed",
+        "Assigned", "In Progress", "Reassignment Requested",
+        "Escalated", "Resolved", "Closed",
         name="internal_complaint_statuses"
-    ), nullable=False, default="Pending Review")
+    ), nullable=False, default="Assigned")
 
     is_critical              = Column(Boolean, default=False, nullable=False)
 
@@ -259,10 +258,8 @@ class Complaint(Base):
 
     @property
     def passenger_status(self) -> str:
-        """Dynamically maps internal_status to the 3 passenger-facing statuses: OPEN, IN-PROGRESS, RESOLVED."""
-        if self.internal_status in ("Pending Review", "Under Review"):
-            return "OPEN"
-        elif self.internal_status in ("Resolved", "Closed"):
+        """Dynamically maps internal_status to passenger-facing statuses: IN-PROGRESS, RESOLVED."""
+        if self.internal_status in ("Resolved", "Closed"):
             return "RESOLVED"
         else:
             return "IN-PROGRESS"
