@@ -182,3 +182,29 @@ class OtpVerifyRequest(BaseModel):
     phone_number: str
     otp_code:     str
     purpose:      str
+
+# ---------------------------------------------------------------------------
+# Phase 2 Complaint Lifecycle Schemas
+# ---------------------------------------------------------------------------
+class VerifyComplaintRequest(BaseModel):
+    verified_category_code: Optional[str] = None
+    priority:               Optional[str] = None
+    is_critical:            Optional[bool] = None
+    verification_remarks:   Optional[str] = None
+
+class AssignComplaintRequest(BaseModel):
+    staff_id: str
+
+class RequestReassignmentRequest(BaseModel):
+    reason: str
+
+class ReassignComplaintRequest(BaseModel):
+    new_staff_id: str
+    reason:       Optional[str] = None
+
+class EscalateComplaintRequest(BaseModel):
+    reason:            str
+    escalated_to_role: Optional[str] = "Admin"
+
+class ResolveComplaintRequest(BaseModel):
+    resolution_remarks: str

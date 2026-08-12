@@ -532,3 +532,170 @@ async def get_trains_api(db: Session = Depends(get_db)):
         {"train_number": t.train_number, "train_name": t.train_name}
         for t in trains
     ]
+
+
+# ---------------------------------------------------------------------------
+# Phase 2 Lifecycle Endpoints
+# ---------------------------------------------------------------------------
+from .schemas import (
+    VerifyComplaintRequest, AssignComplaintRequest, RequestReassignmentRequest,
+    ReassignComplaintRequest, EscalateComplaintRequest, ResolveComplaintRequest
+)
+from .services import (
+    verify_complaint_service, assign_complaint_service, accept_assignment_service,
+    start_work_service, request_reassignment_service, reassign_complaint_service,
+    escalate_complaint_service, resolve_complaint_service
+)
+
+
+@router.post("/api/v1/officer/complaints/{complaint_id}/verify")
+async def verify_complaint_endpoint(
+    complaint_id: str,
+    payload: VerifyComplaintRequest,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    officer_user_id = request.session.get("user_id")
+    c = verify_complaint_service(
+        db=db,
+        complaint_id=complaint_id,
+        officer_user_id=officer_user_id,
+        verified_category_code=payload.verified_category_code,
+        priority=payload.priority,
+        is_critical=payload.is_critical,
+        verification_remarks=payload.verification_remarks
+    )
+    return {"status": "success", "message": "Complaint verified successfully", "data": enrich_complaint_dict(c, db)}
+
+
+@router.post("/api/v1/officer/complaints/{complaint_id}/assign")
+async def assign_complaint_endpoint(
+    complaint_id: str,
+    payload: AssignComplaintRequest,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    officer_user_id = request.session.get("user_id")
+    c = assign_complaint_service(
+        db=db,
+        complaint_id=complaint_id,
+        officer_user_id=officer_user_id,
+        staff_id=payload.staff_id
+    )
+    return {"status": "success", "message": "Complaint assigned successfully", "data": enrich_complaint_dict(c, db)}
+
+
+@router.post("/api/v1/staff/complaints/{complaint_id}/accept")
+async def accept_assignment_endpoint(
+    complaint_id: str,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    staff_user_id = request.session.get("user_id")
+    c = accept_assignment_service(
+        db=db,
+        complaint_id=complaint_id,
+        staff_user_id=staff_user_id
+    )
+    return {"status": "success", "message": "Assignment accepted successfully", "data": enrich_complaint_dict(c, db)}
+
+
+@router.post("/api/v1/staff/complaints/{complaint_id}/start")
+async def start_work_endpoint(
+    complaint_id: str,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    staff_user_id = request.session.get("user_id")
+    c = start_work_service(
+        db=db,
+        complaint_id=complaint_id,
+        staff_user_id=staff_user_id
+    )
+    return {"status": "success", "message": "Work started on complaint", "data": enrich_complaint_dict(c, db)}
+
+
+@router.post("/api/v1/staff/complaints/{complaint_id}/request-reassignment")
+async def request_reassignment_endpoint(
+    complaint_id: str,
+    payload: RequestReassignmentRequest,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    staff_user_id = request.session.get("user_id")
+    c = request_reassignment_service(
+        db=db,
+        complaint_id=complaint_id,
+        staff_user_id=staff_user_id,
+        reason=payload.reason
+    )
+    return {"status": "success", "message": "Reassignment requested", "data": enrich_complaint_dict(c, db)}
+
+
+@router.post("/api/v1/officer/complaints/{complaint_id}/reassign")
+async def reassign_complaint_endpoint(
+    complaint_id: str,
+    payload: ReassignComplaintRequest,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    officer_user_id = request.session.get("user_id")
+    c = reassign_complaint_service(
+        db=db,
+        complaint_id=complaint_id,
+        officer_user_id=officer_user_id,
+        new_staff_id=payload.new_staff_id,
+        reason=payload.reason
+    )
+    return {"status": "success", "message": "Complaint reassigned successfully", "data": enrich_complaint_dict(c, db)}
+
+
+@router.post("/api/v1/officer/complaints/{complaint_id}/escalate")
+async def escalate_complaint_endpoint(
+    complaint_id: str,
+    payload: EscalateComplaintRequest,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    officer_user_id = request.session.get("user_id")
+    c = escalate_complaint_service(
+        db=db,
+        complaint_id=complaint_id,
+        officer_user_id=officer_user_id,
+        reason=payload.reason,
+        escalated_to_role=payload.escalated_to_role or "Admin"
+    )
+    return {"status": "success", "message": "Complaint escalated successfully", "data": enrich_complaint_dict(c, db)}
+
+
+@router.post("/api/v1/staff/complaints/{complaint_id}/resolve")
+async def resolve_complaint_endpoint(
+    complaint_id: str,
+    payload: ResolveComplaintRequest,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    staff_user_id = request.session.get("user_id")
+    c = resolve_complaint_service(
+        db=db,
+        complaint_id=complaint_id,
+        staff_user_id=staff_user_id,
+        resolution_remarks=payload.resolution_remarks
+    )
+    return {"status": "success", "message": "Complaint resolved successfully", "data": enrich_complaint_dict(c, db)}

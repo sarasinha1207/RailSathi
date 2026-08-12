@@ -1104,7 +1104,7 @@ def seed_database():
                         else:
                             t_num = train_num_raw.strip()
                             if t_num not in unique_trains:
-                                unique_trains[t_num] = "Express"
+                                unique_trains[t_num] = None
                                 
                     csv_station = row.get("station_name")
                     if csv_station:
@@ -1148,13 +1148,14 @@ def seed_database():
         else:
             real_trains_data = []
 
-        # Ensure PNR and complaint trains are in the list to prevent KeyError
+        # Ensure PNR and complaint trains are in the list with valid official names
         existing_numbers = {t["train_number"] for t in real_trains_data}
         for t_num, t_name in unique_trains.items():
             if t_num not in existing_numbers:
+                valid_name = t_name if (t_name and t_name not in ["Express", "Superfast Express", "Passenger"]) else f"Train {t_num} Express"
                 real_trains_data.append({
                     "train_number": t_num,
-                    "train_name": t_name,
+                    "train_name": valid_name,
                     "source_station_code": "NDLS",
                     "destination_station_code": "BPL",
                     "stops": []
@@ -1492,14 +1493,47 @@ def seed_database():
         db.add(inspector_staff)
         db.flush()
 
-        gps = StaffGpsLocation(
-            staff_id=inspector_staff.staff_id,
-            latitude=23.2500,
-            longitude=77.4100,
-            current_station_code=stations_map["bpl"]
-        )
-        db.add(gps)
-        db.flush()
+        # Seed demo user accounts for all major roles with Department & Division FKs
+        demo_accounts = [
+            ("USR_ZH_NR", "zone_head_nr", "zone123", "ZoneHead", "Ramesh Chandra Sharma", "zonehead.nr@railsathi.gov.in", "+91 98765 11001", "STF_ZH_NR", None, divisions_map.get("delhi"), None),
+            ("USR_DH_DLI", "div_head_dli", "div123", "DivisionHead", "Anil Kumar Verma", "divhead.dli@railsathi.gov.in", "+91 98765 22001", "STF_DH_DLI", None, divisions_map.get("delhi"), None),
+            ("USR_DH_ELEC", "dept_head_elec", "dept123", "DepartmentHead", "Dr. Priya Sundaram", "depthead.elec@railsathi.gov.in", "+91 98765 33001", "STF_DH_ELEC", depts_map["Electrical"], divisions_map.get("delhi"), None)
+        ]
+
+        for uid, uname, pwd, urole, fname, uemail, uphone, stfid, dcode, divcode, trnno in demo_accounts:
+            existing_u = db.query(User).filter(User.username == uname).first()
+            if not existing_u:
+                nu = User(
+                    user_id=uid,
+                    username=uname,
+                    password_hash=pwd,
+                    role=urole,
+                    full_name=fname,
+                    email=uemail,
+                    phone_number=uphone,
+                    department_code=dcode,
+                    division_code=divcode,
+                    is_active=True
+                )
+                db.add(nu)
+                db.flush()
+                if stfid:
+                    nstf = Staff(
+                        staff_id=stfid,
+                        user_id=nu.user_id,
+                        name=fname,
+                        department_code=dcode,
+                        division_code=divcode,
+                        is_on_duty=True,
+                        active_train_number=trnno
+                    )
+                    db.add(nstf)
+                    db.flush()
+            else:
+                existing_u.full_name = fname
+                existing_u.department_code = dcode
+                existing_u.division_code = divcode
+                existing_u.phone_number = uphone
 
         db.commit()
         print("--- DATABASE INITIAL SEEDING COMPLETED SUCCESSFULLY ---")

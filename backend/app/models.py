@@ -25,6 +25,7 @@ class Division(Base):
     zone       = relationship("Zone",      back_populates="divisions")
     stations   = relationship("Station",   back_populates="division", cascade="all, delete-orphan")
     staff      = relationship("Staff",     back_populates="division")
+    users      = relationship("User",      back_populates="division")
     complaints = relationship("Complaint", back_populates="assigned_division")
 
 
@@ -67,6 +68,7 @@ class Department(Base):
     description     = Column(String(255), nullable=True)
 
     staff      = relationship("Staff",             back_populates="department")
+    users      = relationship("User",              back_populates="department")
     categories = relationship("ComplaintCategory", back_populates="department", cascade="all, delete-orphan")
     complaints = relationship("Complaint",          back_populates="assigned_department")
 
@@ -104,16 +106,21 @@ class TrainRoute(Base):
 
 class User(Base):
     __tablename__ = "users"
-    user_id       = Column(String(50), primary_key=True)
-    username      = Column(String(50),  unique=True, nullable=False)
-    password_hash = Column(String(255), nullable=False)
-    role          = Column(Enum("Admin", "ComplaintOfficer", "Staff", "Passenger", "Inspector", "StationMaster", name="user_roles"), nullable=False)
-    email         = Column(String(100), unique=True, nullable=True)
-    phone_number  = Column(String(15),  nullable=True)
-    is_active     = Column(Boolean, default=True)
-    created_at    = Column(DateTime, default=datetime.utcnow)
-    updated_at    = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    user_id         = Column(String(50), primary_key=True)
+    username        = Column(String(50),  unique=True, nullable=False)
+    password_hash   = Column(String(255), nullable=False)
+    role            = Column(Enum("Admin", "ZoneHead", "DivisionHead", "DepartmentHead", "ComplaintOfficer", "Staff", "Inspector", "StationMaster", name="user_roles"), nullable=False)
+    full_name       = Column(String(100), nullable=True)
+    department_code = Column(String(20),  ForeignKey("departments.department_code"), nullable=True)
+    division_code   = Column(String(20),  ForeignKey("divisions.division_code"),     nullable=True)
+    email           = Column(String(100), unique=True, nullable=True)
+    phone_number    = Column(String(15),  nullable=True)
+    is_active       = Column(Boolean, default=True)
+    created_at      = Column(DateTime, default=datetime.utcnow)
+    updated_at      = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    department            = relationship("Department",                 back_populates="users")
+    division              = relationship("Division",                   back_populates="users")
     staff                 = relationship("Staff",                      uselist=False, back_populates="user", cascade="all, delete-orphan")
     notifications         = relationship("Notification",               back_populates="user", cascade="all, delete-orphan")
     status_updates        = relationship("ComplaintStatusHistory",     back_populates="updated_by_user")
