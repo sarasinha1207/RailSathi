@@ -1,10 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminHeader from '../components/dashboard/AdminHeader';
 import Sidebar from '../components/common/Sidebar';
 import AdminFooter from '../components/dashboard/AdminFooter';
 
 export default function DashboardLayout({ user, onLogout, children }) {
-  const [activeTab, setActiveTab] = useState('home');
+  // Helper to determine initial active tab from URL hash or localStorage
+  const getInitialTab = () => {
+    try {
+      const hash = window.location.hash.replace('#', '').trim();
+      if (hash) {
+        const clean = hash.startsWith('dashboard/') ? hash.replace('dashboard/', '') : hash;
+        if (clean && clean !== 'dashboard') {
+          return clean;
+        }
+      }
+      const saved = localStorage.getItem('dashboard_active_tab');
+      if (saved) return saved;
+    } catch (e) {
+      console.error('Failed to read initial dashboard tab:', e);
+    }
+    return 'home';
+  };
+
+  const [activeTab, setActiveTabState] = useState(getInitialTab);
+
+  // Synchronize tab state with localStorage and URL hash
+  const setActiveTab = (tab) => {
+    setActiveTabState(tab);
+    try {
+      localStorage.setItem('dashboard_active_tab', tab);
+      window.location.hash = `#dashboard/${tab}`;
+    } catch (e) {
+      console.error('Failed to persist dashboard tab:', e);
+    }
+  };
+
+  // Listen to browser forward/back or manual hash changes
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.replace('#', '').trim();
+      if (hash) {
+        const clean = hash.startsWith('dashboard/') ? hash.replace('dashboard/', '') : hash;
+        if (clean && clean !== 'dashboard') {
+          setActiveTabState(clean);
+          localStorage.setItem('dashboard_active_tab', clean);
+        }
+      }
+    };
+
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
 
   return (
     <div style={{

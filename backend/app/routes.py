@@ -534,6 +534,39 @@ async def get_trains_api(db: Session = Depends(get_db)):
     ]
 
 
+# Categories List
+@router.get("/api/v1/categories")
+async def get_categories_api(db: Session = Depends(get_db)):
+    """Lists all complaint categories and subcategories."""
+    cats = db.query(ComplaintCategory).order_by(ComplaintCategory.category_name.asc(), ComplaintCategory.subcategory_name.asc()).all()
+    return [
+        {
+            "category_code": c.category_code,
+            "category_name": c.category_name,
+            "subcategory_name": c.subcategory_name,
+            "department_code": c.department_code,
+            "default_priority": c.default_priority
+        }
+        for c in cats
+    ]
+
+
+# Departments List
+@router.get("/api/v1/departments")
+async def get_departments_api(db: Session = Depends(get_db)):
+    """Lists all railway departments."""
+    depts = db.query(Department).order_by(Department.department_name.asc()).all()
+    return [
+        {
+            "department_code": d.department_code,
+            "department_name": d.department_name,
+            "description": d.description
+        }
+        for d in depts
+    ]
+
+
+
 # ---------------------------------------------------------------------------
 # Phase 2 Lifecycle Endpoints
 # ---------------------------------------------------------------------------

@@ -18,7 +18,7 @@ export default function ComplaintsPage({ user }) {
   const [error, setError] = useState(null);
   const [toastMsg, setToastMsg] = useState(null);
 
-  // Filter Form State (Date Range removed; Priority added)
+  // Filter Form State
   const [filters, setFilters] = useState({
     zone: 'all',
     department: 'all',
@@ -77,8 +77,8 @@ export default function ComplaintsPage({ user }) {
         officerService.getAnalytics()
       ]);
 
-      if (Array.isArray(catRes)) setCategoriesList(catRes);
-      if (Array.isArray(deptRes)) setDepartmentsList(deptRes);
+      if (Array.isArray(catRes) && catRes.length > 0) setCategoriesList(catRes);
+      if (Array.isArray(deptRes) && deptRes.length > 0) setDepartmentsList(deptRes);
 
       if (analyticsRes?.overview_table) {
         const zMap = new Map();
@@ -148,7 +148,7 @@ export default function ComplaintsPage({ user }) {
   const uniqueMainClasses = useMemo(() => {
     const set = new Set();
     categoriesList.forEach(c => {
-      if (c.category_name) set.add(c.category_name);
+      if (c.category_name) set.add(c.category_name.trim());
     });
     return Array.from(set).sort();
   }, [categoriesList]);
@@ -156,7 +156,9 @@ export default function ComplaintsPage({ user }) {
   // Subclasses for Dropdown 2 filtered by selected Main Class
   const availableSubClasses = useMemo(() => {
     if (!modalMainClass) return [];
-    return categoriesList.filter(c => c.category_name === modalMainClass);
+    return categoriesList.filter(
+      c => c.category_name && c.category_name.trim().toLowerCase() === modalMainClass.trim().toLowerCase()
+    );
   }, [categoriesList, modalMainClass]);
 
   // OPEN ASSIGN STAFF MODAL
@@ -164,11 +166,33 @@ export default function ComplaintsPage({ user }) {
     setSelectedComplaint(complaint);
     setSelectedStaffId(complaint.assigned_staff_id || '');
 
-    // Pre-select Main Class and Subclass Code
-    const currMain = complaint.main_class || complaint.category_name || '';
+    // Ensure categories are loaded if not already in state
+    let activeCats = categoriesList;
+    if (activeCats.length === 0) {
+      try {
+        const catRes = await fetch('/api/v1/categories').then(r => r.json());
+        if (Array.isArray(catRes) && catRes.length > 0) {
+          activeCats = catRes;
+          setCategoriesList(catRes);
+        }
+      } catch (e) {
+        console.error('Failed to load categories:', e);
+      }
+    }
+
+    // Pre-select Main Class
+    let currMain = complaint.main_class || complaint.category_name || '';
+    if (!currMain && activeCats.length > 0) {
+      currMain = activeCats[0].category_name;
+    }
     setModalMainClass(currMain);
 
-    const currCode = complaint.verified_category_code || complaint.category_code || '';
+    // Pre-select Subclass Code
+    let currCode = complaint.verified_category_code || complaint.category_code || '';
+    if (!currCode && currMain && activeCats.length > 0) {
+      const match = activeCats.find(c => c.category_name.trim().toLowerCase() === currMain.trim().toLowerCase());
+      if (match) currCode = match.category_code;
+    }
     setModalSubClassCode(currCode);
 
     setShowAssignModal(true);
@@ -187,7 +211,9 @@ export default function ComplaintsPage({ user }) {
   // Handle Main Class Dropdown Change in Modal
   const handleMainClassChange = (newMain) => {
     setModalMainClass(newMain);
-    const subList = categoriesList.filter(c => c.category_name === newMain);
+    const subList = categoriesList.filter(
+      c => c.category_name && c.category_name.trim().toLowerCase() === newMain.trim().toLowerCase()
+    );
     if (subList.length > 0) {
       setModalSubClassCode(subList[0].category_code);
     } else {
@@ -283,10 +309,10 @@ export default function ComplaintsPage({ user }) {
         <CMOKPISection kpis={kpis} />
       </div>
 
-      {/* 2. COMPACT FILTER WORKSPACE CARD (NO HEADING, QUEUE BUTTONS INSIDE, COMPACT FILTERS) */}
+      {/* 2. COMPACT FILTER WORKSPACE CARD */}
       <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px 24px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
         
-        {/* REQUIREMENT 1: QUEUE BUTTONS MOVED INSIDE THIS CARD CONTAINER AT THE TOP */}
+        {/* QUEUE BUTTONS INSIDE CARD */}
         <div style={{ display: 'flex', gap: '10px', marginBottom: '18px', borderBottom: '1px solid #f3f4f6', paddingBottom: '14px', flexWrap: 'wrap' }}>
           <button
             type="button"
@@ -343,7 +369,7 @@ export default function ComplaintsPage({ user }) {
           </button>
         </div>
 
-        {/* COMPACT FILTER FORM (NO HEADING, DATE RANGE REMOVED, PRIORITY ADDED) */}
+        {/* COMPACT FILTER FORM */}
         <form onSubmit={handleApplyFilters} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
           
           {/* Search by ID/PNR */}
@@ -388,7 +414,7 @@ export default function ComplaintsPage({ user }) {
             </select>
           </div>
 
-          {/* REQUIREMENT 2: PRIORITY FILTER DROPDOWN */}
+          {/* Priority */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <label style={{ fontSize: '0.76rem', fontWeight: 700, color: '#4b5563' }}>Priority:</label>
             <select
@@ -488,7 +514,7 @@ export default function ComplaintsPage({ user }) {
                   const isCritical = c.is_critical;
                   const priorityColor = isCritical ? '#c5221f' : c.priority === 'High' ? '#ea4335' : c.priority === 'Medium' ? '#b06000' : '#137333';
                   
-                  // Compute Displayed Status Badge (Unassigned vs Assigned vs In Progress)
+                  // Compute Displayed Status Badge
                   const isAssignedToStaff = Boolean(c.assigned_staff_id);
                   let displayBadgeText = c.internal_status;
                   if (c.internal_status === 'Assigned' && !isAssignedToStaff) {
@@ -501,6 +527,9 @@ export default function ComplaintsPage({ user }) {
                   // Category Main Class & Subclass
                   const mainClass = c.main_class || c.category_name || 'General';
                   const subClass = c.sub_class || c.subcategory_name || 'General';
+
+                  // TRAIN vs STATION OVERVIEW DISPLAY FIX
+                  const isTrainComplaint = c.complaint_type === 'Train' || (c.train_number && c.train_number !== 'N/A');
 
                   return (
                     <tr key={c.complaint_id} style={{ borderBottom: '1px solid #eeeeee' }}>
@@ -520,16 +549,19 @@ export default function ComplaintsPage({ user }) {
                         <div style={{ fontWeight: 700, color: '#111827' }}>
                           Type: {c.complaint_type || 'Train'}
                         </div>
-                        {c.train_number && (
+                        
+                        {isTrainComplaint ? (
                           <div style={{ fontSize: '0.78rem', color: '#374151' }}>
-                            Train: {c.train_number} - {c.train_name || 'Express'}
+                            Train: {c.train_number} {c.train_name ? `- ${c.train_name}` : ''} {c.coach_number ? `(Coach: ${c.coach_number})` : ''}
                           </div>
+                        ) : (
+                          c.station_name && (
+                            <div style={{ fontSize: '0.78rem', color: '#374151' }}>
+                              Station: {c.station_name} {c.station_code ? `(${c.station_code})` : ''} {c.platform_number ? `- Pf ${c.platform_number}` : ''}
+                            </div>
+                          )
                         )}
-                        {c.station_name && (
-                          <div style={{ fontSize: '0.78rem', color: '#374151' }}>
-                            Station: {c.station_name} ({c.station_code || 'NDLS'})
-                          </div>
-                        )}
+
                         <div style={{ fontSize: '0.74rem', color: '#6b7280', marginTop: '2px' }}>
                           Zone: {c.zone_code || 'NR'} | Div: {c.assigned_division_code || c.division_code || 'DLI'}
                         </div>
@@ -554,17 +586,18 @@ export default function ComplaintsPage({ user }) {
                         )}
                       </td>
 
-                      {/* Priority */}
+                      {/* HIGHLIGHTED PRIORITY BADGE */}
                       <td style={{ padding: '12px 14px', verticalAlign: 'top', textAlign: 'center' }}>
                         <span style={{
-                          backgroundColor: priorityColor + '18',
+                          backgroundColor: priorityColor + '20',
                           color: priorityColor,
                           border: `1px solid ${priorityColor}`,
                           padding: '4px 10px',
                           borderRadius: '999px',
                           fontWeight: 800,
                           fontSize: '0.75rem',
-                          display: 'inline-block'
+                          display: 'inline-block',
+                          boxShadow: `0 2px 4px ${priorityColor}15`
                         }}>
                           {isCritical ? 'Critical' : c.priority}
                         </span>
@@ -696,28 +729,81 @@ export default function ComplaintsPage({ user }) {
 
       </div>
 
-      {/* --- REFINED ASSIGN STAFF MODAL --- */}
+      {/* --- ENHANCED ASSIGN STAFF MODAL --- */}
       {showAssignModal && selectedComplaint && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px', maxWidth: '560px', width: '92%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
-            <h3 style={{ margin: '0 0 12px 0', color: '#800020', fontSize: '1.25rem', fontWeight: 800 }}>
-              Assign Field Staff to Complaint
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px', maxWidth: '640px', width: '92%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
+            <h3 style={{ margin: '0 0 16px 0', color: '#800020', fontSize: '1.25rem', fontWeight: 800 }}>
+              Assign Field Staff & Update Complaint Category
             </h3>
             
-            <div style={{ fontSize: '0.82rem', color: '#4b5563', padding: '10px 14px', backgroundColor: '#f9fafb', borderRadius: '6px', marginBottom: '16px', border: '1px solid #e5e7eb' }}>
-              <div>Complaint ID: <strong>{selectedComplaint.complaint_id}</strong> | PNR: {selectedComplaint.pnr_number || 'N/A'}</div>
-              <div>Current Category: <strong>{selectedComplaint.main_class} — {selectedComplaint.sub_class}</strong></div>
+            {/* REQUIREMENT 1: COMPLAINT DETAILS & OVERVIEW (INCLUDING PASSENGER CHOSEN CATEGORY & SUBCATEGORY) */}
+            <div style={{ backgroundColor: '#f9fafb', borderRadius: '8px', padding: '16px', border: '1px solid #e5e7eb', marginBottom: '18px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px dashed #d1d5db', paddingBottom: '8px', marginBottom: '10px' }}>
+                <span style={{ fontSize: '0.95rem', fontWeight: 800, color: '#800020' }}>
+                  Complaint ID: {selectedComplaint.complaint_id}
+                </span>
+                
+                {/* HIGHLIGHTED PRIORITY BADGE IN MODAL */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '0.78rem', color: '#4b5563', fontWeight: 700 }}>Priority:</span>
+                  <span style={{
+                    backgroundColor: (selectedComplaint.is_critical ? '#c5221f' : selectedComplaint.priority === 'High' ? '#ea4335' : selectedComplaint.priority === 'Medium' ? '#b06000' : '#137333') + '20',
+                    color: selectedComplaint.is_critical ? '#c5221f' : selectedComplaint.priority === 'High' ? '#ea4335' : selectedComplaint.priority === 'Medium' ? '#b06000' : '#137333',
+                    border: `1px solid ${selectedComplaint.is_critical ? '#c5221f' : selectedComplaint.priority === 'High' ? '#ea4335' : selectedComplaint.priority === 'Medium' ? '#b06000' : '#137333'}`,
+                    padding: '3px 10px',
+                    borderRadius: '999px',
+                    fontWeight: 800,
+                    fontSize: '0.76rem',
+                    display: 'inline-block'
+                  }}>
+                    {selectedComplaint.is_critical ? 'Critical' : selectedComplaint.priority}
+                  </span>
+                </div>
+              </div>
+
+              {/* OVERVIEW GRID WITH PASSENGER CHOSEN CATEGORY & SUBCATEGORY */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '0.82rem', color: '#374151', marginBottom: '10px' }}>
+                <div><strong>PNR / Phone:</strong> {selectedComplaint.pnr_number || 'N/A'} ({selectedComplaint.phone_number || 'N/A'})</div>
+                <div><strong>Submitted Date:</strong> {new Date(selectedComplaint.created_at).toLocaleString()}</div>
+                
+                {selectedComplaint.complaint_type === 'Train' || (selectedComplaint.train_number && selectedComplaint.train_number !== 'N/A') ? (
+                  <div><strong>Train:</strong> {selectedComplaint.train_number} - {selectedComplaint.train_name || 'Express'} {selectedComplaint.coach_number ? `(Coach ${selectedComplaint.coach_number})` : ''}</div>
+                ) : (
+                  selectedComplaint.station_name && (
+                    <div><strong>Station:</strong> {selectedComplaint.station_name} ({selectedComplaint.station_code || 'N/A'})</div>
+                  )
+                )}
+
+                <div><strong>Zone / Division:</strong> {selectedComplaint.zone_code || 'NR'} / {selectedComplaint.assigned_division_code || selectedComplaint.division_code || 'DLI'}</div>
+              </div>
+
+              {/* REQUIREMENT 1: PASSENGER CHOSEN CATEGORY & SUBCATEGORY */}
+              <div style={{ fontSize: '0.82rem', color: '#374151', padding: '6px 10px', backgroundColor: '#edf2f7', borderRadius: '6px', marginBottom: '10px' }}>
+                <strong>Passenger Category Chosen:</strong>{' '}
+                <span style={{ color: '#800020', fontWeight: 800 }}>
+                  {selectedComplaint.main_class || selectedComplaint.category_name || 'General'} — {selectedComplaint.sub_class || selectedComplaint.subcategory_name || 'General'}
+                </span>
+              </div>
+
+              {/* DESCRIPTION BOX */}
+              <div style={{ marginTop: '8px' }}>
+                <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#111827' }}>Complaint Description:</span>
+                <div style={{ backgroundColor: '#ffffff', padding: '10px 12px', borderRadius: '6px', border: '1px solid #d1d5db', marginTop: '4px', fontSize: '0.82rem', color: '#1f2937', lineHeight: 1.45 }}>
+                  {selectedComplaint.complaint_description || selectedComplaint.description || 'No description provided.'}
+                </div>
+              </div>
             </div>
 
+            {/* REQUIREMENT 2: UPDATE PRIMARY COMPLAINT CATEGORY (DROPDOWNS + UPDATE CATEGORY BUTTON) */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
-              {/* 2 DROPDOWNS FOR COMPLAINT CLASS AND SUBCLASS */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#fcf8f9', padding: '14px', borderRadius: '8px', border: '1px solid #f3d0d8' }}>
-                <label style={{ fontSize: '0.85rem', fontWeight: 800, color: '#800020' }}>
-                  Update Primary Complaint Class & Subclass:
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', backgroundColor: '#fcf8f9', padding: '16px', borderRadius: '8px', border: '1px solid #f3d0d8' }}>
+                <label style={{ fontSize: '0.88rem', fontWeight: 800, color: '#800020' }}>
+                  Update Primary Complaint Category:
                 </label>
 
-                {/* DROPDOWN 1: Main Complaint Class */}
+                {/* DROPDOWN 1: Main Category / Class */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   <label style={{ fontSize: '0.78rem', fontWeight: 700, color: '#374151' }}>1. Select Complaint Class (Main Category):</label>
                   <select
@@ -725,16 +811,19 @@ export default function ComplaintsPage({ user }) {
                     onChange={(e) => handleMainClassChange(e.target.value)}
                     style={{ padding: '9px 12px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '0.85rem', backgroundColor: '#fff', fontWeight: 600 }}
                   >
-                    <option value="">-- Select Main Class --</option>
-                    {uniqueMainClasses.map(m => (
-                      <option key={m} value={m}>{m}</option>
-                    ))}
+                    {uniqueMainClasses.length === 0 ? (
+                      <option value="">-- Loading Categories... --</option>
+                    ) : (
+                      uniqueMainClasses.map(m => (
+                        <option key={m} value={m}>{m}</option>
+                      ))
+                    )}
                   </select>
                 </div>
 
-                {/* DROPDOWN 2: Subclass (Filtered by Main Class) */}
+                {/* DROPDOWN 2: Subcategory / Subclass */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <label style={{ fontSize: '0.78rem', fontWeight: 700, color: '#374151' }}>2. Select Subclass:</label>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 700, color: '#374151' }}>2. Select Subclass (Subcategory):</label>
                   <select
                     value={modalSubClassCode}
                     onChange={(e) => setModalSubClassCode(e.target.value)}
@@ -750,24 +839,50 @@ export default function ComplaintsPage({ user }) {
                     }}
                   >
                     {!modalMainClass ? (
-                      <option value="">-- Choose Class First --</option>
+                      <option value="">-- Select Main Category First --</option>
                     ) : availableSubClasses.length === 0 ? (
-                      <option value="">-- No Subclasses Available --</option>
+                      <option value="">-- No Subcategories Available --</option>
                     ) : (
                       availableSubClasses.map(sc => (
                         <option key={sc.category_code} value={sc.category_code}>
-                          {sc.subcategory_name} ({sc.department_code})
+                          {sc.subcategory_name}
                         </option>
                       ))
                     )}
                   </select>
                 </div>
 
+                {/* UPDATE CATEGORY BUTTON PLACED AFTER THE DROPDOWNS */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '4px' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const match = categoriesList.find(c => c.category_code === modalSubClassCode);
+                      const catText = match ? `${match.category_name} — ${match.subcategory_name}` : modalMainClass;
+                      showToast(`Primary category updated to: ${catText}`);
+                    }}
+                    style={{
+                      padding: '8px 18px',
+                      backgroundColor: '#800020',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '6px',
+                      fontWeight: 700,
+                      fontSize: '0.82rem',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 5px rgba(128,0,32,0.25)'
+                    }}
+                  >
+                    Update Category
+                  </button>
+                </div>
+
               </div>
+
 
               {/* ON-DUTY FIELD STAFF SELECTION */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#111827' }}>Select On-Duty Field Staff Member:</label>
+                <label style={{ fontSize: '0.84rem', fontWeight: 800, color: '#111827' }}>Select On-Duty Field Staff Member:</label>
                 {staffLoading ? (
                   <div style={{ padding: '16px', textAlign: 'center', color: '#666', fontSize: '0.85rem' }}>Loading available staff...</div>
                 ) : availableStaff.length === 0 ? (
@@ -841,8 +956,11 @@ export default function ComplaintsPage({ user }) {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '0.85rem', color: '#374151', marginBottom: '16px' }}>
               <div><strong>Passenger PNR:</strong> {selectedComplaint.pnr_number || 'N/A'}</div>
               <div><strong>Phone Number:</strong> {selectedComplaint.phone_number || 'N/A'}</div>
-              <div><strong>Train Number:</strong> {selectedComplaint.train_number || 'N/A'} ({selectedComplaint.train_name || 'N/A'})</div>
-              <div><strong>Station Name:</strong> {selectedComplaint.station_name || 'N/A'} ({selectedComplaint.station_code || 'N/A'})</div>
+              {selectedComplaint.complaint_type === 'Train' || selectedComplaint.train_number ? (
+                <div><strong>Train Number:</strong> {selectedComplaint.train_number || 'N/A'} ({selectedComplaint.train_name || 'N/A'})</div>
+              ) : (
+                <div><strong>Station Name:</strong> {selectedComplaint.station_name || 'N/A'} ({selectedComplaint.station_code || 'N/A'})</div>
+              )}
               <div><strong>Zone / Division:</strong> {selectedComplaint.zone_code || 'NR'} / {selectedComplaint.assigned_division_code || 'DLI'}</div>
               <div><strong>Submitted At:</strong> {new Date(selectedComplaint.created_at).toLocaleString()}</div>
             </div>
