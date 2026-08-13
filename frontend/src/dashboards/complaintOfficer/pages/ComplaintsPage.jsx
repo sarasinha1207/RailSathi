@@ -881,34 +881,77 @@ export default function ComplaintsPage({ user }) {
 
 
               {/* ON-DUTY FIELD STAFF SELECTION */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.84rem', fontWeight: 800, color: '#111827' }}>Select On-Duty Field Staff Member:</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '0.86rem', fontWeight: 800, color: '#111827' }}>
+                  Eligible Onboard On-Duty Field Staff:
+                </label>
                 {staffLoading ? (
-                  <div style={{ padding: '16px', textAlign: 'center', color: '#666', fontSize: '0.85rem' }}>Loading available staff...</div>
+                  <div style={{ padding: '18px', textAlign: 'center', color: '#666', fontSize: '0.85rem', fontWeight: 600 }}>
+                    Loading eligible staff from database...
+                  </div>
                 ) : availableStaff.length === 0 ? (
-                  <div style={{ padding: '12px', backgroundColor: '#fef3c7', color: '#92400e', borderRadius: '6px', fontSize: '0.82rem' }}>
-                    No active on-duty staff available for this department.
+                  <div style={{ padding: '14px 16px', backgroundColor: '#fef3c7', border: '1px solid #fde68a', color: '#92400e', borderRadius: '8px' }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.88rem', marginBottom: '2px' }}>No On-Duty Staff Available</div>
+                    <div style={{ fontSize: '0.78rem', color: '#b45309' }}>
+                      No eligible staff member from the selected department is currently available for this complaint's train/station.
+                    </div>
                   </div>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '180px', overflowY: 'auto' }}>
-                    {availableStaff.map(s => (
-                      <label key={s.staff_id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', borderRadius: '6px', border: '1px solid #e5e7eb', cursor: 'pointer', backgroundColor: selectedStaffId === s.staff_id ? '#fdf2f4' : '#fff' }}>
-                        <input
-                          type="radio"
-                          name="staffSelection"
-                          value={s.staff_id}
-                          checked={selectedStaffId === s.staff_id}
-                          onChange={() => setSelectedStaffId(s.staff_id)}
-                        />
-                        <div>
-                          <div style={{ fontWeight: 800, fontSize: '0.85rem' }}>{s.full_name} ({s.staff_id})</div>
-                          <div style={{ fontSize: '0.74rem', color: '#6b7280' }}>Role: {s.role} | Active Load: {s.active_assigned_count || 0} tasks</div>
-                        </div>
-                      </label>
-                    ))}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '220px', overflowY: 'auto', paddingRight: '4px' }}>
+                    {availableStaff.map(s => {
+                      const isSelected = selectedStaffId === s.staff_id;
+                      return (
+                        <label
+                          key={s.staff_id}
+                          onClick={() => setSelectedStaffId(s.staff_id)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '12px 14px',
+                            borderRadius: '8px',
+                            border: isSelected ? '2px solid #800020' : '1px solid #e5e7eb',
+                            cursor: 'pointer',
+                            backgroundColor: isSelected ? '#fdf2f4' : '#ffffff',
+                            boxShadow: isSelected ? '0 2px 8px rgba(128,0,32,0.12)' : 'none',
+                            transition: 'all 0.15s ease'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <input
+                              type="radio"
+                              name="staffSelection"
+                              value={s.staff_id}
+                              checked={isSelected}
+                              onChange={() => setSelectedStaffId(s.staff_id)}
+                              style={{ accentColor: '#800020', width: '16px', height: '16px' }}
+                            />
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                              <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#111827' }}>
+                                {s.name || s.staff_name}
+                              </div>
+                              <div style={{ fontSize: '0.76rem', color: '#4b5563' }}>
+                                Staff ID: <strong>{s.staff_id}</strong> | Designation: <strong>{s.designation || 'Field Staff'}</strong>
+                              </div>
+                              <div style={{ fontSize: '0.74rem', color: '#6b7280' }}>
+                                Department: <strong>{s.department_name || s.department_code}</strong> | Duty Location: <strong>{s.duty_location}</strong>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#16a34a', display: 'inline-block' }} />
+                            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#15803d' }}>
+                              On Duty
+                            </span>
+                          </div>
+                        </label>
+                      );
+                    })}
                   </div>
                 )}
               </div>
+
 
             </div>
 

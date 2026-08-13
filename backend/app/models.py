@@ -133,21 +133,41 @@ class User(Base):
 
 class Staff(Base):
     __tablename__ = "staff"
-    staff_id            = Column(String(50), primary_key=True)
-    user_id             = Column(String(50), ForeignKey("users.user_id", ondelete="CASCADE"), unique=True, nullable=False)
-    name                = Column(String(100), nullable=False)
-    department_code     = Column(String(20),  ForeignKey("departments.department_code"), nullable=True)
-    division_code       = Column(String(20),  ForeignKey("divisions.division_code"),     nullable=True)
-    is_on_duty          = Column(Boolean, default=False)
-    active_train_number = Column(String(10),  ForeignKey("trains.train_number"),         nullable=True)
+    staff_id              = Column(String(50), primary_key=True)
+    user_id               = Column(String(50), ForeignKey("users.user_id", ondelete="CASCADE"), unique=True, nullable=False)
+    name                  = Column(String(100), nullable=False)
+    designation           = Column(String(100), nullable=True)
+    department_code       = Column(String(20),  ForeignKey("departments.department_code"), nullable=True)
+    division_code         = Column(String(20),  ForeignKey("divisions.division_code"),     nullable=True)
+    is_on_duty            = Column(Boolean, default=True)
+    duty_status           = Column(String(20), default="ON_DUTY")
+    active_train_number   = Column(String(10),  ForeignKey("trains.train_number"),         nullable=True)
+    assigned_station_code = Column(String(10),  ForeignKey("stations.station_code"),       nullable=True)
 
-    user                = relationship("User",                       back_populates="staff")
-    department          = relationship("Department",                 back_populates="staff")
-    division            = relationship("Division",                   back_populates="staff")
-    active_train        = relationship("Train",                      back_populates="staff_assignments")
-    gps_location        = relationship("StaffGpsLocation",           uselist=False, back_populates="staff", cascade="all, delete-orphan")
-    assigned_complaints = relationship("Complaint",                  back_populates="assigned_staff")
-    assignment_history  = relationship("ComplaintAssignmentHistory", back_populates="staff")
+    user                 = relationship("User",                       back_populates="staff")
+    department           = relationship("Department",                 back_populates="staff")
+    division             = relationship("Division",                   back_populates="staff")
+    active_train         = relationship("Train",                      back_populates="staff_assignments")
+    assigned_station     = relationship("Station",                    foreign_keys=[assigned_station_code])
+    duty_assignments     = relationship("StaffDutyAssignment",        back_populates="staff", cascade="all, delete-orphan")
+    gps_location         = relationship("StaffGpsLocation",           uselist=False, back_populates="staff", cascade="all, delete-orphan")
+    assigned_complaints  = relationship("Complaint",                  back_populates="assigned_staff")
+    assignment_history   = relationship("ComplaintAssignmentHistory", back_populates="staff")
+
+
+class StaffDutyAssignment(Base):
+    __tablename__ = "staff_duty_assignments"
+    assignment_id        = Column(Integer, primary_key=True, autoincrement=True)
+    staff_id             = Column(String(50), ForeignKey("staff.staff_id", ondelete="CASCADE"), nullable=False)
+    train_number         = Column(String(10), ForeignKey("trains.train_number",   ondelete="CASCADE"), nullable=True)
+    station_code         = Column(String(10), ForeignKey("stations.station_code", ondelete="CASCADE"), nullable=True)
+    duty_type            = Column(String(20), nullable=False, default="TRAIN")
+    duty_status          = Column(String(20), nullable=False, default="ON_DUTY")
+    assigned_at          = Column(DateTime, default=datetime.utcnow)
+
+    staff   = relationship("Staff",   foreign_keys=[staff_id], back_populates="duty_assignments")
+    train   = relationship("Train",   foreign_keys=[train_number])
+    station = relationship("Station", foreign_keys=[station_code])
 
 
 class StaffGpsLocation(Base):

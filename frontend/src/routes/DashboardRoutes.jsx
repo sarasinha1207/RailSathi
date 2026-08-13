@@ -9,9 +9,27 @@ import ZoneHeadDashboardPage from '../dashboards/zoneHead/pages/ZoneHeadDashboar
 import DivisionHeadDashboardPage from '../dashboards/divisionHead/pages/DivisionHeadDashboardPage';
 import StaffDashboardPage from '../dashboards/staff/pages/StaffDashboardPage';
 import PassengerDashboardPage from '../dashboards/passenger/pages/PassengerDashboardPage';
+import HelpPage from '../components/dashboard/HelpPage';
+import SettingsPage from '../components/dashboard/SettingsPage';
+import StaffAvailabilityPage from '../dashboards/complaintOfficer/pages/StaffAvailabilityPage';
 
 export default function DashboardRoutes({ user, activeTab = 'home' }) {
   if (!user) return null;
+
+  // Help page is common for every dashboard view
+  if (activeTab === 'help' || activeTab === 'info') {
+    return <HelpPage user={user} />;
+  }
+
+  // Settings page is common for every dashboard view
+  if (activeTab === 'settings') {
+    return <SettingsPage user={user} />;
+  }
+
+  // Staff & Availability Page
+  if (activeTab === 'staff_availability' || activeTab === 'staff') {
+    return <StaffAvailabilityPage user={user} />;
+  }
 
   switch (user.role) {
     case ROLES.ADMIN:

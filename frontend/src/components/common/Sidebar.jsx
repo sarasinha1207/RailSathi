@@ -13,6 +13,12 @@ const IconMap = () => (
   </svg>
 );
 
+const IconInfo = () => (
+  <svg style={{ width: '20px', height: '20px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+);
+
 const IconCog = () => (
   <svg style={{ width: '20px', height: '20px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h3.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.796 3.111a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.798 3.111a1.125 1.125 0 01-1.37.49l-1.216-.456c-.356-.133-.751-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-3.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.797-3.111a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.797-3.111a1.125 1.125 0 011.37-.49l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
@@ -184,6 +190,37 @@ export default function Sidebar({ user, activeTab, setActiveTab, onLogout }) {
           </div>
         </div>
 
+        {/* HELP BUTTON - Common in every dashboard below Clock and above Settings/Logout */}
+        <button
+          onClick={() => setActiveTab('help')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '14px',
+            width: '100%',
+            padding: '12px 18px',
+            borderRadius: '10px',
+            border: 'none',
+            fontSize: '0.92rem',
+            fontWeight: (activeTab === 'help' || activeTab === 'info') ? 800 : 600,
+            cursor: 'pointer',
+            textAlign: 'left',
+            transition: 'all 0.15s ease',
+            position: 'relative',
+            backgroundColor: (activeTab === 'help' || activeTab === 'info') ? '#700c28' : 'transparent',
+            color: (activeTab === 'help' || activeTab === 'info') ? '#ffffff' : '#f0b8c4',
+            boxShadow: (activeTab === 'help' || activeTab === 'info') ? '0 4px 14px rgba(0, 0, 0, 0.25)' : 'none'
+          }}
+        >
+          {(activeTab === 'help' || activeTab === 'info') && (
+            <span style={{ position: 'absolute', left: 0, top: '6px', bottom: '6px', width: '4px', backgroundColor: '#e65c00', borderRadius: '0 4px 4px 0' }}></span>
+          )}
+          <span style={{ color: (activeTab === 'help' || activeTab === 'info') ? '#ffb300' : '#f0b8c4', display: 'flex', alignItems: 'center' }}><IconInfo /></span>
+          <span style={{ letterSpacing: '0.3px' }}>Help</span>
+        </button>
+
+
+        {/* SETTINGS BUTTON */}
         <button
           onClick={() => setActiveTab('settings')}
           style={{
@@ -201,13 +238,18 @@ export default function Sidebar({ user, activeTab, setActiveTab, onLogout }) {
             transition: 'all 0.15s ease',
             position: 'relative',
             backgroundColor: activeTab === 'settings' ? '#700c28' : 'transparent',
-            color: activeTab === 'settings' ? '#ffffff' : '#f0b8c4'
+            color: activeTab === 'settings' ? '#ffffff' : '#f0b8c4',
+            boxShadow: activeTab === 'settings' ? '0 4px 14px rgba(0, 0, 0, 0.25)' : 'none'
           }}
         >
+          {activeTab === 'settings' && (
+            <span style={{ position: 'absolute', left: 0, top: '6px', bottom: '6px', width: '4px', backgroundColor: '#e65c00', borderRadius: '0 4px 4px 0' }}></span>
+          )}
           <span style={{ color: activeTab === 'settings' ? '#ffb300' : '#f0b8c4', display: 'flex', alignItems: 'center' }}><IconCog /></span>
           <span style={{ letterSpacing: '0.3px' }}>Settings</span>
         </button>
 
+        {/* LOGOUT BUTTON */}
         <button
           onClick={onLogout}
           style={{

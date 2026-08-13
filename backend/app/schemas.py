@@ -21,6 +21,16 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
+class ChangePasswordRequest(BaseModel):
+    new_password: str
+
+
+class UpdateProfileRequest(BaseModel):
+    email: Optional[str] = None
+    phone_number: Optional[str] = None
+    full_name: Optional[str] = None
+
+
 # ---------------------------------------------------------------------------
 # Railway Structure Schemas
 # ---------------------------------------------------------------------------

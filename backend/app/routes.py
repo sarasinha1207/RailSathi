@@ -156,7 +156,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Form, Request
 from sqlalchemy.orm import Session
 from .database import get_db
-from .schemas import ComplaintResponse, PnrResponse, LoginRequest, UpdateStatusRequest
+from .schemas import ComplaintResponse, PnrResponse, LoginRequest, UpdateStatusRequest, ChangePasswordRequest, UpdateProfileRequest
 from .models import (
     User, Zone, Division, Station, Train, TrainRoute,
     PnrBooking, Department, ComplaintCategory, Staff, StaffGpsLocation,
@@ -164,6 +164,76 @@ from .models import (
 )
 
 router = APIRouter()
+
+
+@router.get("/api/v1/auth/user-profile")
+async def get_user_profile(request: Request, db: Session = Depends(get_db)):
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    username = request.session.get("username")
+    user = db.query(User).filter(User.username == username).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    dept_name = user.department.department_name if user.department else "General"
+    div_name = user.division.division_name if user.division else "HQ"
+
+    return {
+        "status": "success",
+        "user_id": user.user_id,
+        "username": user.username,
+        "role": user.role,
+        "full_name": user.full_name or user.username,
+        "email": user.email or "",
+        "phone_number": user.phone_number or "",
+        "department_code": user.department_code,
+        "department_name": dept_name,
+        "division_code": user.division_code,
+        "division_name": div_name,
+        "is_active": user.is_active
+    }
+
+@router.post("/api/v1/auth/change-password")
+async def change_password(request: Request, payload: ChangePasswordRequest, db: Session = Depends(get_db)):
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    username = request.session.get("username")
+    user = db.query(User).filter(User.username == username).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user.password_hash = payload.new_password
+    db.commit()
+    return {"status": "success", "message": "Password updated successfully"}
+
+
+@router.post("/api/v1/auth/update-profile")
+async def update_profile(request: Request, payload: UpdateProfileRequest, db: Session = Depends(get_db)):
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    username = request.session.get("username")
+    user = db.query(User).filter(User.username == username).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if payload.email is not None:
+        user.email = payload.email
+    if payload.phone_number is not None:
+        user.phone_number = payload.phone_number
+    if payload.full_name is not None:
+        user.full_name = payload.full_name
+
+    db.commit()
+    return {
+        "status": "success",
+        "message": "Profile updated successfully",
+        "data": {
+            "email": user.email,
+            "phone_number": user.phone_number,
+            "full_name": user.full_name
+        }
+    }
+
 
 
 def generate_complaint_id(db: Session) -> str:
@@ -845,53 +915,75 @@ async def get_available_staff_for_complaint(
     if not complaint:
         raise HTTPException(status_code=404, detail="Complaint not found")
 
+    # Target Department
     target_dept = complaint.verified_category.department_code if (complaint.verified_category and complaint.verified_category.department_code) else complaint.assigned_department_code
 
-    # Query all active staff
-    staff_query = db.query(Staff).filter(Staff.is_on_duty == True)
+    # Check if Train or Station complaint
+    is_train_complaint = (complaint.complaint_type == "Train") or bool(complaint.train_number and complaint.train_number != "N/A")
+
+    # Base query for active, on-duty staff
+    staff_query = db.query(Staff).filter(
+        Staff.is_on_duty == True
+    )
+
+    # 1. STRICT LOCATION BOUNDARY: Train vs Station (Only staff present in passenger's exact train/station)
+    if is_train_complaint and complaint.train_number:
+        staff_query = staff_query.filter(Staff.active_train_number == complaint.train_number)
+    elif not is_train_complaint and complaint.station_code:
+        staff_query = staff_query.filter(Staff.assigned_station_code == complaint.station_code)
+    else:
+        # If no valid location specified on complaint, return empty list
+        staff_query = staff_query.filter(text("1 = 0"))
+
+    # 2. Department-based filtering (First try exact department match on passenger's train/station)
+    dept_filtered_query = staff_query
     if target_dept:
-        staff_query = staff_query.filter(Staff.department_code == target_dept)
+        dept_filtered_query = staff_query.filter(Staff.department_code == target_dept)
 
-    staff_list = staff_query.all()
+    staff_list = dept_filtered_query.all()
 
-    # If department filter yields no staff, fallback to all on-duty staff
+    # Fallback ONLY within the SAME train or SAME station if target department yields zero staff
     if not staff_list:
-        staff_list = db.query(Staff).filter(Staff.is_on_duty == True).all()
+        staff_list = staff_query.all()
 
     result_staff = []
     for s in staff_list:
-        if not s.user or not s.user.is_active:
+        if s.user and not s.user.is_active:
             continue
 
-        active_workload = db.query(Complaint).filter(
-            Complaint.assigned_staff_id == s.staff_id,
-            Complaint.internal_status.in_(["Assigned", "Accepted", "In Progress"])
-        ).count()
-
         dept_name = s.department.department_name if s.department else (s.department_code or "General")
+
+        # Compute duty location text
+        if s.active_train_number:
+            duty_location = f"Train {s.active_train_number}"
+        elif s.assigned_station_code:
+            duty_location = f"Station {s.assigned_station_code}"
+        else:
+            duty_location = "On Duty"
 
         result_staff.append({
             "staff_id": s.staff_id,
             "name": s.name,
+            "staff_name": s.name,
+            "designation": s.designation or "Railway Field Staff",
             "department_code": s.department_code,
             "department_name": dept_name,
             "division_code": s.division_code,
-            "active_train_number": s.active_train_number,
-            "is_on_duty": s.is_on_duty,
-            "active_workload": active_workload,
-            "is_available": active_workload < 5
+            "duty_location": duty_location,
+            "duty_status": s.duty_status or "ON_DUTY",
+            "is_on_duty": s.is_on_duty
         })
-
-    # Sort by active_workload ascending (least loaded first)
-    result_staff.sort(key=lambda x: x["active_workload"])
 
     return {
         "status": "success",
         "complaint_id": complaint_id,
         "recommended_department_code": target_dept,
         "count": len(result_staff),
-        "data": result_staff
+        "data": result_staff,
+        "available_staff": result_staff
     }
+
+
 
 
 @router.post("/api/v1/officer/complaints/{complaint_id}/verify")
@@ -1048,3 +1140,109 @@ async def resolve_complaint_endpoint(
         resolution_remarks=payload.resolution_remarks
     )
     return {"status": "success", "message": "Complaint resolved successfully", "data": enrich_complaint_dict(c, db)}
+
+
+@router.get("/api/v1/officer/staff-availability")
+async def get_staff_availability_overview(
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    """Fetches comprehensive staff list and availability metrics for Staff & Availability Dashboard."""
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+
+    all_staff = db.query(Staff).all()
+    all_trains = {t.train_number: t.train_name for t in db.query(Train).all()}
+    all_depts = {d.department_code: d.department_name for d in db.query(Department).all()}
+    all_stations = {s.station_code: s.station_name for s in db.query(Station).all()}
+
+    # Compute active assigned complaints per staff member
+    active_assigned_counts = {}
+    active_complaints = db.query(Complaint).filter(
+        Complaint.internal_status.in_(["Assigned", "In Progress"]),
+        Complaint.assigned_staff_id.isnot(None)
+    ).all()
+    for c in active_complaints:
+        active_assigned_counts[c.assigned_staff_id] = active_assigned_counts.get(c.assigned_staff_id, 0) + 1
+
+    staff_list = []
+    total_staff = len(all_staff)
+    currently_onboard = 0
+    available_count = 0
+    assigned_count = 0
+    unavailable_count = 0
+    offline_count = 0
+
+    for s in all_staff:
+        train_name = all_trains.get(s.active_train_number, "Special Express") if s.active_train_number else ""
+        dept_name = all_depts.get(s.department_code, s.department_code)
+        station_name = all_stations.get(s.assigned_station_code, s.assigned_station_code) if s.assigned_station_code else ""
+
+        active_cnt = active_assigned_counts.get(s.staff_id, 0)
+
+        # Determine Availability Status:
+        # 🟢 Available — onboard and can receive a complaint
+        # 🟡 Assigned — currently handling complaint(s), but may still be eligible depending on workload
+        # 🔴 Unavailable — not available for assignment
+        # ⚪ Offline/Not Onboard — not currently present on the train
+        
+        isOnboard = bool(s.active_train_number) or s.duty_status == 'ON_DUTY'
+        if isOnboard:
+            currently_onboard += 1
+
+        if s.duty_status == 'ON_BREAK' or s.duty_status == 'SUSPENDED':
+            availability_status = 'Unavailable'
+            unavailable_count += 1
+
+        elif s.duty_status == 'OFF_DUTY' or not isOnboard:
+            availability_status = 'Offline/Not Onboard'
+            offline_count += 1
+        elif active_cnt > 0:
+            availability_status = 'Assigned'
+            assigned_count += 1
+        else:
+            availability_status = 'Available'
+            available_count += 1
+
+        # Generate realistic coach & location assignment
+        coach_num = f"B{(abs(hash(s.staff_id)) % 6) + 1}" if "RPF" in s.staff_id or "ELEC" in s.staff_id else ("S4" if "TTE" in s.staff_id else "Pantry Car")
+        curr_loc = f"Enroute ({station_name or 'NDLS'})" if station_name else "In Transit"
+
+        phone_num = (s.user.phone_number if s.user and s.user.phone_number else None) or "+91 98765 12801"
+        email_addr = (s.user.email if s.user and s.user.email else None) or f"{s.staff_id.lower()}@railsathi.gov.in"
+
+        staff_list.append({
+            "staff_id": s.staff_id,
+            "name": s.name,
+            "designation": s.designation or "Railway Official",
+            "department_code": s.department_code,
+            "department_name": dept_name,
+            "phone": phone_num,
+            "email": email_addr,
+            "train_number": s.active_train_number or "",
+            "train_name": train_name,
+            "station_code": s.assigned_station_code or "",
+            "station_name": station_name,
+            "coach_number": coach_num,
+            "current_location": curr_loc,
+            "onboard_status": "Onboard" if s.active_train_number else "Station Duty",
+            "availability_status": availability_status,
+            "active_complaint_count": active_cnt,
+            "last_updated": datetime.now().strftime("%d %b %Y, %H:%M IST")
+        })
+
+
+    metrics = {
+        "total_staff": total_staff,
+        "currently_onboard": currently_onboard,
+        "available": available_count,
+        "currently_assigned": assigned_count,
+        "unavailable": unavailable_count + offline_count
+    }
+
+    return {
+        "status": "success",
+        "metrics": metrics,
+        "data": staff_list
+    }
+

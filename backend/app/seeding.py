@@ -661,9 +661,10 @@ STATIONS_DATA = [
 
 from .models import (
     Zone, Division, Station, Train, TrainRoute, User, Department,
-    Staff, StaffGpsLocation, PnrBooking, ComplaintCategory, Complaint,
+    Staff, StaffDutyAssignment, StaffGpsLocation, PnrBooking, ComplaintCategory, Complaint,
     Feedback, ComplaintStatusHistory, OtpVerification, Notification
 )
+
 
 def parse_date(date_str):
     if not date_str:
@@ -1539,6 +1540,9 @@ def seed_database():
                 existing_u.division_code = divcode
                 existing_u.phone_number = uphone
 
+        # 6. Seed Onboarded Staff System
+        seed_onboarded_staff_system(db)
+
         db.commit()
         print("--- DATABASE INITIAL SEEDING COMPLETED SUCCESSFULLY ---")
     except Exception as e:
@@ -1547,3 +1551,159 @@ def seed_database():
         raise e
     finally:
         db.close()
+
+
+def seed_onboarded_staff_system(db: Session):
+    print("--- SEEDING ONBOARDED STAFF SYSTEM DATA ---")
+
+    # 1. Ensure essential departments exist
+    dept_mappings = {
+        "RPF": "Railway Protection Force",
+        "COMMERCIAL": "Commercial & Ticket Checking",
+        "OPERATING": "Operating & Train Operations",
+        "MECH_CLEAN": "Mechanical & Housekeeping",
+        "MECH_COACH": "Mechanical (Coaching)",
+        "ELEC": "Electrical & AC Maintenance",
+        "CATERING": "Catering & Vending Services",
+        "S&T": "Signal & Telecommunication",
+        "CIVIL": "Civil Engineering & Works"
+    }
+    for code, name in dept_mappings.items():
+        existing_dept = db.query(Department).filter(Department.department_code == code).first()
+        if not existing_dept:
+            db.add(Department(department_code=code, department_name=name, description=name))
+            db.flush()
+
+
+    # 2. Get list of actual trains & stations from DB
+    trains = db.query(Train).all()
+    stations = db.query(Station).all()
+
+    target_trains = ["12801", "12002", "12301", "12951", "10215", "12424", "12260", "12626", "12724", "12622"]
+    for t in trains[:20]:
+        if t.train_number not in target_trains:
+            target_trains.append(t.train_number)
+
+    target_stations = ["NDLS", "PUNE", "CSMT", "HWH", "MAS", "ADI", "CNB", "BSB", "LKO", "GKP"]
+    for s in stations[:20]:
+        if s.station_code not in target_stations:
+            target_stations.append(s.station_code)
+
+    train_numbers = target_trains
+    station_codes = target_stations
+
+
+    staff_created_count = 0
+
+    def upsert_staff_member(staff_id, name, designation, dept_code, train_num=None, stn_code=None):
+        nonlocal staff_created_count
+        user_id = f"USR_{staff_id}"
+        username = staff_id.lower()
+
+        user = db.query(User).filter(User.user_id == user_id).first()
+        if not user:
+            user = User(
+                user_id=user_id,
+                username=username,
+                password_hash="staff123",
+                role="Staff",
+                full_name=name,
+                department_code=dept_code,
+                email=f"{username}@railsathi.gov.in",
+                phone_number=f"98765{staff_created_count:05d}",
+                is_active=True
+            )
+            db.add(user)
+            db.flush()
+
+        staff = db.query(Staff).filter(Staff.staff_id == staff_id).first()
+        if not staff:
+            staff = Staff(
+                staff_id=staff_id,
+                user_id=user.user_id,
+                name=name,
+                designation=designation,
+                department_code=dept_code,
+                is_on_duty=True,
+                duty_status="ON_DUTY",
+                active_train_number=train_num,
+                assigned_station_code=stn_code
+            )
+            db.add(staff)
+            staff_created_count += 1
+        else:
+            staff.name = name
+            staff.designation = designation
+            staff.department_code = dept_code
+            staff.is_on_duty = True
+            staff.duty_status = "ON_DUTY"
+            staff.active_train_number = train_num
+            staff.assigned_station_code = stn_code
+
+        db.flush()
+
+        duty_type = "TRAIN" if train_num else "STATION"
+        duty = db.query(StaffDutyAssignment).filter(StaffDutyAssignment.staff_id == staff_id).first()
+        if not duty:
+            duty = StaffDutyAssignment(
+                staff_id=staff_id,
+                train_number=train_num,
+                station_code=stn_code,
+                duty_type=duty_type,
+                duty_status="ON_DUTY"
+            )
+            db.add(duty)
+        else:
+            duty.train_number = train_num
+            duty.station_code = stn_code
+            duty.duty_type = duty_type
+            duty.duty_status = "ON_DUTY"
+
+    train_staff_templates = [
+        ("RPF", "STF_RPF", "RPF Constable", "Rajesh Kumar"),
+        ("RPF", "STF_RPF_SI", "RPF Sub-Inspector", "Vikram Singh"),
+        ("COMMERCIAL", "STF_TTE", "TTE", "Amit Sharma"),
+        ("COMMERCIAL", "STF_STE", "Senior Ticket Examiner", "Rakesh Verma"),
+        ("OPERATING", "STF_GUARD", "Train Manager / Guard", "Anil Sharma"),
+        ("OPERATING", "STF_PILOT", "Loco Pilot", "Dinesh Kumar"),
+        ("OPERATING", "STF_APILOT", "Assistant Loco Pilot", "Sanjay Gupta"),
+        ("MECH_CLEAN", "STF_HYG", "Coach Attendant", "Neha Singh"),
+        ("MECH_CLEAN", "STF_OBHS", "OBHS Cleaning Staff", "Suresh Verma"),
+        ("MECH_CLEAN", "STF_CLEAN", "Sanitation Supervisor", "Manoj Tiwari"),
+        ("ELEC", "STF_ELEC", "AC Maintenance Technician", "Ramesh Chander"),
+        ("ELEC", "STF_ELEC_ATT", "Train Electrical Attendant", "Vijay Kumar"),
+        ("CATERING", "STF_CAT", "Pantry Manager", "Praveen Yadav"),
+        ("CATERING", "STF_CAT_SUP", "Catering Service Supervisor", "Sunil Joshi"),
+    ]
+
+    for t_num in train_numbers[:20]:
+        for dept_code, prefix, desig, base_name in train_staff_templates:
+            sid = f"{prefix}_{t_num}"
+            sname = f"{base_name} ({t_num})"
+            upsert_staff_member(sid, sname, desig, dept_code, train_num=t_num)
+
+    station_staff_templates = [
+        ("OPERATING", "STF_SM", "Station Master", "Rajendra Prasad"),
+        ("OPERATING", "STF_ASM", "Assistant Station Master", "Alok Pandey"),
+        ("OPERATING", "STF_PN", "Pointsman", "Karan Bahadur"),
+        ("COMMERCIAL", "STF_COMM_SUP", "Commercial Inspector", "Mahesh Babu"),
+        ("COMMERCIAL", "STF_TICKET", "Station Ticket Inspector", "Sunita Rao"),
+        ("COMMERCIAL", "STF_PARCEL", "Parcel Clerk", "Deepak Saxena"),
+        ("RPF", "STF_RPF_STN", "RPF Station Inspector", "Harish Chandra"),
+        ("RPF", "STF_RPF_CONST", "RPF Station Constable", "Bhagwan Das"),
+        ("MECH_CLEAN", "STF_HYG_STN", "Station Cleaning Supervisor", "Ravi Shankar"),
+        ("MECH_CLEAN", "STF_SAN_STN", "Sanitation Staff", "Santosh Kumar"),
+        ("ELEC", "STF_ELEC_STN", "Station Electrical Tech", "Manish Malhotra"),
+        ("ELEC", "STF_LIFT_STN", "Escalator & Lift Technician", "Girish Sharma"),
+        ("S&T", "STF_ST_STN", "Signal & Telecom Inspector", "Venkatesh Rao"),
+    ]
+
+    for s_code in station_codes[:20]:
+        for dept_code, prefix, desig, base_name in station_staff_templates:
+            sid = f"{prefix}_{s_code}"
+            sname = f"{base_name} ({s_code})"
+            upsert_staff_member(sid, sname, desig, dept_code, stn_code=s_code)
+
+    db.flush()
+    print(f"[OK] Onboarded staff system seeded successfully: {staff_created_count} staff records.")
+
