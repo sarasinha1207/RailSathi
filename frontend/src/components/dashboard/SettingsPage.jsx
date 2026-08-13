@@ -43,8 +43,8 @@ export default function SettingsPage({ user }) {
     user_id: user?.user_id || 'USR_01',
     department_name: 'Commercial & Operations',
     division_name: 'Delhi Division (Northern Railway)',
-    working_hours: '09:00 AM - 06:00 PM IST (Break Time: 01:00 PM - 02:00 PM)',
-    working_days: 'Mon, Tue, Wed, Thu, Fri (M, T, W, TH, F)'
+    working_hours: '09:00 AM - 06:00 PM (Break Time: 01:00 PM - 02:00 PM)',
+    working_days: 'Mon, Tue, Wed, Thu, Fri'
   });
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);

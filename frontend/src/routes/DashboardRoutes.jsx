@@ -12,6 +12,7 @@ import PassengerDashboardPage from '../dashboards/passenger/pages/PassengerDashb
 import HelpPage from '../components/dashboard/HelpPage';
 import SettingsPage from '../components/dashboard/SettingsPage';
 import StaffAvailabilityPage from '../dashboards/complaintOfficer/pages/StaffAvailabilityPage';
+import ZoneDivisionPage from '../dashboards/complaintOfficer/pages/ZoneDivisionPage';
 
 export default function DashboardRoutes({ user, activeTab = 'home' }) {
   if (!user) return null;
@@ -29,6 +30,11 @@ export default function DashboardRoutes({ user, activeTab = 'home' }) {
   // Staff & Availability Page
   if (activeTab === 'staff_availability' || activeTab === 'staff') {
     return <StaffAvailabilityPage user={user} />;
+  }
+
+  // Zone & Division-wise Page
+  if (activeTab === 'zone_division_complaints' || activeTab === 'zones' || activeTab === 'zone_division') {
+    return <ZoneDivisionPage user={user} />;
   }
 
   switch (user.role) {

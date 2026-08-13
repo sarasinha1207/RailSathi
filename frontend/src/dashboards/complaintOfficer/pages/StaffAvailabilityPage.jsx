@@ -124,35 +124,30 @@ export default function StaffAvailabilityPage({ user }) {
     { code: 'S&T', name: 'Signal & Telecommunication' }
   ];
 
-  // Helper for Status Badge styling
+  // Helper for Status Badge styling (Only Available, Assigned, Unavailable)
   const renderStatusBadge = (status) => {
     switch (status) {
       case 'Available':
         return (
-          <span style={{ backgroundColor: '#e6f4ea', color: '#137333', border: '1px solid #ceead6', padding: '5px 12px', borderRadius: '16px', fontSize: '0.8rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <span>🟢</span> Available — Onboard and can receive a complaint
+          <span style={{ backgroundColor: '#e6f4ea', color: '#137333', border: '1px solid #ceead6', padding: '5px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <span>🟢</span> Available
           </span>
         );
       case 'Assigned':
         return (
-          <span style={{ backgroundColor: '#fef3d6', color: '#b06000', border: '1px solid #fde293', padding: '5px 12px', borderRadius: '16px', fontSize: '0.8rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <span>🟡</span> Assigned — Currently handling complaint(s)
-          </span>
-        );
-      case 'Unavailable':
-        return (
-          <span style={{ backgroundColor: '#fce8e6', color: '#c5221f', border: '1px solid #fad2cf', padding: '5px 12px', borderRadius: '16px', fontSize: '0.8rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <span>🔴</span> Unavailable — Not available for assignment
+          <span style={{ backgroundColor: '#fef3d6', color: '#b06000', border: '1px solid #fde293', padding: '5px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <span>🟡</span> Assigned
           </span>
         );
       default:
         return (
-          <span style={{ backgroundColor: '#f1f5f9', color: '#64748b', border: '1px solid #cbd5e1', padding: '5px 12px', borderRadius: '16px', fontSize: '0.8rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <span>⚪</span> Offline / Not Onboard
+          <span style={{ backgroundColor: '#fce8e6', color: '#c5221f', border: '1px solid #fad2cf', padding: '5px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <span>🔴</span> Unavailable
           </span>
         );
     }
   };
+
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '28px', maxWidth: '1280px', margin: '0 auto', paddingBottom: '48px', fontFamily: "'Outfit', 'Segoe UI', system-ui, sans-serif" }}>
@@ -364,14 +359,13 @@ export default function StaffAvailabilityPage({ user }) {
                 {filteredStaff.map((staff, idx) => (
                   <tr
                     key={staff.staff_id}
-                    onClick={() => setSelectedStaff(staff)}
                     style={{
                       backgroundColor: idx % 2 === 0 ? '#ffffff' : '#f8fafc',
                       borderBottom: '1px solid #e2e8f0',
-                      cursor: 'pointer',
                       transition: 'background-color 0.15s ease'
                     }}
                   >
+
                     {/* Staff Avatar + Name */}
                     <td style={{ padding: '14px 16px', fontWeight: 800, color: '#111827' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -413,7 +407,7 @@ export default function StaffAvailabilityPage({ user }) {
                       {staff.department_name}
                     </td>
 
-                    {/* Train Number & Name */}
+                    {/* Train Number & Name / Station Duty */}
                     <td style={{ padding: '14px 16px', fontWeight: 700, color: '#1f2937' }}>
                       {staff.train_number ? (
                         <div>
@@ -421,9 +415,15 @@ export default function StaffAvailabilityPage({ user }) {
                           <div style={{ fontSize: '0.76rem', color: '#6b7280', fontWeight: 500 }}>{staff.train_name}</div>
                         </div>
                       ) : (
-                        <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>Station Duty ({staff.station_code || 'NDLS'})</span>
+                        <div>
+                          <div style={{ color: '#800020', fontWeight: 800 }}>Station Duty ({staff.station_code || 'NDLS'})</div>
+                          <div style={{ fontSize: '0.75rem', color: '#4b5563', fontWeight: 600 }}>
+                            Zone: {staff.station_zone_code || 'NR'} | Div: {staff.station_division_name || 'Delhi (DLI)'}
+                          </div>
+                        </div>
                       )}
                     </td>
+
 
                     {/* Availability Status */}
                     <td style={{ padding: '14px 16px' }}>
