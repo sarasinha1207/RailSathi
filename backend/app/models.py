@@ -79,7 +79,8 @@ class ComplaintCategory(Base):
     category_name    = Column(String(150), nullable=False)
     subcategory_name = Column(String(150), nullable=False)
     department_code  = Column(String(20),  ForeignKey("departments.department_code", ondelete="CASCADE"), nullable=False)
-    default_priority = Column(Enum("Low", "Medium", "High", name="category_priorities"), nullable=False, default="Medium")
+    default_priority = Column(Enum("Low", "Medium", "High", "Critical", name="category_priorities"), nullable=False, default="Medium")
+
 
     department = relationship("Department", back_populates="categories")
     complaints = relationship("Complaint",  foreign_keys="[Complaint.category_code]", back_populates="category", cascade="all, delete-orphan")
@@ -229,10 +230,12 @@ class Complaint(Base):
     
     # Single source of truth: internal lifecycle status
     internal_status          = Column(Enum(
-        "Assigned", "In Progress", "Reassignment Requested",
-        "Escalated", "Resolved", "Closed",
+        "Pending Review", "Under Review", "Assigned", "Accepted", "In Progress",
+        "Unable to Resolve", "Reassignment Requested", "Reassigned", "Escalated",
+        "Resolved", "Closed",
         name="internal_complaint_statuses"
-    ), nullable=False, default="Assigned")
+    ), nullable=False, default="Pending Review")
+
 
     is_critical              = Column(Boolean, default=False, nullable=False)
 
@@ -241,7 +244,8 @@ class Complaint(Base):
     assigned_division_code   = Column(String(20), ForeignKey("divisions.division_code"),    nullable=True)
     assigned_staff_id        = Column(String(50), ForeignKey("staff.staff_id"),          nullable=True)
 
-    priority                 = Column(Enum("Low", "Medium", "High", name="complaint_priorities"), nullable=False, default="Medium")
+    priority                 = Column(Enum("Low", "Medium", "High", "Critical", name="complaint_priorities"), nullable=False, default="Medium")
+
     complaint_source         = Column(Enum("Passenger Portal", "Staff Portal", "Admin Portal", "Mobile App", "API", name="complaint_sources"), nullable=False, default="Passenger Portal")
     created_at               = Column(DateTime, default=datetime.utcnow)
     updated_at               = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -379,3 +383,53 @@ class Notification(Base):
     created_at        = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="notifications")
+
+
+# ---------------------------------------------------------------------------
+# PHASE 4 ONBOARD STAFF & TRAIN INVENTORY MODELS
+# ---------------------------------------------------------------------------
+class TrainCoach(Base):
+    __tablename__ = "train_coaches"
+    coach_id          = Column(Integer, primary_key=True, autoincrement=True)
+    train_number      = Column(String(10), ForeignKey("trains.train_number", ondelete="CASCADE"), nullable=False)
+    coach_number      = Column(String(20), nullable=False)
+    coach_type        = Column(String(50), nullable=False)
+    position_sequence = Column(Integer, nullable=False, default=1)
+    assigned_staff_id = Column(String(50), ForeignKey("staff.staff_id", ondelete="SET NULL"), nullable=True)
+    facilities        = Column(String(255), nullable=True)
+
+    train          = relationship("Train", foreign_keys=[train_number])
+    assigned_staff = relationship("Staff", foreign_keys=[assigned_staff_id])
+
+
+class TrainInventory(Base):
+    __tablename__ = "train_inventory"
+    inventory_id  = Column(Integer, primary_key=True, autoincrement=True)
+    train_number  = Column(String(10), ForeignKey("trains.train_number", ondelete="CASCADE"), nullable=False)
+    item_name     = Column(String(150), nullable=False)
+    category      = Column(String(50), nullable=False)
+    quantity      = Column(Integer, nullable=False, default=0)
+    unit          = Column(String(20), nullable=False, default="Units")
+    min_threshold = Column(Integer, nullable=False, default=10)
+    status        = Column(String(20), nullable=False, default="Available")
+    last_updated  = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    train = relationship("Train", foreign_keys=[train_number])
+
+
+class ComplaintReassignmentRequest(BaseModel if False else Base):
+    __tablename__ = "complaint_reassignment_requests"
+    request_id           = Column(Integer, primary_key=True, autoincrement=True)
+    complaint_id         = Column(String(20), ForeignKey("complaints.complaint_id", ondelete="CASCADE"), nullable=False)
+    requested_by_staff_id= Column(String(50), ForeignKey("staff.staff_id"), nullable=False)
+    reason               = Column(String(255), nullable=False)
+    remarks              = Column(Text, nullable=True)
+    status               = Column(Enum("Pending", "Approved", "Rejected", "Cancelled", name="reassignment_request_statuses"), nullable=False, default="Pending")
+    created_at           = Column(DateTime, default=datetime.utcnow, nullable=False)
+    reviewed_by_user_id  = Column(String(50), ForeignKey("users.user_id"), nullable=True)
+    reviewed_at          = Column(DateTime, nullable=True)
+
+    complaint          = relationship("Complaint", foreign_keys=[complaint_id])
+    requested_by_staff = relationship("Staff", foreign_keys=[requested_by_staff_id])
+    reviewed_by_user   = relationship("User", foreign_keys=[reviewed_by_user_id])
+

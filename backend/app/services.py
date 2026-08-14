@@ -58,9 +58,12 @@ def verify_complaint_service(
                 complaint.assigned_department_code = cat.department_code
 
         if priority:
-            if priority not in ("Low", "Medium", "High"):
+            if priority not in ("Low", "Medium", "High", "Critical"):
                 raise HTTPException(status_code=400, detail="Invalid priority level.")
             complaint.priority = priority
+            if priority == "Critical":
+                complaint.is_critical = True
+
 
         if is_critical is not None:
             complaint.is_critical = is_critical
@@ -141,7 +144,11 @@ def assign_complaint_service(
                 if not complaint.assigned_department_code:
                     complaint.assigned_department_code = cat.department_code
         if priority:
-            complaint.priority = priority
+            if priority in ("Low", "Medium", "High", "Critical"):
+                complaint.priority = priority
+                if priority == "Critical":
+                    complaint.is_critical = True
+
         if is_critical is not None:
             complaint.is_critical = is_critical
 

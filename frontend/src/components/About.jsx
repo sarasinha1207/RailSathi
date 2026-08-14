@@ -585,10 +585,13 @@ export default function About() {
               while standard maintenance requests are queued for scheduled halts:
             </p>
             <ul style={{ paddingLeft: '20px', fontSize: '0.95rem', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <li><strong>High Priority</strong>: Security threats (thefts, harassment) and medical emergencies trigger instant control room dispatch.</li>
-              <li><strong>Medium Priority</strong>: Faulty electrical systems (AC, fans) or catering overcharging are scheduled for inspection at the next major halt.</li>
-              <li><strong>Low Priority</strong>: General cleanliness issues or minor fittings repairs are resolved by onboard personnel during regular rounds.</li>
+              <li><strong>Critical Priority</strong> (<span style={{ color: '#c5221f', fontWeight: 800 }}>SLA &lt; 15 Mins</span>): Medical emergencies, dacoity/robbery, sexual harassment/eve-teasing, passenger fallen down, and train fire trigger immediate control room dispatch and instant SMS/WhatsApp alerts to onboard TTE/RPF.</li>
+              <li><strong>High Priority</strong> (<span style={{ color: '#ea4335', fontWeight: 800 }}>SLA &lt; 30 Mins</span>): Complete AC failure in AC coaches, water exhaustion in toilets, security nuisance, and luggage theft.</li>
+              <li><strong>Medium Priority</strong> (<span style={{ color: '#b06000', fontWeight: 800 }}>SLA &lt; 2 Hours</span>): Food quality defects, catering overcharging, bedroll non-availability, fan/light defects, and train delay inquiries.</li>
+              <li><strong>Low Priority</strong> (<span style={{ color: '#0284c7', fontWeight: 800 }}>SLA &lt; 4 Hours</span>): General cleanliness inquiries, UTS app queries, feedback, and minor station fittings repairs.</li>
             </ul>
+
+
           </div>
 
           <div className="split-col-item">

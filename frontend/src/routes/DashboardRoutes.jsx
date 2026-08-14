@@ -8,13 +8,17 @@ import OfficerDashboardPage from '../dashboards/complaintOfficer/pages/OfficerDa
 import ZoneHeadDashboardPage from '../dashboards/zoneHead/pages/ZoneHeadDashboardPage';
 import DivisionHeadDashboardPage from '../dashboards/divisionHead/pages/DivisionHeadDashboardPage';
 import StaffDashboardPage from '../dashboards/staff/pages/StaffDashboardPage';
+import StaffComplaintsPage from '../dashboards/staff/pages/StaffComplaintsPage';
+import StaffOtherStaffPage from '../dashboards/staff/pages/StaffOtherStaffPage';
+import StaffTrainJourneyPage from '../dashboards/staff/pages/StaffTrainJourneyPage';
+import StaffInventoryPage from '../dashboards/staff/pages/StaffInventoryPage';
 import PassengerDashboardPage from '../dashboards/passenger/pages/PassengerDashboardPage';
 import HelpPage from '../components/dashboard/HelpPage';
 import SettingsPage from '../components/dashboard/SettingsPage';
 import StaffAvailabilityPage from '../dashboards/complaintOfficer/pages/StaffAvailabilityPage';
 import ZoneDivisionPage from '../dashboards/complaintOfficer/pages/ZoneDivisionPage';
 
-export default function DashboardRoutes({ user, activeTab = 'home' }) {
+export default function DashboardRoutes({ user, activeTab = 'home', onNavigate }) {
   if (!user) return null;
 
   // Help page is common for every dashboard view
@@ -82,9 +86,20 @@ export default function DashboardRoutes({ user, activeTab = 'home' }) {
     case ROLES.STAFF:
       return (
         <RoleRoute user={user} allowedRoles={[ROLES.STAFF, ROLES.ADMIN]}>
-          <StaffDashboardPage user={user} />
+          {activeTab === 'complaints' || activeTab === 'my_complaints' ? (
+            <StaffComplaintsPage user={user} />
+          ) : activeTab === 'other_staff' ? (
+            <StaffOtherStaffPage user={user} />
+          ) : activeTab === 'train_journey' ? (
+            <StaffTrainJourneyPage user={user} />
+          ) : activeTab === 'inventory' ? (
+            <StaffInventoryPage user={user} />
+          ) : (
+            <StaffDashboardPage user={user} onNavigate={onNavigate} />
+          )}
         </RoleRoute>
       );
+
 
     default:
       return (

@@ -390,10 +390,11 @@ export default function OfficerDashboard({ user }) {
             style={{ padding: '10px 14px', borderRadius: '8px', border: '1px solid #cccccc', fontSize: '0.88rem' }}
           >
             <option value="all">All Priorities</option>
+            <option value="Critical">Critical Priority</option>
             <option value="High">High Priority</option>
             <option value="Medium">Medium Priority</option>
             <option value="Low">Low Priority</option>
-            <option value="Critical">Critical Only</option>
+
           </select>
 
           {/* Department Filter */}

@@ -952,7 +952,8 @@ def seed_database():
             ("Luggage / Parcels", "Staff Not Available", "Other", "Low"),
             ("Luggage / Parcels", "Touts", "Other", "Low"),
             # Medical Assistance
-            ("Medical Assistance", "Medical Assistance", "Medical", "High"),
+            ("Medical Assistance", "Medical Assistance", "Medical", "Critical"),
+
             # Miscellaneous
             ("Miscellaneous", "Miscellaneous", "Other", "Low"),
             # Passenger Amenities
@@ -980,24 +981,25 @@ def seed_database():
             ("Reserved Ticketing", "Tatkal", "Other", "Low"),
             ("Reserved Ticketing", "touts", "Other", "Medium"),
             # Security
-            ("Security", "Dacoity/Robbery/Murder/Riots", "Security (RPF)", "High"),
-            ("Security", "Eve-teasing", "Security (RPF)", "High"),
-            ("Security", "Eveteasing/Misbehaviour with lady passengers/Rape", "Security (RPF)", "High"),
+            ("Security", "Dacoity/Robbery/Murder/Riots", "Security (RPF)", "Critical"),
+            ("Security", "Eve-teasing", "Security (RPF)", "Critical"),
+            ("Security", "Eveteasing/Misbehaviour with lady passengers/Rape", "Security (RPF)", "Critical"),
             ("Security", "Harassment/Extortion by Security Personnel/Railway personnel", "Security (RPF)", "High"),
             ("Security", "Luggage Left Behind/Unclaimed/Suspected Articles", "Security (RPF)", "High"),
             ("Security", "Misbehaviour", "Security (RPF)", "Medium"),
-            ("Security", "Misbehaviour with lady passenger", "Security (RPF)", "High"),
-            ("Security", "Misbehaviour with lady passengers", "Security (RPF)", "High"),
+            ("Security", "Misbehaviour with lady passenger", "Security (RPF)", "Critical"),
+            ("Security", "Misbehaviour with lady passengers", "Security (RPF)", "Critical"),
             ("Security", "Nuisance by Hawkers/Beggar/Eunuch", "Security (RPF)", "Medium"),
             ("Security", "Nuisance by passenger", "Security (RPF)", "Medium"),
             ("Security", "Others", "Security (RPF)", "Low"),
-            ("Security", "Passenger Missing/Not responding call", "Security (RPF)", "High"),
-            ("Security", "Passenger fallen down", "Security (RPF)", "High"),
-            ("Security", "Quarrelling/Hooliganism", "Security (RPF)", "High"),
-            ("Security", "Rape", "Security (RPF)", "High"),
+            ("Security", "Passenger Missing/Not responding call", "Security (RPF)", "Critical"),
+            ("Security", "Passenger fallen down", "Security (RPF)", "Critical"),
+            ("Security", "Quarrelling/Hooliganism", "Security (RPF)", "Critical"),
+            ("Security", "Rape", "Security (RPF)", "Critical"),
             ("Security", "Smoking/Drinking Alcohol/Narcotics", "Security (RPF)", "High"),
             ("Security", "Theft of Passengers Belongings/Snatching", "Security (RPF)", "High"),
-            ("Security", "Unauthorized person in Ladies/Disabled Coach/SLR/Reserve Coach", "Security (RPF)", "High"),
+            ("Security", "Unauthorized person in Ladies/Disabled Coach/SLR/Reserve Coach", "Security (RPF)", "Critical"),
+
             # Staff Behaviour
             ("Staff Behaviour", "Staff Behaviour", "Commercial (Staff)", "Medium"),
             # Unreserved Ticketing
@@ -1149,18 +1151,41 @@ def seed_database():
         else:
             real_trains_data = []
 
+        # Load train_master.json if available
+        train_master_path = os.path.join(base_dir, "data", "train_master.json")
+        train_master = {}
+        if os.path.exists(train_master_path):
+            with open(train_master_path, "r", encoding="utf-8") as f:
+                train_master = json.load(f)
+
         # Ensure PNR and complaint trains are in the list with valid official names
         existing_numbers = {t["train_number"] for t in real_trains_data}
         for t_num, t_name in unique_trains.items():
             if t_num not in existing_numbers:
                 valid_name = t_name if (t_name and t_name not in ["Express", "Superfast Express", "Passenger"]) else f"Train {t_num} Express"
+                src_code = "NDLS"
+                dest_code = "BPL"
+                
+                match = None
+                for cand in (t_num, t_num.lstrip("0"), t_num.zfill(5), "0"+t_num, "1"+t_num, "2"+t_num, "5"+t_num, "6"+t_num):
+                    if cand in train_master:
+                        match = train_master[cand]
+                        break
+                
+                if match:
+                    src_code = match["source_station_code"]
+                    dest_code = match["destination_station_code"]
+                    if match.get("train_name") and not match["train_name"].startswith("Train "):
+                        valid_name = match["train_name"]
+
                 real_trains_data.append({
                     "train_number": t_num,
                     "train_name": valid_name,
-                    "source_station_code": "NDLS",
-                    "destination_station_code": "BPL",
+                    "source_station_code": src_code,
+                    "destination_station_code": dest_code,
                     "stops": []
                 })
+
 
         # Get existing division code fallback
         default_division = db.query(Division).first()

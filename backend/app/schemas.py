@@ -209,7 +209,8 @@ class AssignComplaintRequest(BaseModel):
     is_critical:            Optional[bool] = None
 
 class RequestReassignmentRequest(BaseModel):
-    reason: str
+    reason:  str
+    remarks: Optional[str] = None
 
 class ReassignComplaintRequest(BaseModel):
     new_staff_id: str
@@ -221,3 +222,8 @@ class EscalateComplaintRequest(BaseModel):
 
 class ResolveComplaintRequest(BaseModel):
     resolution_remarks: str
+
+class UpdateInventoryRequest(BaseModel):
+    quantity: int
+    status:   Optional[str] = None
+

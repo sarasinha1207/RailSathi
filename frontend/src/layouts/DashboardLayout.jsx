@@ -103,8 +103,9 @@ export default function DashboardLayout({ user, onLogout, children }) {
             width: '100%'
           }}>
             {React.isValidElement(children)
-              ? React.cloneElement(children, { activeTab })
+              ? React.cloneElement(children, { activeTab, onNavigate: setActiveTab })
               : children}
+
           </main>
 
           {/* Shared Docked Footer */}

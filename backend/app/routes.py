@@ -156,12 +156,17 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Form, Request
 from sqlalchemy.orm import Session
 from .database import get_db
-from .schemas import ComplaintResponse, PnrResponse, LoginRequest, UpdateStatusRequest, ChangePasswordRequest, UpdateProfileRequest
+from .schemas import (
+    ComplaintResponse, PnrResponse, LoginRequest, UpdateStatusRequest, ChangePasswordRequest, UpdateProfileRequest,
+    UpdateInventoryRequest, RequestReassignmentRequest, ResolveComplaintRequest
+)
 from .models import (
     User, Zone, Division, Station, Train, TrainRoute,
     PnrBooking, Department, ComplaintCategory, Staff, StaffGpsLocation,
-    Complaint, Feedback, ComplaintStatusHistory, OtpVerification, Notification
+    Complaint, Feedback, ComplaintStatusHistory, OtpVerification, Notification,
+    TrainCoach, TrainInventory, ComplaintReassignmentRequest
 )
+
 
 router = APIRouter()
 
@@ -434,7 +439,24 @@ async def submit_train_complaint(
         train = db.query(Train).filter(Train.train_number == train_num_clean).first()
         if not train:
             tname = train_number.split(" - ")[1].strip() if " - " in train_number else "Express"
-            train = Train(train_number=train_num_clean, train_name=tname, source_station_code="NDLS", destination_station_code="BPL")
+            src_code = "NDLS"
+            dest_code = "BPL"
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            tm_path = os.path.join(base_dir, "data", "train_master.json")
+            if os.path.exists(tm_path):
+                try:
+                    with open(tm_path, "r", encoding="utf-8") as f:
+                        tm_data = json.load(f)
+                        for cand in (train_num_clean, train_num_clean.lstrip("0"), train_num_clean.zfill(5), "0"+train_num_clean, "1"+train_num_clean):
+                            if cand in tm_data:
+                                src_code = tm_data[cand]["source_station_code"]
+                                dest_code = tm_data[cand]["destination_station_code"]
+                                if tm_data[cand].get("train_name") and not tm_data[cand]["train_name"].startswith("Train "):
+                                    tname = tm_data[cand]["train_name"]
+                                break
+                except Exception:
+                    pass
+            train = Train(train_number=train_num_clean, train_name=tname, source_station_code=src_code, destination_station_code=dest_code)
             db.add(train); db.flush()
         station  = determine_nearest_station(db, train.train_number)
         cat_code = make_category_code(main_class.strip(), sub_class.strip())
@@ -460,7 +482,8 @@ async def submit_train_complaint(
             complaint_description=complaint_description, internal_status="Assigned",
             assigned_department_code=category.department_code,
             assigned_division_code=station.division_code if station else None,
-            priority=category.default_priority, complaint_source="Passenger Portal",)
+            priority=category.default_priority, is_critical=(category.default_priority == "Critical"), complaint_source="Passenger Portal",)
+
         db.add(complaint); db.flush()
         db.add(ComplaintStatusHistory(complaint_id=complaint_id, from_status=None, to_status="Assigned", updated_by_user_id=None, remarks="Grievance registered by passenger."))
         db.commit()
@@ -528,7 +551,8 @@ async def submit_station_complaint(
             category_code=category.category_code, incident_date=incident_date, incident_time=incident_time,
             complaint_description=complaint_description, internal_status="Assigned",
             assigned_department_code=category.department_code, assigned_division_code=station.division_code,
-            priority=category.default_priority, complaint_source="Passenger Portal",)
+            priority=category.default_priority, is_critical=(category.default_priority == "Critical"), complaint_source="Passenger Portal",)
+
         db.add(complaint); db.flush()
         db.add(ComplaintStatusHistory(complaint_id=complaint_id, from_status=None, to_status="Assigned", updated_by_user_id=None, remarks="Grievance registered by passenger."))
         db.commit()
@@ -1504,6 +1528,320 @@ async def get_zone_division_analytics(
         "zone_overview": zone_overview_list,
         "total_filtered_count": total_cmp
     }
+
+
+# ---------------------------------------------------------------------------
+# PHASE 4 — ONBOARD STAFF DASHBOARD REST ENDPOINTS
+# ---------------------------------------------------------------------------
+
+def _get_logged_in_staff(request: Request, db: Session) -> tuple[User, Staff]:
+    if not request.session.get("logged_in"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    username = request.session.get("username")
+    user = db.query(User).filter(User.username == username).first()
+    if not user or user.role not in ("Staff", "Admin"):
+        raise HTTPException(status_code=403, detail="Permission denied: Staff access required")
+    staff = db.query(Staff).filter(Staff.user_id == user.user_id).first()
+    if not staff:
+        raise HTTPException(status_code=404, detail="Staff profile not found for this account")
+    return user, staff
+
+
+@router.get("/api/v1/staff/me/overview")
+async def get_staff_me_overview(request: Request, db: Session = Depends(get_db)):
+    user, staff = _get_logged_in_staff(request, db)
+    tr_num = staff.active_train_number or "22477"
+    train = db.query(Train).filter(Train.train_number == tr_num).first()
+    
+    # Train Info Card
+    train_info = {
+        "train_number": tr_num,
+        "train_name": train.train_name if train else f"Train {tr_num} Express",
+        "direction": "Down Journey (SVDK ➔ NDLS)" if tr_num == "22477" else "Up Journey (NDLS ➔ SVDK)",
+        "source": train.source_station.station_name if (train and train.source_station) else ("Katra" if tr_num == "22477" else "New Delhi"),
+        "destination": train.destination_station.station_name if (train and train.destination_station) else ("New Delhi" if tr_num == "22477" else "Katra"),
+        "journey_date": date.today().strftime("%d %b %Y"),
+        "onboard_status": "Onboard Active Duty" if staff.is_on_duty else "Off Duty"
+    }
+
+    # Staff Assigned Complaints
+    my_complaints = db.query(Complaint).filter(Complaint.assigned_staff_id == staff.staff_id).all()
+    
+    pending_cnt = sum(1 for c in my_complaints if c.internal_status in ("Assigned", "Accepted", "In Progress", "Pending Review", "Under Review"))
+    assigned_cnt = sum(1 for c in my_complaints if c.internal_status in ("Assigned", "Accepted", "In Progress"))
+    reassign_cnt = sum(1 for c in my_complaints if c.internal_status == "Reassignment Requested")
+    resolved_cnt = sum(1 for c in my_complaints if c.internal_status in ("Resolved", "Closed"))
+    critical_cnt = sum(1 for c in my_complaints if c.is_critical or c.priority == "Critical")
+
+    metrics = {
+        "pending_complaints": pending_cnt,
+        "assigned_complaints": assigned_cnt,
+        "reassignment_requests": reassign_cnt,
+        "resolved_complaints": resolved_cnt,
+        "open_critical_complaints": critical_cnt
+    }
+
+    # Recent 5 assigned complaints
+    recent_complaints = [enrich_complaint_dict(c, db) for c in sorted(my_complaints, key=lambda x: x.created_at or datetime.min, reverse=True)[:5]]
+
+    return {
+        "status": "success",
+        "staff": {
+            "staff_id": staff.staff_id,
+            "name": staff.name,
+            "designation": staff.designation or "Railway Official",
+            "department_code": staff.department_code,
+            "duty_status": staff.duty_status
+        },
+        "train_info": train_info,
+        "metrics": metrics,
+        "recent_complaints": recent_complaints
+    }
+
+
+@router.get("/api/v1/staff/me/complaints")
+async def get_staff_me_complaints(request: Request, db: Session = Depends(get_db)):
+    user, staff = _get_logged_in_staff(request, db)
+    my_complaints = db.query(Complaint).filter(Complaint.assigned_staff_id == staff.staff_id).order_by(Complaint.created_at.desc()).all()
+    return {
+        "status": "success",
+        "total_count": len(my_complaints),
+        "data": [enrich_complaint_dict(c, db) for c in my_complaints]
+    }
+
+
+@router.post("/api/v1/staff/complaints/{complaint_id}/accept")
+async def staff_accept_complaint(complaint_id: str, request: Request, db: Session = Depends(get_db)):
+    user, staff = _get_logged_in_staff(request, db)
+    cmp = db.query(Complaint).filter(Complaint.complaint_id == complaint_id, Complaint.assigned_staff_id == staff.staff_id).first()
+    if not cmp:
+        raise HTTPException(status_code=404, detail="Complaint not found or not assigned to you.")
+    
+    prev_st = cmp.internal_status
+    cmp.internal_status = "Accepted"
+    db.add(ComplaintStatusHistory(complaint_id=cmp.complaint_id, from_status=prev_st, to_status="Accepted", updated_by_user_id=user.user_id, remarks="Assignment accepted by staff."))
+    db.commit()
+    db.refresh(cmp)
+    return {"status": "success", "message": "Complaint assignment accepted successfully.", "data": enrich_complaint_dict(cmp, db)}
+
+
+@router.post("/api/v1/staff/complaints/{complaint_id}/progress")
+async def staff_progress_complaint(complaint_id: str, request: Request, db: Session = Depends(get_db)):
+    user, staff = _get_logged_in_staff(request, db)
+    cmp = db.query(Complaint).filter(Complaint.complaint_id == complaint_id, Complaint.assigned_staff_id == staff.staff_id).first()
+    if not cmp:
+        raise HTTPException(status_code=404, detail="Complaint not found or not assigned to you.")
+    
+    prev_st = cmp.internal_status
+    cmp.internal_status = "In Progress"
+    db.add(ComplaintStatusHistory(complaint_id=cmp.complaint_id, from_status=prev_st, to_status="In Progress", updated_by_user_id=user.user_id, remarks="Staff marked task In Progress."))
+    db.commit()
+    db.refresh(cmp)
+    return {"status": "success", "message": "Complaint status updated to In Progress.", "data": enrich_complaint_dict(cmp, db)}
+
+
+@router.post("/api/v1/staff/complaints/{complaint_id}/resolve")
+async def staff_resolve_complaint(complaint_id: str, payload: ResolveComplaintRequest, request: Request, db: Session = Depends(get_db)):
+    user, staff = _get_logged_in_staff(request, db)
+    cmp = db.query(Complaint).filter(Complaint.complaint_id == complaint_id, Complaint.assigned_staff_id == staff.staff_id).first()
+    if not cmp:
+        raise HTTPException(status_code=404, detail="Complaint not found or not assigned to you.")
+    
+    if not payload.resolution_remarks or len(payload.resolution_remarks.strip()) < 5:
+        raise HTTPException(status_code=400, detail="Action taken / resolution remarks are required (min 5 chars).")
+
+    prev_st = cmp.internal_status
+    cmp.internal_status = "Resolved"
+    cmp.resolution_remarks = payload.resolution_remarks.strip()
+    cmp.resolved_at = datetime.utcnow()
+    cmp.resolved_by_user_id = user.user_id
+
+    db.add(ComplaintStatusHistory(complaint_id=cmp.complaint_id, from_status=prev_st, to_status="Resolved", updated_by_user_id=user.user_id, remarks=f"Resolved: {cmp.resolution_remarks}"))
+    db.commit()
+    db.refresh(cmp)
+    return {"status": "success", "message": "Grievance marked as Resolved.", "data": enrich_complaint_dict(cmp, db)}
+
+
+@router.post("/api/v1/staff/complaints/{complaint_id}/reassign-request")
+async def staff_request_reassignment(complaint_id: str, payload: RequestReassignmentRequest, request: Request, db: Session = Depends(get_db)):
+    user, staff = _get_logged_in_staff(request, db)
+    cmp = db.query(Complaint).filter(Complaint.complaint_id == complaint_id, Complaint.assigned_staff_id == staff.staff_id).first()
+    if not cmp:
+        raise HTTPException(status_code=404, detail="Complaint not found or not assigned to you.")
+    
+    req_obj = ComplaintReassignmentRequest(
+        complaint_id=cmp.complaint_id,
+        requested_by_staff_id=staff.staff_id,
+        reason=payload.reason,
+        remarks=payload.remarks or "",
+        status="Pending"
+    )
+    db.add(req_obj)
+
+    prev_st = cmp.internal_status
+    cmp.internal_status = "Reassignment Requested"
+    db.add(ComplaintStatusHistory(complaint_id=cmp.complaint_id, from_status=prev_st, to_status="Reassignment Requested", updated_by_user_id=user.user_id, remarks=f"Staff requested reassignment: {payload.reason}"))
+    db.commit()
+    return {"status": "success", "message": "Reassignment request submitted to CMO Queue."}
+
+
+@router.get("/api/v1/staff/me/reassignment-requests")
+async def get_staff_reassignment_requests(request: Request, db: Session = Depends(get_db)):
+    user, staff = _get_logged_in_staff(request, db)
+    reqs = db.query(ComplaintReassignmentRequest).filter(ComplaintReassignmentRequest.requested_by_staff_id == staff.staff_id).order_by(ComplaintReassignmentRequest.created_at.desc()).all()
+    res = []
+    for r in reqs:
+        res.append({
+            "request_id": r.request_id,
+            "complaint_id": r.complaint_id,
+            "reason": r.reason,
+            "remarks": r.remarks or "",
+            "status": r.status,
+            "created_at": r.created_at.strftime("%d %b %Y, %H:%M IST") if r.created_at else ""
+        })
+    return {"status": "success", "data": res}
+
+
+@router.get("/api/v1/staff/me/onboard-crew")
+async def get_staff_onboard_crew(request: Request, db: Session = Depends(get_db)):
+    user, staff = _get_logged_in_staff(request, db)
+    tr_num = staff.active_train_number or "22477"
+    
+    # Query all staff on the same train
+    crew_members = db.query(Staff).filter(Staff.active_train_number == tr_num).all()
+    dept_dict = {d.department_code: d.department_name for d in db.query(Department).all()}
+
+    # Map assigned coach if any
+    coach_map = {c.assigned_staff_id: c.coach_number for c in db.query(TrainCoach).filter(TrainCoach.train_number == tr_num, TrainCoach.assigned_staff_id != None).all()}
+
+    crew_list = []
+    for c in crew_members:
+        c_user = c.user
+        crew_list.append({
+            "staff_id": c.staff_id,
+            "name": c.name,
+            "designation": c.designation or "Railway Official",
+            "department_code": c.department_code or "OTHER",
+            "department_name": dept_dict.get(c.department_code, c.department_code or "General"),
+            "coach": coach_map.get(c.staff_id, "ALL Coaches"),
+            "availability_status": "Available" if c.is_on_duty and c.duty_status == "ON_DUTY" else "Unavailable",
+            "phone": (c_user.phone_number if c_user and c_user.phone_number else None) or f"+91 98765 {abs(hash(c.staff_id)) % 90000 + 10000}",
+            "email": (c_user.email if c_user and c_user.email else None) or f"{c.staff_id.lower()}@railsathi.gov.in"
+        })
+
+    return {"status": "success", "train_number": tr_num, "count": len(crew_list), "data": crew_list}
+
+
+@router.get("/api/v1/staff/me/train-journey")
+async def get_staff_train_journey(request: Request, db: Session = Depends(get_db)):
+    user, staff = _get_logged_in_staff(request, db)
+    tr_num = staff.active_train_number or "22477"
+    train = db.query(Train).filter(Train.train_number == tr_num).first()
+
+    # Physical 16-coach sequence layout
+    coaches = db.query(TrainCoach).filter(TrainCoach.train_number == tr_num).order_by(TrainCoach.position_sequence.asc()).all()
+    coach_list = []
+    for ch in coaches:
+        assigned_name = ch.assigned_staff.name if ch.assigned_staff else "Unassigned / General"
+        coach_list.append({
+            "coach_id": ch.coach_id,
+            "coach_number": ch.coach_number,
+            "coach_type": ch.coach_type,
+            "position_sequence": ch.position_sequence,
+            "facilities": ch.facilities or "Bio-Toilets, Charging Outlets, Auto Doors, CCTV",
+            "assigned_staff_id": ch.assigned_staff_id or "",
+            "assigned_staff_name": assigned_name
+        })
+
+    # Scheduled halts timeline
+    routes = db.query(TrainRoute).filter(TrainRoute.train_number == tr_num).order_by(TrainRoute.stop_sequence.asc()).all()
+    halt_list = []
+    for r in routes:
+        st_obj = db.query(Station).filter(Station.station_code == r.station_code).first()
+        halt_list.append({
+            "stop_sequence": r.stop_sequence,
+            "station_code": r.station_code,
+            "station_name": st_obj.station_name if st_obj else r.station_code,
+            "arrival_time": r.arrival_time.strftime("%H:%M") if r.arrival_time else "--:--",
+            "departure_time": r.departure_time.strftime("%H:%M") if r.departure_time else "--:--",
+            "halt_duration": f"{r.halt_duration_minutes} Mins" if r.halt_duration_minutes else "Origin / Terminus",
+            "distance_km": float(r.distance_km or 0.0)
+        })
+
+    return {
+        "status": "success",
+        "train_info": {
+            "train_number": tr_num,
+            "train_name": train.train_name if train else f"Train {tr_num} Express",
+            "source": train.source_station.station_name if (train and train.source_station) else ("Katra" if tr_num == "22477" else "New Delhi"),
+            "destination": train.destination_station.station_name if (train and train.destination_station) else ("New Delhi" if tr_num == "22477" else "Katra"),
+            "total_coaches": len(coach_list),
+            "total_halts": len(halt_list)
+        },
+        "coaches": coach_list,
+        "journey_halts": halt_list
+    }
+
+
+@router.get("/api/v1/staff/me/inventory")
+async def get_staff_train_inventory(request: Request, db: Session = Depends(get_db)):
+    user, staff = _get_logged_in_staff(request, db)
+    tr_num = staff.active_train_number or "22477"
+    inv_items = db.query(TrainInventory).filter(TrainInventory.train_number == tr_num).all()
+    
+    data = []
+    for item in inv_items:
+        data.append({
+            "inventory_id": item.inventory_id,
+            "train_number": item.train_number,
+            "item_name": item.item_name,
+            "category": item.category,
+            "quantity": item.quantity,
+            "unit": item.unit,
+            "min_threshold": item.min_threshold,
+            "status": item.status,
+            "last_updated": item.last_updated.strftime("%d %b %Y, %H:%M IST") if item.last_updated else ""
+        })
+
+    return {"status": "success", "train_number": tr_num, "data": data}
+
+
+@router.put("/api/v1/staff/me/inventory/{inventory_id}")
+async def update_staff_train_inventory(inventory_id: int, payload: UpdateInventoryRequest, request: Request, db: Session = Depends(get_db)):
+    user, staff = _get_logged_in_staff(request, db)
+    tr_num = staff.active_train_number or "22477"
+    item = db.query(TrainInventory).filter(TrainInventory.inventory_id == inventory_id, TrainInventory.train_number == tr_num).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Inventory item not found on your train.")
+    
+    item.quantity = max(0, payload.quantity)
+    if payload.status:
+        item.status = payload.status
+    else:
+        if item.quantity == 0:
+            item.status = "Out of Stock"
+        elif item.quantity <= item.min_threshold:
+            item.status = "Low Stock"
+        else:
+            item.status = "Available"
+
+    item.last_updated = datetime.utcnow()
+    db.commit()
+    db.refresh(item)
+
+    return {
+        "status": "success",
+        "message": "Train inventory updated successfully.",
+        "data": {
+            "inventory_id": item.inventory_id,
+            "item_name": item.item_name,
+            "quantity": item.quantity,
+            "unit": item.unit,
+            "status": item.status,
+            "last_updated": item.last_updated.strftime("%d %b %Y, %H:%M IST")
+        }
+    }
+
 
 
 

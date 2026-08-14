@@ -8,10 +8,12 @@ export const STATUS_COLORS = {
 };
 
 export const PRIORITY_COLORS = {
-  'High': { bg: '#fce8e6', text: '#c5221f' },
+  'Critical': { bg: '#fce8e6', text: '#c5221f' },
+  'High': { bg: '#fee8e6', text: '#ea4335' },
   'Medium': { bg: '#fef7e0', text: '#b06000' },
   'Low': { bg: '#e6f4ea', text: '#137333' }
 };
+
 
 export function getPassengerStatus(internalStatus) {
   if (['Resolved', 'Closed'].includes(internalStatus)) return 'RESOLVED';

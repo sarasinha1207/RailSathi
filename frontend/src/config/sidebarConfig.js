@@ -44,9 +44,12 @@ export const SIDEBAR_NAV_ITEMS = {
 
   Staff: [
     { id: 'home', label: 'Home', icon: 'home' },
-    { id: 'my_complaints', label: 'My Complaints', icon: 'clipboard-list' },
-    { id: 'complaint_history', label: 'Complaint History', icon: 'clock' }
+    { id: 'complaints', label: 'Complaints', icon: 'clipboard-list' },
+    { id: 'other_staff', label: 'Other Staff', icon: 'users' },
+    { id: 'train_journey', label: 'Train Coaches & Journey', icon: 'map' },
+    { id: 'inventory', label: 'Train Inventory', icon: 'grid' }
   ],
+
 
   Passenger: [
     { id: 'home', label: 'Home', icon: 'home' },

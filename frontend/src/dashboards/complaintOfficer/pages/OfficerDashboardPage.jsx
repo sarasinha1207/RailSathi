@@ -492,13 +492,18 @@ export default function OfficerDashboardPage({ user }) {
                 </label>
                 <select
                   value={verifiedPriority}
-                  onChange={(e) => setVerifiedPriority(e.target.value)}
+                  onChange={(e) => {
+                    setVerifiedPriority(e.target.value);
+                    if (e.target.value === 'Critical') setIsCritical(true);
+                  }}
                   style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem' }}
                 >
-                  <option value="Low">Low Priority</option>
-                  <option value="Medium">Medium Priority</option>
+                  <option value="Critical">Critical Priority (Emergency Response)</option>
                   <option value="High">High Priority</option>
+                  <option value="Medium">Medium Priority</option>
+                  <option value="Low">Low Priority</option>
                 </select>
+
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#fef2f2', padding: '12px', borderRadius: '8px', border: '1px solid #fecaca' }}>
