@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function AdminHeader({ user, onLogout, setActiveTab }) {
+export default function AdminHeader({ user, onLogout, setActiveTab, isMobile, mobileSidebarOpen, setMobileSidebarOpen }) {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -11,9 +11,9 @@ export default function AdminHeader({ user, onLogout, setActiveTab }) {
   return (
     <header style={{
       width: '100%',
-      height: '80px',
+      height: isMobile ? '64px' : '80px',
       backgroundColor: '#ffffff',
-      padding: '0 32px',
+      padding: isMobile ? '0 12px' : '0 32px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -25,41 +25,78 @@ export default function AdminHeader({ user, onLogout, setActiveTab }) {
       boxSizing: 'border-box',
       flexShrink: 0
     }}>
-      {/* Left: Indian Railways Logo & Official Text */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+      {/* Left: Hamburger Menu Button (Mobile) + Indian Railways Logo */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '14px' }}>
+        {/* Mobile Hamburger Toggle Button */}
+        {isMobile && (
+          <button
+            onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+            style={{
+              padding: '8px',
+              backgroundColor: '#f3f4f6',
+              color: '#800020',
+              border: '1px solid #e5e7eb',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            title="Toggle Menu"
+          >
+            <svg style={{ width: '22px', height: '22px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        )}
+
         <img
           src="/railway_logo.jpg"
           alt="Indian Railways Logo"
           style={{
-            height: '48px',
-            width: '48px',
+            height: isMobile ? '38px' : '48px',
+            width: isMobile ? '38px' : '48px',
             objectFit: 'contain',
             borderRadius: '50%',
             border: '1px solid #e0e0e0'
           }}
         />
-        <div style={{ display: 'flex', flexDirection: 'column', borderLeft: '2px solid #e0e0e0', paddingLeft: '14px' }}>
-          <span style={{ fontSize: '0.95rem', fontWeight: 800, color: '#700c28', lineHeight: 1.1, letterSpacing: '0.5px' }}>
-            भारतीय रेल
-          </span>
-          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#333333', lineHeight: 1.1 }}>
-            INDIAN RAILWAYS
-          </span>
-          <span style={{ fontSize: '0.65rem', color: '#666666', fontWeight: 500, marginTop: '2px' }}>
-            Ministry of Railways
-          </span>
-        </div>
+
+        {!isMobile ? (
+          <div style={{ display: 'flex', flexDirection: 'column', borderLeft: '2px solid #e0e0e0', paddingLeft: '14px' }}>
+            <span style={{ fontSize: '0.95rem', fontWeight: 800, color: '#700c28', lineHeight: 1.1, letterSpacing: '0.5px' }}>
+              भारतीय रेल
+            </span>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#333333', lineHeight: 1.1 }}>
+              INDIAN RAILWAYS
+            </span>
+            <span style={{ fontSize: '0.65rem', color: '#666666', fontWeight: 500, marginTop: '2px' }}>
+              Ministry of Railways
+            </span>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#700c28', lineHeight: 1 }}>
+              RailSathi
+            </span>
+            <span style={{ fontSize: '0.62rem', fontWeight: 700, color: '#666666' }}>
+              Indian Railways
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Center: RailSathi Branding (ADMIN PORTAL word removed completely) */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#700c28', margin: 0, lineHeight: 1, letterSpacing: '0.5px' }}>
-          RailSathi
-        </h1>
-        <p style={{ fontSize: '0.7rem', fontWeight: 600, color: '#666666', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '4px', margin: 0 }}>
-          Passenger Grievance & Assistance Portal
-        </p>
-      </div>
+      {/* Center: RailSathi Branding (Hidden on Mobile view to conserve header space) */}
+      {!isMobile && (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#700c28', margin: 0, lineHeight: 1, letterSpacing: '0.5px' }}>
+            RailSathi
+          </h1>
+          <p style={{ fontSize: '0.7rem', fontWeight: 600, color: '#666666', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '4px', margin: 0 }}>
+            Passenger Grievance & Assistance Portal
+          </p>
+        </div>
+      )}
 
       {/* Right: Notifications Bell & Administrator Profile Avatar */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>

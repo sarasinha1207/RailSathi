@@ -70,21 +70,22 @@ export default function StaffInventoryPage({ user }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Top Banner */}
+      {/* Top Banner Matching CMO Dashboard Header */}
       <div style={{
         backgroundColor: '#ffffff',
         borderRadius: '12px',
         padding: '20px 24px',
-        border: '1px solid #e5e7eb',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
         display: 'flex',
-        justifyContent: 'space-between',
         alignItems: 'center',
+        justifyContent: 'space-between',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+        borderLeft: '5px solid #800020',
+        border: '1px solid #e5e7eb',
         flexWrap: 'wrap',
         gap: '16px'
       }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 800, color: '#4a071a' }}>
+          <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 800, color: '#800020' }}>
             Onboard Train Inventory (Train {trainNumber})
           </h2>
           <p style={{ margin: '4px 0 0 0', fontSize: '0.88rem', color: '#6b7280' }}>
@@ -94,9 +95,9 @@ export default function StaffInventoryPage({ user }) {
 
         <button
           onClick={fetchInventory}
-          style={{ padding: '8px 16px', backgroundColor: '#f3f4f6', color: '#374151', border: '1px solid #d1d5db', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}
+          style={{ padding: '8px 16px', backgroundColor: '#800020', color: '#ffffff', border: 'none', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}
         >
-          🔄 Refresh Stock
+          Refresh Stock
         </button>
       </div>
 
@@ -152,7 +153,7 @@ export default function StaffInventoryPage({ user }) {
                           backgroundColor: isOut ? '#fee2e2' : isLow ? '#fef3c7' : '#d1fae5',
                           color: isOut ? '#991b1b' : isLow ? '#92400e' : '#065f46'
                         }}>
-                          {isOut ? '🔴 Out of Stock' : isLow ? '⚠️ Low Stock' : '🟢 Available'}
+                          {isOut ? 'Out of Stock' : isLow ? 'Low Stock' : 'Available'}
                         </span>
                       </td>
                       <td style={{ padding: '14px 16px', color: '#6b7280', fontSize: '0.82rem' }}>
@@ -163,7 +164,7 @@ export default function StaffInventoryPage({ user }) {
                           onClick={() => handleOpenUpdate(item)}
                           style={{
                             padding: '6px 12px',
-                            backgroundColor: '#4a071a',
+                            backgroundColor: '#800020',
                             color: '#ffffff',
                             border: 'none',
                             borderRadius: '6px',
@@ -188,7 +189,7 @@ export default function StaffInventoryPage({ user }) {
       {showUpdateModal && selectedItem && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '16px' }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '14px', width: '100%', maxWidth: '460px', padding: '24px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
-            <h3 style={{ margin: '0 0 8px 0', fontSize: '1.2rem', fontWeight: 800, color: '#4a071a' }}>
+            <h3 style={{ margin: '0 0 8px 0', fontSize: '1.2rem', fontWeight: 800, color: '#800020' }}>
               Update Stock — {selectedItem.item_name}
             </h3>
             <p style={{ margin: '0 0 16px 0', fontSize: '0.85rem', color: '#6b7280' }}>
@@ -206,7 +207,7 @@ export default function StaffInventoryPage({ user }) {
                   required
                   value={newQuantity}
                   onChange={(e) => setNewQuantity(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.9rem', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem', boxSizing: 'border-box' }}
                 />
               </div>
 
@@ -236,9 +237,9 @@ export default function StaffInventoryPage({ user }) {
                 <button
                   type="submit"
                   disabled={updating}
-                  style={{ padding: '10px 20px', backgroundColor: '#4a071a', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}
+                  style={{ padding: '10px 20px', backgroundColor: '#800020', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 800, cursor: 'pointer' }}
                 >
-                  {updating ? 'Saving...' : 'Save Stock'}
+                  {updating ? 'Saving...' : 'Save Stock Record'}
                 </button>
               </div>
             </form>

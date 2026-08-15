@@ -35,7 +35,6 @@ export default function StaffOtherStaffPage({ user }) {
 
   const filteredCrew = useMemo(() => {
     return crew.filter((member) => {
-      // Search term
       if (searchTerm) {
         const term = searchTerm.toLowerCase();
         const matchName = member.name.toLowerCase().includes(term);
@@ -44,14 +43,12 @@ export default function StaffOtherStaffPage({ user }) {
         if (!matchName && !matchId && !matchDesig) return false;
       }
 
-      // Department filter
       if (deptFilter !== 'all') {
         if (member.department_code !== deptFilter && !member.department_name.toLowerCase().includes(deptFilter.toLowerCase())) {
           return false;
         }
       }
 
-      // Status filter
       if (statusFilter !== 'all') {
         if (member.availability_status !== statusFilter) return false;
       }
@@ -62,69 +59,56 @@ export default function StaffOtherStaffPage({ user }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Top Banner */}
+      {/* Top Banner Matching CMO Dashboard Header */}
       <div style={{
         backgroundColor: '#ffffff',
         borderRadius: '12px',
         padding: '20px 24px',
-        border: '1px solid #e5e7eb',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
         display: 'flex',
-        justifyContent: 'space-between',
         alignItems: 'center',
+        justifyContent: 'space-between',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+        borderLeft: '5px solid #800020',
+        border: '1px solid #e5e7eb',
         flexWrap: 'wrap',
         gap: '16px'
       }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 800, color: '#4a071a' }}>
+          <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 800, color: '#800020' }}>
             Fellow Onboard Staff Roster (Train {trainNumber})
           </h2>
           <p style={{ margin: '4px 0 0 0', fontSize: '0.88rem', color: '#6b7280' }}>
             Official directory of railway personnel currently deployed onboard your active train journey.
           </p>
         </div>
-
-        <button
-          onClick={fetchOnboardCrew}
-          style={{
-            padding: '8px 16px',
-            backgroundColor: '#f3f4f6',
-            color: '#374151',
-            border: '1px solid #d1d5db',
-            borderRadius: '8px',
-            fontWeight: 700,
-            fontSize: '0.85rem',
-            cursor: 'pointer'
-          }}
-        >
-          🔄 Refresh Crew
-        </button>
       </div>
 
-      {/* Filter Controls */}
+      {/* Filter Controls — Horizontal Single Line Layout */}
       <div style={{
         backgroundColor: '#ffffff',
         borderRadius: '12px',
-        padding: '16px 20px',
+        padding: '14px 20px',
         border: '1px solid #e5e7eb',
         boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
         display: 'flex',
-        flexWrap: 'wrap',
-        gap: '14px',
-        alignItems: 'center'
+        flexDirection: 'row',
+        gap: '12px',
+        alignItems: 'center',
+        width: '100%',
+        boxSizing: 'border-box'
       }}>
         <input
           type="text"
-          placeholder="🔍 Search Staff Name / ID..."
+          placeholder="Search Staff Name / ID..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ padding: '9px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem', minWidth: '220px' }}
+          style={{ flex: 2, minWidth: '180px', padding: '9px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem', boxSizing: 'border-box' }}
         />
 
         <select
           value={deptFilter}
           onChange={(e) => setDeptFilter(e.target.value)}
-          style={{ padding: '9px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem' }}
+          style={{ flex: 1, minWidth: '160px', padding: '9px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem', boxSizing: 'border-box' }}
         >
           <option value="all">All Departments</option>
           <option value="COMMERCIAL">Commercial (TTE / Ticket Checking)</option>
@@ -137,7 +121,7 @@ export default function StaffOtherStaffPage({ user }) {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          style={{ padding: '9px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem' }}
+          style={{ flex: 1, minWidth: '140px', padding: '9px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem', boxSizing: 'border-box' }}
         >
           <option value="all">All Duty Statuses</option>
           <option value="Available">Available On Duty</option>
@@ -155,7 +139,7 @@ export default function StaffOtherStaffPage({ user }) {
           No fellow onboard staff found matching selected filters.
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
           {filteredCrew.map((c) => (
             <div
               key={c.staff_id}
@@ -189,50 +173,37 @@ export default function StaffOtherStaffPage({ user }) {
                     backgroundColor: c.availability_status === 'Available' ? '#d1fae5' : '#fee2e2',
                     color: c.availability_status === 'Available' ? '#065f46' : '#991b1b'
                   }}>
-                    {c.availability_status === 'Available' ? '🟢 Available' : '🔴 Off Duty'}
+                    {c.availability_status === 'Available' ? 'Available' : 'Off Duty'}
                   </span>
                 </div>
 
                 <div style={{ fontSize: '0.85rem', color: '#4b5563', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <div>🏢 <strong>Department:</strong> {c.department_name}</div>
-                  <div>📋 <strong>Designation:</strong> {c.designation}</div>
-                  <div>🚃 <strong>Coach Duty:</strong> {c.coach}</div>
+                  <div><strong>Department:</strong> {c.department_name}</div>
+                  <div><strong>Designation:</strong> {c.designation}</div>
+                  <div><strong>Coach Duty:</strong> {c.coach}</div>
                 </div>
               </div>
 
-              {/* Official Contact Buttons */}
-              <div style={{ paddingTop: '12px', borderTop: '1px solid #f3f4f6', display: 'flex', gap: '8px' }}>
+              {/* Official Contact Phone Button */}
+              <div style={{ paddingTop: '12px', borderTop: '1px solid #f3f4f6' }}>
                 <a
                   href={`tel:${c.phone}`}
                   style={{
-                    flex: 1,
+                    display: 'block',
+                    width: '100%',
                     textAlign: 'center',
-                    padding: '8px',
+                    padding: '9px',
                     backgroundColor: '#f3f4f6',
                     color: '#1f2937',
                     borderRadius: '6px',
                     textDecoration: 'none',
                     fontWeight: 700,
-                    fontSize: '0.82rem'
+                    fontSize: '0.88rem',
+                    boxSizing: 'border-box'
                   }}
                 >
-                  📞 {c.phone}
+                  Contact: {c.phone}
                 </a>
-                <button
-                  onClick={() => alert(`Official Railway Email:\n${c.email}`)}
-                  style={{
-                    padding: '8px 12px',
-                    backgroundColor: '#4a071a',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    fontWeight: 700,
-                    fontSize: '0.82rem',
-                    cursor: 'pointer'
-                  }}
-                >
-                  ✉️ Official Email
-                </button>
               </div>
             </div>
           ))}

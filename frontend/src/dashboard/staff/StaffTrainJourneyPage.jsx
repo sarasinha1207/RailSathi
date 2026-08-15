@@ -43,8 +43,9 @@ export default function StaffTrainJourneyPage({ user }) {
 
   const { train_info, coaches, journey_halts } = journeyData || {};
 
-  const row1Coaches = coaches ? coaches.slice(0, 9) : [];
-  const row2Coaches = coaches ? coaches.slice(9, 18) : [];
+  const row1Coaches = coaches ? coaches.slice(0, 6) : [];
+  const row2Coaches = coaches ? coaches.slice(6, 12) : [];
+  const row3Coaches = coaches ? coaches.slice(12, 18) : [];
 
   const renderCoachCard = (c, isLastInRow) => {
     const isEngine = c.coach_number === 'ENGINE';
@@ -57,36 +58,45 @@ export default function StaffTrainJourneyPage({ user }) {
         <div
           onClick={() => setSelectedCoach(c)}
           style={{
-            width: '92px',
-            height: '84px',
+            flex: 1,
+            minWidth: '130px',
+            maxWidth: '160px',
+            height: '110px',
             flexShrink: 0,
             backgroundColor: isEngine ? '#1e293b' : isTail ? '#800020' : isExecutive ? '#5c091e' : isSelected ? '#700c28' : '#ffffff',
             color: (isEngine || isTail || isExecutive || isSelected) ? '#ffffff' : '#1f2937',
             border: isSelected ? '3px solid #ffb300' : '2px solid #cbd5e1',
-            borderRadius: '8px',
-            padding: '8px 6px',
+            borderRadius: '10px',
+            padding: '12px 10px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
             cursor: 'pointer',
             transition: 'all 0.15s ease',
-            boxShadow: isSelected ? '0 4px 12px rgba(255, 179, 0, 0.4)' : '0 1px 4px rgba(0,0,0,0.05)',
-            transform: isSelected ? 'translateY(-2px)' : 'none',
+            boxShadow: isSelected ? '0 6px 16px rgba(255, 179, 0, 0.4)' : '0 2px 6px rgba(0,0,0,0.06)',
+            transform: isSelected ? 'translateY(-3px)' : 'none',
             boxSizing: 'border-box'
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.65rem', fontWeight: 800, opacity: 0.8 }}>#{c.position_sequence}</span>
-            <span style={{ fontSize: '0.62rem', fontWeight: 800 }}>
-              {isEngine ? '🚂 LOCO' : isTail ? '🏁 TAIL' : isExecutive ? '⭐ EC' : '🚃 CC'}
+            <span style={{ fontSize: '0.78rem', fontWeight: 800, opacity: 0.85 }}>#{c.position_sequence}</span>
+            <span style={{
+              fontSize: '0.72rem',
+              fontWeight: 800,
+              padding: '2px 6px',
+              borderRadius: '4px',
+              backgroundColor: (isEngine || isTail || isExecutive || isSelected) ? 'rgba(255,255,255,0.2)' : '#f1f5f9',
+              color: (isEngine || isTail || isExecutive || isSelected) ? '#ffffff' : '#475569'
+            }}>
+              {isEngine ? 'LOCO' : isTail ? 'TAIL' : isExecutive ? 'EXEC' : 'CHAIR'}
             </span>
           </div>
 
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '1.15rem', fontWeight: 900, letterSpacing: '0.5px', lineHeight: '1' }}>
+          <div style={{ textAlign: 'center', margin: '4px 0' }}>
+            <div style={{ fontSize: '1.45rem', fontWeight: 900, letterSpacing: '0.5px', lineHeight: '1' }}>
               {c.coach_number}
             </div>
-            <div style={{ fontSize: '0.62rem', opacity: 0.8, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', marginTop: '3px' }}>
+            <div style={{ fontSize: '0.72rem', opacity: 0.85, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', marginTop: '4px', fontWeight: 600 }}>
               {isEngine ? 'Locomotive' : isTail ? 'Guard Cab' : c.coach_type}
             </div>
           </div>
@@ -96,9 +106,11 @@ export default function StaffTrainJourneyPage({ user }) {
           <div style={{
             color: '#800020',
             fontWeight: 900,
-            fontSize: '1rem',
+            fontSize: '1.2rem',
             userSelect: 'none',
-            padding: '0 2px'
+            padding: '0 4px',
+            display: 'flex',
+            alignItems: 'center'
           }}>
             ➔
           </div>
@@ -109,22 +121,29 @@ export default function StaffTrainJourneyPage({ user }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Top Banner Matching CMO Dashboard Header */}
       <div style={{
         backgroundColor: '#ffffff',
         borderRadius: '12px',
         padding: '20px 24px',
-        border: '1px solid #e5e7eb',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+        borderLeft: '5px solid #800020',
+        border: '1px solid #e5e7eb'
       }}>
-        <div style={{ fontSize: '0.78rem', color: '#ffb300', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          ONBOARD TRAIN ARCHITECTURE & SCHEDULE
+        <div>
+          <div style={{ fontSize: '0.78rem', color: '#800020', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            ONBOARD TRAIN ARCHITECTURE & SCHEDULE
+          </div>
+          <h2 style={{ margin: '2px 0 0 0', fontSize: '1.4rem', fontWeight: 800, color: '#800020' }}>
+            Train {train_info?.train_number} — {train_info?.train_name}
+          </h2>
+          <p style={{ margin: '4px 0 0 0', fontSize: '0.88rem', color: '#6b7280' }}>
+            Origin: <strong>{train_info?.source}</strong> ➔ Destination: <strong>{train_info?.destination}</strong> • Total Rake Coaches: <strong>{train_info?.total_coaches}</strong>
+          </p>
         </div>
-        <h2 style={{ margin: '2px 0 0 0', fontSize: '1.4rem', fontWeight: 800, color: '#4a071a' }}>
-          Train {train_info?.train_number} — {train_info?.train_name}
-        </h2>
-        <p style={{ margin: '4px 0 0 0', fontSize: '0.88rem', color: '#6b7280' }}>
-          Origin: <strong>{train_info?.source}</strong> ➔ Destination: <strong>{train_info?.destination}</strong> • Total Rake Coaches: <strong>{train_info?.total_coaches}</strong>
-        </p>
       </div>
 
       <div style={{
@@ -136,28 +155,35 @@ export default function StaffTrainJourneyPage({ user }) {
       }}>
         <div style={{ marginBottom: '18px' }}>
           <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#111827' }}>
-            🚃 Train Physical Coach Composition (Engine ➔ Tail)
+            Train Physical Coach Composition (Engine ➔ Tail)
           </h3>
           <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#6b7280' }}>
-            Physical rake sequence starting from locomotive engine to rear tail cab. Click any coach to inspect details.
+            Physical 18-coach rake sequence displayed in 3 rows of 6 coaches each (Engine ➔ Tail). Click any coach to inspect details.
           </p>
         </div>
 
         <div style={{
           backgroundColor: '#f8fafc',
-          padding: '20px',
+          padding: '24px',
           borderRadius: '12px',
           border: '1px solid #e2e8f0',
           display: 'flex',
           flexDirection: 'column',
-          gap: '16px'
+          gap: '20px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', overflowX: 'auto', paddingBottom: '4px' }}>
+          {/* ROW 1: Coaches #1 to #6 */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
             {row1Coaches.map((c, idx) => renderCoachCard(c, idx === row1Coaches.length - 1))}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', overflowX: 'auto', paddingTop: '4px' }}>
+          {/* ROW 2: Coaches #7 to #12 */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
             {row2Coaches.map((c, idx) => renderCoachCard(c, idx === row2Coaches.length - 1))}
+          </div>
+
+          {/* ROW 3: Coaches #13 to #18 */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+            {row3Coaches.map((c, idx) => renderCoachCard(c, idx === row3Coaches.length - 1))}
           </div>
         </div>
 
@@ -176,21 +202,21 @@ export default function StaffTrainJourneyPage({ user }) {
             boxShadow: '0 4px 12px rgba(128, 0, 32, 0.08)'
           }}>
             <div>
-              <div style={{ fontSize: '0.78rem', color: '#ffb300', fontWeight: 800, letterSpacing: '0.5px' }}>
+              <div style={{ fontSize: '0.78rem', color: '#800020', fontWeight: 800, letterSpacing: '0.5px' }}>
                 SELECTED COACH INSPECTION SPECIFICATIONS
               </div>
               <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#111827', marginTop: '2px' }}>
                 Coach {selectedCoach.coach_number} — {selectedCoach.coach_type} (Sequence #{selectedCoach.position_sequence})
               </div>
               <div style={{ fontSize: '0.86rem', color: '#4b5563', marginTop: '6px' }}>
-                ⚙️ <strong>Facilities & Equipment:</strong> {selectedCoach.facilities}
+                <strong>Facilities & Equipment:</strong> {selectedCoach.facilities}
               </div>
             </div>
 
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: 700 }}>ASSIGNED CREW MEMBER</div>
               <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#800020', marginTop: '2px' }}>
-                👤 {selectedCoach.assigned_staff_name}
+                {selectedCoach.assigned_staff_name}
               </div>
             </div>
           </div>
@@ -207,7 +233,7 @@ export default function StaffTrainJourneyPage({ user }) {
       }}>
         <div style={{ marginBottom: '18px' }}>
           <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#111827' }}>
-            📍 Scheduled Halts & Route Timeline ({journey_halts?.length || 7} Stopping Stations)
+            Scheduled Halts & Route Timeline ({journey_halts?.length || 7} Stopping Stations)
           </h3>
           <p style={{ margin: '2px 0 0 0', fontSize: '0.85rem', color: '#6b7280' }}>
             Official railway timetable for Train {train_info?.train_number} — New Delhi ➔ SVDK Katra Vande Bharat Express

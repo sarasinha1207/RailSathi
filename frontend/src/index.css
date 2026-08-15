@@ -1371,3 +1371,63 @@ html {
 .faq-table tr:nth-child(even) {
     background-color: #fafbfc;
 }
+
+/* ==========================================================================
+   MOBILE & RESPONSIVE DASHBOARD STYLES (Screen Width <= 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Main Layout Padding on Mobile */
+    main {
+        padding: 14px !important;
+    }
+
+    /* Top Banners on Mobile */
+    div[style*="borderLeft: 5px solid"] {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        padding: 16px !important;
+    }
+
+    /* Modal Dialogs on Mobile */
+    div[style*="max-width: 650px"],
+    div[style*="max-width: 680px"],
+    div[style*="max-width: 520px"],
+    div[style*="max-width: 460px"] {
+        width: 95% !important;
+        maxWidth: 95% !important;
+        padding: 16px !important;
+        max-height: 94vh !important;
+    }
+
+    /* Grid Layouts in Modals & Cards */
+    div[style*="gridTemplateColumns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Horizontal Filter Bars on Mobile */
+    div[style*="flex-direction: row"] {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    /* Filter Controls Full Width on Mobile */
+    div[style*="flex-direction: row"] input,
+    div[style*="flex-direction: row"] select {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    /* Table Horizontal Scroll Wrapper */
+    div[style*="overflowX: auto"],
+    div[style*="overflow-x: auto"] {
+        -webkit-overflow-scrolling: touch;
+        border-radius: 8px;
+    }
+
+    /* Coach Cards Row Layout on Mobile Touch Screens */
+    div[style*="display: flex"][style*="justify-content: space-between"][style*="gap: 8px"] {
+        overflow-x: auto !important;
+        padding-bottom: 6px !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+}

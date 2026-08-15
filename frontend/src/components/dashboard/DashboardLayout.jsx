@@ -25,10 +25,24 @@ export default function DashboardLayout({ user, onLogout, children }) {
   };
 
   const [activeTab, setActiveTabState] = useState(getInitialTab);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Synchronize tab state with localStorage and URL hash
   const setActiveTab = (tab) => {
     setActiveTabState(tab);
+    if (isMobile) {
+      setMobileSidebarOpen(false);
+    }
     try {
       localStorage.setItem('dashboard_active_tab', tab);
       window.location.hash = `#dashboard/${tab}`;
@@ -69,7 +83,14 @@ export default function DashboardLayout({ user, onLogout, children }) {
       padding: 0
     }}>
       {/* Shared Header */}
-      <AdminHeader user={user} onLogout={onLogout} setActiveTab={setActiveTab} />
+      <AdminHeader
+        user={user}
+        onLogout={onLogout}
+        setActiveTab={setActiveTab}
+        isMobile={isMobile}
+        mobileSidebarOpen={mobileSidebarOpen}
+        setMobileSidebarOpen={setMobileSidebarOpen}
+      />
 
       {/* Main Layout Area */}
       <div style={{
@@ -77,15 +98,45 @@ export default function DashboardLayout({ user, onLogout, children }) {
         display: 'flex',
         minHeight: 0,
         width: '100%',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        position: 'relative'
       }}>
-        {/* Shared Left Dynamic Sidebar */}
-        <Sidebar
-          user={user}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          onLogout={onLogout}
-        />
+        {/* Mobile Drawer Overlay Backdrop */}
+        {isMobile && mobileSidebarOpen && (
+          <div
+            onClick={() => setMobileSidebarOpen(false)}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.6)',
+              zIndex: 9998,
+              backdropFilter: 'blur(2px)'
+            }}
+          />
+        )}
+
+        {/* Shared Left Sidebar (Fixed on Desktop, Drawer on Mobile) */}
+        <div style={{
+          display: isMobile ? (mobileSidebarOpen ? 'block' : 'none') : 'block',
+          position: isMobile ? 'fixed' : 'relative',
+          top: isMobile ? 0 : 'auto',
+          left: isMobile ? 0 : 'auto',
+          bottom: isMobile ? 0 : 'auto',
+          zIndex: isMobile ? 9999 : 1,
+          height: isMobile ? '100vh' : 'auto'
+        }}>
+          <Sidebar
+            user={user}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            onLogout={onLogout}
+            onCloseMobile={() => setMobileSidebarOpen(false)}
+            isMobile={isMobile}
+          />
+        </div>
 
         {/* Right Main Column */}
         <div style={{
@@ -94,20 +145,20 @@ export default function DashboardLayout({ user, onLogout, children }) {
           flexDirection: 'column',
           minHeight: 0,
           width: '100%',
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
+          overflowX: 'hidden'
         }}>
           {/* Main Content Workspace */}
-          <main style={{
+          <main className="dashboard-main-content" style={{
             flex: 1,
             overflowY: 'auto',
-            padding: '32px',
+            padding: isMobile ? '14px' : '32px',
             boxSizing: 'border-box',
             width: '100%'
           }}>
             {React.isValidElement(children)
               ? React.cloneElement(children, { activeTab, onNavigate: setActiveTab })
               : children}
-
           </main>
 
           {/* Shared Docked Footer */}

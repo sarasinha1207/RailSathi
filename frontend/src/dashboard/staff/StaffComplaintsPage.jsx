@@ -151,31 +151,32 @@ export default function StaffComplaintsPage({ user }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Top Banner */}
+      {/* Top Banner Matching CMO Dashboard Header */}
       <div style={{
         backgroundColor: '#ffffff',
         borderRadius: '12px',
         padding: '20px 24px',
-        border: '1px solid #e5e7eb',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
         display: 'flex',
-        justifyContent: 'space-between',
         alignItems: 'center',
+        justifyContent: 'space-between',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+        borderLeft: '5px solid #800020',
+        border: '1px solid #e5e7eb',
         flexWrap: 'wrap',
         gap: '16px'
       }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 800, color: '#4a071a' }}>
+          <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 800, color: '#800020' }}>
             Assigned Complaints Workspace
           </h2>
           <p style={{ margin: '4px 0 0 0', fontSize: '0.88rem', color: '#6b7280' }}>
-            Click any complaint to view full overview, passenger description, add remarks, and mark as closed.
+            Click any complaint to view full audit record, passenger description, log remarks, and mark as closed.
           </p>
         </div>
 
         <input
           type="text"
-          placeholder="🔍 Search Complaint ID, Coach, Category..."
+          placeholder="Search Complaint ID, Coach, Category..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{
@@ -191,10 +192,10 @@ export default function StaffComplaintsPage({ user }) {
       {/* Filter Tabs */}
       <div style={{ display: 'flex', gap: '10px', borderBottom: '2px solid #e5e7eb', paddingBottom: '2px' }}>
         {[
-          { id: 'active', label: '🔥 Active Tasks', count: complaints.filter(c => ['Assigned', 'Accepted', 'In Progress', 'Pending Review', 'Under Review'].includes(c.internal_status)).length },
-          { id: 'reassignment', label: '🔄 Reassignment Requested', count: complaints.filter(c => c.internal_status === 'Reassignment Requested').length },
-          { id: 'resolved', label: '✅ Resolved / Closed', count: complaints.filter(c => ['Resolved', 'Closed'].includes(c.internal_status)).length },
-          { id: 'all', label: '📋 All Complaints', count: complaints.length }
+          { id: 'active', label: 'Active Tasks', count: complaints.filter(c => ['Assigned', 'Accepted', 'In Progress', 'Pending Review', 'Under Review'].includes(c.internal_status)).length },
+          { id: 'reassignment', label: 'Reassignment Requested', count: complaints.filter(c => c.internal_status === 'Reassignment Requested').length },
+          { id: 'resolved', label: 'Resolved / Closed', count: complaints.filter(c => ['Resolved', 'Closed'].includes(c.internal_status)).length },
+          { id: 'all', label: 'All Complaints', count: complaints.length }
         ].map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -207,7 +208,7 @@ export default function StaffComplaintsPage({ user }) {
                 background: 'none',
                 fontSize: '0.92rem',
                 fontWeight: isActive ? 800 : 600,
-                color: isActive ? '#4a071a' : '#6b7280',
+                color: isActive ? '#800020' : '#6b7280',
                 borderBottom: isActive ? '3px solid #800020' : '3px solid transparent',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease'
@@ -281,7 +282,7 @@ export default function StaffComplaintsPage({ user }) {
                           onClick={(e) => { e.stopPropagation(); openComplaintModal(c); }}
                           style={{ padding: '6px 14px', backgroundColor: '#800020', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
                         >
-                          🔍 View & Resolve
+                          View Record
                         </button>
                       </td>
                     </tr>
@@ -293,121 +294,64 @@ export default function StaffComplaintsPage({ user }) {
         </div>
       )}
 
-      {/* COMPLAINT OVERVIEW & ACTION MODAL */}
+      {/* --- COMPLAINT AUDIT RECORD MODAL (IDENTICAL LAYOUT TO CMO VIEW MODAL) --- */}
       {selectedComplaint && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.6)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-          padding: '16px'
-        }}>
-          <div style={{
-            backgroundColor: '#ffffff',
-            borderRadius: '16px',
-            width: '100%',
-            maxWidth: '680px',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            padding: '28px',
-            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-            boxSizing: 'border-box'
-          }}>
-            {/* Modal Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #e5e7eb', paddingBottom: '16px', marginBottom: '20px' }}>
-              <div>
-                <div style={{ fontSize: '0.78rem', color: '#ffb300', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  COMPLAINT OVERVIEW & ACTION CENTER
-                </div>
-                <h3 style={{ margin: '2px 0 0 0', fontSize: '1.4rem', fontWeight: 800, color: '#4a071a' }}>
-                  {selectedComplaint.complaint_id}
-                </h3>
-              </div>
-              <button
-                onClick={() => setSelectedComplaint(null)}
-                style={{ backgroundColor: '#f3f4f6', border: 'none', width: '32px', height: '32px', borderRadius: '50%', fontSize: '1.1rem', cursor: 'pointer', color: '#4b5563', fontWeight: 800 }}
-              >
-                ✕
-              </button>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '16px' }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px', maxWidth: '650px', width: '90%', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
+            <h3 style={{ margin: '0 0 12px 0', color: '#800020', fontSize: '1.3rem', fontWeight: 800 }}>
+              Complaint Audit Record — {selectedComplaint.complaint_id}
+            </h3>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '0.85rem', color: '#374151', marginBottom: '16px' }}>
+              <div><strong>Passenger PNR:</strong> {selectedComplaint.pnr_number || 'N/A'}</div>
+              <div><strong>Phone Number:</strong> {selectedComplaint.phone_number || 'N/A'}</div>
+              <div><strong>Train Number / Coach:</strong> Train {selectedComplaint.train_number || '22477'} (Coach {selectedComplaint.coach_number || 'N/A'})</div>
+              <div><strong>Zone / Division:</strong> {selectedComplaint.zone_code || 'NR'} / {selectedComplaint.assigned_division_code || 'DLI'}</div>
+              <div><strong>Category & Subcategory:</strong> {selectedComplaint.main_class || selectedComplaint.category_name}</div>
+              <div><strong>Submitted At:</strong> {selectedComplaint.created_at || 'Just now'}</div>
+              <div><strong>Priority:</strong> <PriorityBadge priority={selectedComplaint.priority} /></div>
+              <div><strong>Internal Status:</strong> <StatusBadge status={selectedComplaint.internal_status} /></div>
             </div>
 
-            {/* Overview Metadata Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px', backgroundColor: '#f8fafc', padding: '16px', borderRadius: '10px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
-              <div>
-                <div style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: 700 }}>TRAIN & COACH</div>
-                <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#111827', marginTop: '2px' }}>
-                  Train {selectedComplaint.train_number} • Coach {selectedComplaint.coach_number || 'N/A'} {selectedComplaint.seat_number ? `(Seat ${selectedComplaint.seat_number})` : ''}
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: 700 }}>PNR NUMBER</div>
-                <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#111827', marginTop: '2px' }}>
-                  {selectedComplaint.pnr_number || 'N/A'}
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: 700 }}>CATEGORY</div>
-                <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#111827', marginTop: '2px' }}>
-                  {selectedComplaint.main_class || selectedComplaint.category_name}
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: 700 }}>PRIORITY & STATUS</div>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px' }}>
-                  <PriorityBadge priority={selectedComplaint.priority} />
-                  <StatusBadge status={selectedComplaint.internal_status} />
-                </div>
+            <div style={{ marginBottom: '16px' }}>
+              <strong style={{ fontSize: '0.88rem', color: '#111827' }}>Full Complaint Description:</strong>
+              <div style={{ backgroundColor: '#f9fafb', padding: '12px', borderRadius: '6px', border: '1px solid #e5e7eb', marginTop: '6px', fontSize: '0.85rem', lineHeight: 1.5, color: '#1f2937' }}>
+                {selectedComplaint.complaint_description || selectedComplaint.description || 'No description provided.'}
               </div>
             </div>
 
-            {/* Passenger Complaint Description */}
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 800, color: '#111827', marginBottom: '6px' }}>
-                📝 Passenger Complaint Description:
-              </label>
-              <div style={{ backgroundColor: '#fffbe8', padding: '14px 16px', borderRadius: '10px', border: '1px solid #fde68a', fontSize: '0.92rem', color: '#92400e', lineHeight: '1.5' }}>
-                "{selectedComplaint.complaint_description}"
-              </div>
-            </div>
-
-            {/* Action Buttons Section: Accept & Reassign */}
+            {/* Staff Task Action Buttons */}
             {!['Resolved', 'Closed'].includes(selectedComplaint.internal_status) && (
-              <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
                 {selectedComplaint.internal_status === 'Assigned' && (
                   <button
                     type="button"
                     onClick={() => handleAcceptTask(selectedComplaint.complaint_id)}
                     disabled={submitting}
-                    style={{ flex: 1, padding: '10px 16px', backgroundColor: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 800, fontSize: '0.88rem', cursor: 'pointer' }}
+                    style={{ flex: 1, padding: '8px 16px', backgroundColor: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}
                   >
-                    {submitting ? 'Updating...' : '✅ Accept Task'}
+                    {submitting ? 'Updating...' : 'Accept Task'}
                   </button>
                 )}
 
                 <button
                   type="button"
                   onClick={() => setShowReassignForm(!showReassignForm)}
-                  style={{ flex: 1, padding: '10px 16px', backgroundColor: '#6b7280', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 800, fontSize: '0.88rem', cursor: 'pointer' }}
+                  style={{ flex: 1, padding: '8px 16px', backgroundColor: '#6b7280', color: '#ffffff', border: 'none', borderRadius: '6px', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}
                 >
-                  🔄 Request Reassignment
+                  Request Reassignment
                 </button>
               </div>
             )}
 
             {/* Reassignment Reason Input Form (Toggled) */}
             {showReassignForm && (
-              <form onSubmit={handleRequestReassign} style={{ backgroundColor: '#fef2f2', padding: '16px', borderRadius: '10px', border: '1px solid #fecaca', marginBottom: '20px' }}>
-                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#991b1b', marginBottom: '10px' }}>
+              <form onSubmit={handleRequestReassign} style={{ backgroundColor: '#fef2f2', padding: '14px', borderRadius: '8px', border: '1px solid #fecaca', marginBottom: '16px' }}>
+                <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#991b1b', marginBottom: '8px' }}>
                   Reassign Task to CMO Control Desk
                 </div>
-                <div style={{ marginBottom: '12px' }}>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#374151', marginBottom: '4px' }}>
+                <div style={{ marginBottom: '10px' }}>
+                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#374151', marginBottom: '4px' }}>
                     Select Reassignment Reason:
                   </label>
                   <select
@@ -424,7 +368,7 @@ export default function StaffComplaintsPage({ user }) {
                 <button
                   type="submit"
                   disabled={submitting}
-                  style={{ padding: '8px 16px', backgroundColor: '#991b1b', color: '#ffffff', border: 'none', borderRadius: '6px', fontWeight: 800, fontSize: '0.82rem', cursor: 'pointer' }}
+                  style={{ padding: '6px 14px', backgroundColor: '#991b1b', color: '#ffffff', border: 'none', borderRadius: '6px', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}
                 >
                   {submitting ? 'Submitting...' : 'Submit Reassignment Request'}
                 </button>
@@ -433,38 +377,38 @@ export default function StaffComplaintsPage({ user }) {
 
             {/* Staff Remarks Section */}
             <form onSubmit={handleCloseComplaint}>
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: 800, color: '#111827', marginBottom: '6px' }}>
-                  💬 Staff Action Taken / Remarks (Required to Close):
-                </label>
+              <div style={{ marginBottom: '16px' }}>
+                <strong style={{ display: 'block', fontSize: '0.88rem', color: '#111827', marginBottom: '6px' }}>
+                  Action Taken / Staff Remarks (Required to Close):
+                </strong>
                 <textarea
-                  rows={4}
+                  rows={3}
                   required={!['Resolved', 'Closed'].includes(selectedComplaint.internal_status)}
                   disabled={['Resolved', 'Closed'].includes(selectedComplaint.internal_status)}
                   placeholder="Enter detailed action taken (e.g. Served fresh meal tray to seat C3-42, rectified AC cooling, etc.)..."
                   value={staffRemark}
                   onChange={(e) => setStaffRemark(e.target.value)}
-                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.88rem', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #d1d5db', fontSize: '0.85rem', boxSizing: 'border-box', lineHeight: 1.5 }}
                 />
               </div>
 
-              {/* Modal Action Buttons: Close Complaint & Dismiss */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', borderTop: '1px solid #e5e7eb', paddingTop: '16px' }}>
+              {/* Modal Footer Controls */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', paddingTop: '8px' }}>
                 <button
                   type="button"
                   onClick={() => setSelectedComplaint(null)}
-                  style={{ padding: '10px 18px', backgroundColor: '#f3f4f6', color: '#374151', border: '1px solid #d1d5db', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+                  style={{ padding: '8px 18px', borderRadius: '6px', border: '1px solid #d1d5db', backgroundColor: '#f3f4f6', color: '#374151', fontWeight: 700, cursor: 'pointer' }}
                 >
-                  Dismiss
+                  Close Record
                 </button>
 
                 {!['Resolved', 'Closed'].includes(selectedComplaint.internal_status) && (
                   <button
                     type="submit"
                     disabled={submitting}
-                    style={{ padding: '10px 22px', backgroundColor: '#059669', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: '0 2px 8px rgba(5,150,105,0.25)' }}
+                    style={{ padding: '8px 18px', borderRadius: '6px', border: 'none', backgroundColor: '#800020', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
                   >
-                    {submitting ? 'Closing...' : '🔒 Close & Mark Resolved'}
+                    {submitting ? 'Closing...' : 'Mark Resolved & Close'}
                   </button>
                 )}
               </div>

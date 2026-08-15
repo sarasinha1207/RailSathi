@@ -93,7 +93,7 @@ export default function StaffDashboardPage({ user, onNavigate }) {
             boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
           }}
         >
-          🔄 Refresh Roster Data
+          Refresh Roster Data
         </button>
       </div>
 
@@ -121,20 +121,21 @@ export default function StaffDashboardPage({ user, onNavigate }) {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{
-            width: '56px',
-            height: '56px',
-            borderRadius: '12px',
+            width: '48px',
+            height: '48px',
+            borderRadius: '10px',
             backgroundColor: '#800020',
             color: '#fff',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '1.5rem'
+            fontSize: '0.85rem',
+            fontWeight: 800
           }}>
-            🚆
+            TRAIN
           </div>
           <div>
-            <div style={{ fontSize: '0.78rem', color: '#ffb300', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ fontSize: '0.78rem', color: '#800020', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               CURRENT ASSIGNED TRAIN JOURNEY
             </div>
             <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#111827' }}>
@@ -160,7 +161,7 @@ export default function StaffDashboardPage({ user, onNavigate }) {
             color: '#065f46',
             border: '1px solid #a7f3d0'
           }}>
-            🟢 {train_info?.onboard_status || 'Onboard Active Duty'}
+            {train_info?.onboard_status || 'Onboard Active Duty'}
           </span>
         </div>
       </div>
@@ -197,7 +198,7 @@ export default function StaffDashboardPage({ user, onNavigate }) {
                 cursor: 'pointer'
               }}
             >
-              View All Complaints ➔
+              View All Complaints
             </button>
           )}
         </div>

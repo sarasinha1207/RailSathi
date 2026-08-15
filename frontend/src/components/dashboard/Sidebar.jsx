@@ -91,9 +91,9 @@ const renderNavIcon = (iconName, itemId) => {
 };
 
 
-export default function Sidebar({ user, activeTab, setActiveTab, onLogout }) {
+export default function Sidebar({ user, activeTab, setActiveTab, onLogout, onCloseMobile, isMobile }) {
   const username = user?.username || 'User';
-  const role = user?.role || 'Admin';
+  const role = user?.role || 'Senior Officer';
 
   const navItems = SIDEBAR_NAV_ITEMS[role] || SIDEBAR_NAV_ITEMS.Admin;
 
@@ -120,6 +120,11 @@ export default function Sidebar({ user, activeTab, setActiveTab, onLogout }) {
     hour12: true
   });
 
+  const handleNavClick = (tabId) => {
+    setActiveTab(tabId);
+    if (onCloseMobile) onCloseMobile();
+  };
+
   return (
     <aside style={{
       width: '260px',
@@ -139,6 +144,27 @@ export default function Sidebar({ user, activeTab, setActiveTab, onLogout }) {
       boxSizing: 'border-box'
     }}>
       <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflowY: 'auto' }}>
+        {/* Mobile Header Close Button */}
+        {isMobile && (
+          <div style={{ padding: '12px 16px', display: 'flex', justifyContent: 'flex-end', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+            <button
+              onClick={onCloseMobile}
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '6px',
+                padding: '6px 12px',
+                fontWeight: 700,
+                fontSize: '0.8rem',
+                cursor: 'pointer'
+              }}
+            >
+              Close Menu ✕
+            </button>
+          </div>
+        )}
+
         {/* User Profile Header */}
         <div style={{
           padding: '24px 16px 20px 16px',
@@ -159,24 +185,36 @@ export default function Sidebar({ user, activeTab, setActiveTab, onLogout }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            fontSize: '1.4rem',
             fontWeight: 800,
-            fontSize: '1.25rem',
-            border: '2.5px solid #e65c00',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-            marginBottom: '4px'
+            border: '2px solid #e65c00',
+            boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)'
           }}>
             {username.charAt(0).toUpperCase()}
           </div>
 
-          <span style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', lineHeight: 1.2 }}>
-            Welcome, {username}!
-          </span>
-          <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#ffb300', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            {role}
-          </span>
-          <span style={{ fontSize: '0.68rem', color: '#f0b8c4', fontWeight: 600 }}>
-            RailSathi Operational Control
-          </span>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#ffffff' }}>
+              Welcome, {username}!
+            </h3>
+            <span style={{
+              display: 'inline-block',
+              marginTop: '4px',
+              padding: '2px 8px',
+              backgroundColor: '#e65c00',
+              color: '#ffffff',
+              borderRadius: '4px',
+              fontSize: '0.65rem',
+              fontWeight: 800,
+              letterSpacing: '0.5px',
+              textTransform: 'uppercase'
+            }}>
+              {role}
+            </span>
+            <p style={{ margin: '4px 0 0 0', fontSize: '0.72rem', color: '#f0b8c4' }}>
+              RailSathi Operational Control
+            </p>
+          </div>
         </div>
 
         {/* Dynamic Navigation Items */}
@@ -186,7 +224,7 @@ export default function Sidebar({ user, activeTab, setActiveTab, onLogout }) {
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id)}
+                onClick={() => handleNavClick(item.id)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
