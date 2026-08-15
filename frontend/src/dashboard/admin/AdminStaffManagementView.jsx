@@ -31,8 +31,21 @@ export default function AdminStaffManagementView() {
     fetchStaffData();
   }, []);
 
+  // Exclude System Administrator / Admin entries as Admin is system supervisor, not field staff
+  const actualFieldStaff = useMemo(() => {
+    return staffList.filter(s => {
+      const desig = (s.designation || s.role || '').toLowerCase();
+      const stfId = (s.staff_id || '').toLowerCase();
+      const stfName = (s.name || '').toLowerCase();
+      if (desig.includes('admin') || desig.includes('administrator') || stfId.includes('admin') || stfName.includes('system admin')) {
+        return false;
+      }
+      return true;
+    });
+  }, [staffList]);
+
   const filteredStaff = useMemo(() => {
-    return staffList.filter((s) => {
+    return actualFieldStaff.filter((s) => {
       if (searchTerm) {
         const term = searchTerm.toLowerCase();
         const matchName = (s.name || s.staff_name || '').toLowerCase().includes(term);
@@ -53,13 +66,13 @@ export default function AdminStaffManagementView() {
 
       return true;
     });
-  }, [staffList, searchTerm, roleFilter, deptFilter]);
+  }, [actualFieldStaff, searchTerm, roleFilter, deptFilter]);
 
-  // Compute live summary statistics strictly from database data
-  const totalStaffCount = staffList.length;
-  const availableCount = staffList.filter(s => s.availability_status === 'Available' || s.availability_status === '🟢 Available').length;
+  // Compute live summary statistics strictly from database field staff data
+  const totalStaffCount = actualFieldStaff.length;
+  const availableCount = actualFieldStaff.filter(s => s.availability_status === 'Available' || s.availability_status === ' Available').length;
   const offDutyCount = totalStaffCount - availableCount;
-  const activeDutyCount = staffList.filter(s => s.active_train_number || s.duty_status === 'ON_DUTY').length || availableCount;
+  const activeDutyCount = actualFieldStaff.filter(s => s.active_train_number || s.duty_status === 'ON_DUTY').length || availableCount;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -184,7 +197,7 @@ export default function AdminStaffManagementView() {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
           {filteredStaff.map((s) => {
-            const isAvail = s.availability_status === 'Available' || s.availability_status === '🟢 Available';
+            const isAvail = s.availability_status === 'Available' || s.availability_status === ' Available';
             return (
               <div key={s.staff_id} style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '12px' }}>
                 <div>

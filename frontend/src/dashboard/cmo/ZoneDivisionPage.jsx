@@ -277,8 +277,8 @@ export default function ZoneDivisionPage({ user }) {
 
         <div style={{ backgroundColor: '#ffffff', padding: '18px 20px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #700c28' }}>
           <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#700c28', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Resolution Rate</div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#700c28', marginTop: '4px' }}>{summaryMetrics.resolution_rate || '98.2%'}</div>
-          <div style={{ fontSize: '0.76rem', color: '#6b7280', marginTop: '2px' }}>Avg Time: {summaryMetrics.avg_resolution_time || '42 Mins'}</div>
+          <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#700c28', marginTop: '4px' }}>{summaryMetrics.resolution_rate || '0.0%'}</div>
+          <div style={{ fontSize: '0.76rem', color: '#6b7280', marginTop: '2px' }}>Avg Time: {summaryMetrics.avg_resolution_time || '0 Mins'}</div>
         </div>
 
       </div>
@@ -307,23 +307,8 @@ export default function ZoneDivisionPage({ user }) {
           </button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
           
-          {/* Date Range */}
-          <div>
-            <label style={{ display: 'block', fontSize: '0.74rem', fontWeight: 800, color: '#4b5563', marginBottom: '4px', textTransform: 'uppercase' }}>Date Range</label>
-            <select
-              value={dateRange}
-              onChange={e => setDateRange(e.target.value)}
-              style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.86rem', backgroundColor: '#ffffff', color: '#1e293b', fontWeight: 600 }}
-            >
-              <option value="today">Today</option>
-              <option value="7_days">Last 7 Days</option>
-              <option value="30_days">Last 30 Days</option>
-              <option value="this_month">This Month</option>
-            </select>
-          </div>
-
           {/* Zone Selector */}
           <div>
             <label style={{ display: 'block', fontSize: '0.74rem', fontWeight: 800, color: '#800020', marginBottom: '4px', textTransform: 'uppercase' }}>Railway Zone</label>
@@ -334,13 +319,23 @@ export default function ZoneDivisionPage({ user }) {
             >
               <option value="all">All 18 Zones</option>
               <option value="NR">Northern Railway (NR)</option>
+              <option value="WR">Western Railway (WR)</option>
+              <option value="SR">Southern Railway (SR)</option>
+              <option value="ER">Eastern Railway (ER)</option>
+              <option value="CR">Central Railway (CR)</option>
+              <option value="ECR">East Central Railway (ECR)</option>
+              <option value="SCR">South Central Railway (SCR)</option>
+              <option value="NWR">North Western Railway (NWR)</option>
               <option value="NCR">North Central Railway (NCR)</option>
               <option value="NER">North Eastern Railway (NER)</option>
-              <option value="CR">Central Railway (CR)</option>
-              <option value="WR">Western Railway (WR)</option>
-              <option value="ECR">East Central Railway (ECR)</option>
-              <option value="ER">Eastern Railway (ER)</option>
+              <option value="NFR">Northeast Frontier Railway (NFR)</option>
+              <option value="ECoR">East Coast Railway (ECoR)</option>
+              <option value="SWR">South Western Railway (SWR)</option>
+              <option value="SECR">South East Central Railway (SECR)</option>
+              <option value="SER">South Eastern Railway (SER)</option>
               <option value="WCR">West Central Railway (WCR)</option>
+              <option value="Metro">Metro Railway Kolkata</option>
+              <option value="KR">Konkan Railway (KR)</option>
             </select>
           </div>
 
@@ -356,58 +351,8 @@ export default function ZoneDivisionPage({ user }) {
             >
               <option value="all">{selectedZone === 'all' ? 'All Divisions (Select Zone First)' : 'All Divisions in ' + selectedZone}</option>
               {availableDivisions.map(d => (
-                <option key={d.division_code} value={d.division_code}>{d.division_name}</option>
+                <option key={d.division_code} value={d.division_code}>{d.division_name || d.division_code}</option>
               ))}
-            </select>
-          </div>
-
-          {/* Category Filter */}
-          <div>
-            <label style={{ display: 'block', fontSize: '0.74rem', fontWeight: 800, color: '#4b5563', marginBottom: '4px', textTransform: 'uppercase' }}>Category</label>
-            <select
-              value={categoryFilter}
-              onChange={e => setCategoryFilter(e.target.value)}
-              style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.86rem', backgroundColor: '#ffffff', color: '#1e293b', fontWeight: 600 }}
-            >
-              <option value="all">All Categories</option>
-              <option value="CAT">Catering & Vending</option>
-              <option value="CLN">Cleanliness & Hygiene</option>
-              <option value="SEC">Security & RPF</option>
-              <option value="ELE">Electrical & AC</option>
-              <option value="MED">Medical Assistance</option>
-              <option value="BED">Bed Roll & Linen</option>
-            </select>
-          </div>
-
-          {/* Priority Filter */}
-          <div>
-            <label style={{ display: 'block', fontSize: '0.74rem', fontWeight: 800, color: '#4b5563', marginBottom: '4px', textTransform: 'uppercase' }}>Priority</label>
-            <select
-              value={priorityFilter}
-              onChange={e => setPriorityFilter(e.target.value)}
-              style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.86rem', backgroundColor: '#ffffff', color: '#1e293b', fontWeight: 600 }}
-            >
-              <option value="all">All Priorities</option>
-              <option value="Critical">Critical Priority</option>
-              <option value="High">High Priority</option>
-              <option value="Medium">Medium Priority</option>
-              <option value="Low">Low Priority</option>
-            </select>
-          </div>
-
-          {/* Status Filter */}
-          <div>
-            <label style={{ display: 'block', fontSize: '0.74rem', fontWeight: 800, color: '#4b5563', marginBottom: '4px', textTransform: 'uppercase' }}>Status</label>
-            <select
-              value={statusFilter}
-              onChange={e => setStatusFilter(e.target.value)}
-              style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.86rem', backgroundColor: '#ffffff', color: '#1e293b', fontWeight: 600 }}
-            >
-              <option value="all">All Statuses</option>
-              <option value="Pending">Pending Verification</option>
-              <option value="Assigned">Under Review / Assigned</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Resolved">Resolved</option>
             </select>
           </div>
 
@@ -427,10 +372,10 @@ export default function ZoneDivisionPage({ user }) {
           </div>
         </div>
 
-        {/* Table with Separate Zone Name & Division Name Columns */}
-        <div style={{ overflowX: 'auto', borderRadius: '12px', border: '1px solid #cbd5e1', boxShadow: '0 4px 14px rgba(0,0,0,0.04)' }}>
+        {/* Compact Scrollable Table Container */}
+        <div style={{ overflowX: 'auto', maxHeight: '480px', overflowY: 'auto', borderRadius: '12px', border: '1px solid #cbd5e1', boxShadow: '0 4px 14px rgba(0,0,0,0.04)' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.86rem', textAlign: 'left' }}>
-            <thead>
+            <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
               <tr style={{ backgroundColor: '#4a0e17', color: '#ffffff' }}>
                 <th style={{ padding: '12px 14px', fontWeight: 800, textAlign: 'center', width: '55px', borderRight: '1px solid rgba(255,255,255,0.15)' }}>S.No.</th>
                 <th style={{ padding: '12px 16px', fontWeight: 800, minWidth: '210px', borderRight: '1px solid rgba(255,255,255,0.15)' }}>Zone Name</th>

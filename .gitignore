@@ -1,8 +1,9 @@
+# ==========================================
 # Python & Bytecode
+# ==========================================
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
 .pytest_cache/
 .coverage
 htmlcov/
@@ -17,45 +18,55 @@ ENV/
 env/
 ENV_DIR/
 
-# Node.js Dependencies & Builds
+# ==========================================
+# Node.js & Vite Builds
+# ==========================================
 node_modules/
 frontend/node_modules/
 frontend/dist/
+frontend/.vite/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 .eslintcache
 
+# ==========================================
+# Temporary & Scratch Files
+# ==========================================
+scratch/
+temp/
+tmp/
+*.log
+logs/
+
+# ==========================================
 # Local Database & Storage
+# ==========================================
 data/mysql/*
 !data/mysql/.gitkeep
 *.sqlite
 *.db
+*.sqlite3
 
-# Environment & Config Credentials
+# ==========================================
+# Environment Credentials & Secrets
+# ==========================================
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# OS & Editor Junk
+# ==========================================
+# IDE & System Files
+# ==========================================
 .DS_Store
 Thumbs.db
 desktop.ini
 *.tmp
 *.bak
-
-# IDE Configurations
 .vscode/
 .idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
 *.swp
 *.swo
-
-# System Logs
-*.log
-logs/

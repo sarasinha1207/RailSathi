@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import AdminHomeView from './AdminHomeView';
-import AdminAnalyticsView from './AdminAnalyticsView';
-import AdminComplaintsView from './AdminComplaintsView';
-import AdminStaffManagementView from './AdminStaffManagementView';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+
+const AdminHomeView = lazy(() => import('./AdminHomeView'));
+const AdminAnalyticsView = lazy(() => import('./AdminAnalyticsView'));
+const AdminComplaintsView = lazy(() => import('./AdminComplaintsView'));
+const AdminStaffManagementView = lazy(() => import('./AdminStaffManagementView'));
+
+const ComponentLoader = () => (
+  <div style={{ padding: '40px', textAlign: 'center', color: '#800020', fontWeight: 800 }}>
+    Loading Section...
+  </div>
+);
 
 export default function AdminDashboardPage({ user, activeTab = 'home', onNavigate }) {
   const [analyticsData, setAnalyticsData] = useState(null);
@@ -29,19 +36,21 @@ export default function AdminDashboardPage({ user, activeTab = 'home', onNavigat
 
   return (
     <div style={{ width: '100%', boxSizing: 'border-box' }}>
-      {activeTab === 'analytics' ? (
-        <AdminAnalyticsView analyticsData={analyticsData} />
-      ) : activeTab === 'complaints' ? (
-        <AdminComplaintsView user={user} />
-      ) : activeTab === 'staff_management' || activeTab === 'staff' ? (
-        <AdminStaffManagementView />
-      ) : (
-        <AdminHomeView
-          analyticsData={analyticsData}
-          loading={loading}
-          onRefresh={fetchAnalyticsData}
-        />
-      )}
+      <Suspense fallback={<ComponentLoader />}>
+        {activeTab === 'analytics' ? (
+          <AdminAnalyticsView analyticsData={analyticsData} />
+        ) : activeTab === 'complaints' ? (
+          <AdminComplaintsView user={user} />
+        ) : activeTab === 'staff_management' || activeTab === 'staff' ? (
+          <AdminStaffManagementView />
+        ) : (
+          <AdminHomeView
+            analyticsData={analyticsData}
+            loading={loading}
+            onRefresh={fetchAnalyticsData}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }

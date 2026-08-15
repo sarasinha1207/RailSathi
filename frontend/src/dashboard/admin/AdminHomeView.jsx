@@ -118,20 +118,20 @@ export default function AdminHomeView({ analyticsData, loading, onRefresh }) {
         <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Total Network Grievances</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#111827', margin: '4px 0' }}>
-            {kpis.assigned_complaints + kpis.pending_complaints + kpis.resolved_complaints || 10018}
+            {(kpis.assigned_complaints || 0) + (kpis.pending_complaints || 0) + (kpis.resolved_complaints || 0)}
           </div>
           <div style={{ fontSize: '0.75rem', color: '#800020', fontWeight: 700 }}>Network-wide Logged Complaints</div>
         </div>
 
         <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #c5221f', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-          <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Pending Resolutions</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#c5221f', margin: '4px 0' }}>{kpis.pending_complaints || 3}</div>
-          <div style={{ fontSize: '0.75rem', color: '#991b1b', fontWeight: 700 }}>Action Pending Field Action</div>
+          <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Pending Field Action</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#c5221f', margin: '4px 0' }}>{kpis.pending_complaints || 0}</div>
+          <div style={{ fontSize: '0.75rem', color: '#991b1b', fontWeight: 700 }}>Action Pending Verification</div>
         </div>
 
         <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #059669', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Resolved Grievances</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#059669', margin: '4px 0' }}>{kpis.resolved_complaints || 10010}</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#059669', margin: '4px 0' }}>{kpis.resolved_complaints || 0}</div>
           <div style={{ fontSize: '0.75rem', color: '#065f46', fontWeight: 700 }}>Closed & Passenger Verified</div>
         </div>
 

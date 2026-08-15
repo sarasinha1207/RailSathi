@@ -142,7 +142,7 @@ export default function StaffDashboardPage({ user, onNavigate }) {
               Train {train_info?.train_number} — {train_info?.train_name}
             </div>
             <div style={{ fontSize: '0.88rem', color: '#6b7280', marginTop: '2px' }}>
-              Route: <strong>{train_info?.source}</strong> ➔ <strong>{train_info?.destination}</strong> ({train_info?.direction})
+              Route: <strong>{train_info?.source}</strong>  <strong>{train_info?.destination}</strong> ({train_info?.direction})
             </div>
           </div>
         </div>
@@ -205,7 +205,7 @@ export default function StaffDashboardPage({ user, onNavigate }) {
 
         {(!recent_complaints || recent_complaints.length === 0) ? (
           <div style={{ padding: '30px', textAlign: 'center', backgroundColor: '#f9fafb', borderRadius: '8px', color: '#6b7280' }}>
-            🎉 No active assigned complaints found for your roster duty.
+             No active assigned complaints found for your roster duty.
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>

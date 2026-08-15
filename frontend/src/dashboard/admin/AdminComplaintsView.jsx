@@ -44,9 +44,9 @@ export default function AdminComplaintsView({ user, initialDivisionFilter }) {
   }, []);
 
   // Summary KPI Cards strictly reflect metrics across ALL database complaint records
-  const kpiTotal = apiMetrics?.total_complaints ?? 10019;
-  const kpiPending = apiMetrics?.total_pending ?? 4;
-  const kpiResolved = apiMetrics?.resolved_complaints ?? 10012;
+  const kpiTotal = apiMetrics?.total_complaints ?? 0;
+  const kpiPending = apiMetrics?.total_pending ?? 0;
+  const kpiResolved = apiMetrics?.resolved_complaints ?? 0;
   const kpiCritical = apiMetrics?.high_critical ?? 0;
 
   // Extract unique Zones and Divisions for table card dropdowns
@@ -310,7 +310,7 @@ export default function AdminComplaintsView({ user, initialDivisionFilter }) {
                 boxSizing: 'border-box'
               }}
             >
-              Clear Filters ✕
+              Clear Filters 
             </button>
           )}
         </div>
@@ -449,7 +449,7 @@ export default function AdminComplaintsView({ user, initialDivisionFilter }) {
                 onClick={() => setShowModal(false)}
                 style={{ background: 'none', border: 'none', fontSize: '1.2rem', color: '#6b7280', cursor: 'pointer', fontWeight: 800 }}
               >
-                ✕
+                
               </button>
             </div>
 

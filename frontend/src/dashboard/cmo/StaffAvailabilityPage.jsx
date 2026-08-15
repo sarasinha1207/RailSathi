@@ -130,19 +130,19 @@ export default function StaffAvailabilityPage({ user }) {
       case 'Available':
         return (
           <span style={{ backgroundColor: '#e6f4ea', color: '#137333', border: '1px solid #ceead6', padding: '5px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <span>🟢</span> Available
+            <span></span> Available
           </span>
         );
       case 'Assigned':
         return (
           <span style={{ backgroundColor: '#fef3d6', color: '#b06000', border: '1px solid #fde293', padding: '5px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <span>🟡</span> Assigned
+            <span></span> Assigned
           </span>
         );
       default:
         return (
           <span style={{ backgroundColor: '#fce8e6', color: '#c5221f', border: '1px solid #fad2cf', padding: '5px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <span>🔴</span> Unavailable
+            <span></span> Unavailable
           </span>
         );
     }
@@ -199,20 +199,20 @@ export default function StaffAvailabilityPage({ user }) {
         <div style={{ backgroundColor: '#ffffff', padding: '20px 22px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #137333' }}>
           <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#137333', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Available</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#137333', marginTop: '6px' }}>{metrics.available || 0}</div>
-          <div style={{ fontSize: '0.78rem', color: '#15803d', marginTop: '4px', fontWeight: 700 }}>🟢 Ready for Dispatch</div>
+          <div style={{ fontSize: '0.78rem', color: '#15803d', marginTop: '4px', fontWeight: 700 }}> Ready for Dispatch</div>
         </div>
 
         <div style={{ backgroundColor: '#ffffff', padding: '20px 22px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #b06000' }}>
           <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b06000', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Currently Assigned</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#b06000', marginTop: '6px' }}>{metrics.currently_assigned || 0}</div>
 
-          <div style={{ fontSize: '0.78rem', color: '#b45309', marginTop: '4px', fontWeight: 700 }}>🟡 Handling Grievance</div>
+          <div style={{ fontSize: '0.78rem', color: '#b45309', marginTop: '4px', fontWeight: 700 }}> Handling Grievance</div>
         </div>
 
         <div style={{ backgroundColor: '#ffffff', padding: '20px 22px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #c5221f' }}>
           <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#c5221f', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Unavailable / Offline</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#c5221f', marginTop: '6px' }}>{metrics.unavailable || 0}</div>
-          <div style={{ fontSize: '0.78rem', color: '#b91c1c', marginTop: '4px', fontWeight: 700 }}>🔴 On Break / Off Duty</div>
+          <div style={{ fontSize: '0.78rem', color: '#b91c1c', marginTop: '4px', fontWeight: 700 }}> On Break / Off Duty</div>
         </div>
 
       </div>
@@ -301,10 +301,10 @@ export default function StaffAvailabilityPage({ user }) {
             style={{ padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.86rem', backgroundColor: '#ffffff', color: '#1e293b', fontWeight: 600 }}
           >
             <option value="all">All Availability Statuses</option>
-            <option value="Available">🟢 Available</option>
-            <option value="Assigned">🟡 Assigned</option>
-            <option value="Unavailable">🔴 Unavailable</option>
-            <option value="Offline/Not Onboard">⚪ Offline / Not Onboard</option>
+            <option value="Available"> Available</option>
+            <option value="Assigned"> Assigned</option>
+            <option value="Unavailable"> Unavailable</option>
+            <option value="Offline/Not Onboard"> Offline / Not Onboard</option>
           </select>
 
           {/* Zone / Division Filter */}

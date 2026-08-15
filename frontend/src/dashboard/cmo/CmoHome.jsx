@@ -95,14 +95,6 @@ export default function Home({ user }) {
         <ComplaintOverviewTable overviewData={overviewTable} />
       )}
 
-      {/* SECTION C — CLEAN, PREMIUM DEPARTMENT-WISE ANALYTICS CARD */}
-      <DepartmentComplaintChart
-        data={analytics.department_chart || []}
-        selectedZone={selectedZone}
-        onZoneChange={(newZone) => setSelectedZone(newZone)}
-        zonesList={uniqueZones}
-      />
-
     </div>
   );
 }

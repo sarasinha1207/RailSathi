@@ -89,7 +89,7 @@ export default function Login({ onLoginSuccess }) {
 
         {errorMsg && (
           <div className="login-error-alert bg-[#fef2f2] border-l-4 border-solid border-[var(--error-color)] p-4 rounded-md flex items-start gap-2.5">
-            <span className="error-icon text-[var(--error-color)] font-bold text-sm leading-none mt-0.5">⚠</span>
+            <span className="error-icon text-[var(--error-color)] font-bold text-sm leading-none mt-0.5"></span>
             <span className="error-text text-[#991b1b] font-semibold text-xs leading-normal">{errorMsg}</span>
           </div>
         )}

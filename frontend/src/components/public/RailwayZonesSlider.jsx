@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
-// ── SVG Icon components ──────────────────────────────────────────────────────
+//  SVG Icon components 
 const IconBuilding = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
     <rect x="3" y="9" width="18" height="12" rx="1" /><path d="M3 9l9-6 9 6" /><line x1="9" y1="21" x2="9" y2="13" /><line x1="15" y1="21" x2="15" y2="13" />
@@ -37,7 +37,7 @@ const IconChevronRight = () => (
   </svg>
 );
 
-// ── Zone data ────────────────────────────────────────────────────────────────
+//  Zone data 
 // All 18 Zonal Railways mapped to dedicated unique /zone_<abbr>.jpg images
 const RAILWAY_ZONES = [
   {
@@ -158,7 +158,7 @@ const INFO_ROWS = [
   { icon: <IconStation />,  label: 'Stations', key: 'stations' },
 ];
 
-// ── Component ────────────────────────────────────────────────────────────────
+//  Component 
 export default function RailwayZonesSlider() {
   const [current, setCurrent] = useState(0);
   const [dir, setDir] = useState(1); // 1 = forward, -1 = back

@@ -160,7 +160,7 @@ export default function Sidebar({ user, activeTab, setActiveTab, onLogout, onClo
                 cursor: 'pointer'
               }}
             >
-              Close Menu ✕
+              Close Menu 
             </button>
           </div>
         )}

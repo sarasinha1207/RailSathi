@@ -145,8 +145,8 @@ export function ComplaintOverviewTable({ overviewData = [] }) {
         </div>
       </div>
 
-      {/* Scroll Container with Decreased Column Widths */}
-      <div style={{ overflowX: 'auto', maxHeight: '650px', overflowY: 'auto', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+      {/* Scroll Container with Increased Height for 18 Zones */}
+      <div style={{ overflowX: 'auto', maxHeight: '800px', overflowY: 'auto', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', textAlign: 'left' }}>
           <thead style={{ position: 'sticky', top: 0, zIndex: 5 }}>
             <tr style={{ backgroundColor: '#4a071a', color: '#ffffff', fontSize: '0.85rem', fontWeight: 800 }}>

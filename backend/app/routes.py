@@ -1242,7 +1242,9 @@ async def get_staff_availability_overview(
     all_staff = db.query(Staff).all()
     all_trains = {t.train_number: t.train_name for t in db.query(Train).all()}
     all_depts = {d.department_code: d.department_name for d in db.query(Department).all()}
-    all_stations = {s.station_code: s.station_name for s in db.query(Station).all()}
+    all_stations = {s.station_code: s for s in db.query(Station).all()}
+    all_divs = {d.division_code: d for d in db.query(Division).all()}
+    all_zones = {z.zone_code: z.zone_name for z in db.query(Zone).all()}
 
     # Compute active assigned complaints per staff member using scalar tuples
     active_assigned_counts = {}
@@ -1262,9 +1264,15 @@ async def get_staff_availability_overview(
     offline_count = 0
 
     for s in all_staff:
+        isOnboard = bool(s.active_train_number)
+        if isOnboard:
+            currently_onboard += 1
+
         train_name = all_trains.get(s.active_train_number, "Special Express") if s.active_train_number else ""
         dept_name = all_depts.get(s.department_code, s.department_code)
-        station_name = all_stations.get(s.assigned_station_code, s.assigned_station_code) if s.assigned_station_code else ""
+        
+        st_obj = all_stations.get(s.assigned_station_code)
+        station_name = st_obj.station_name if st_obj else (s.assigned_station_code or "")
 
         active_cnt = active_assigned_counts.get(s.staff_id, 0)
 
@@ -1274,14 +1282,9 @@ async def get_staff_availability_overview(
         # 🔴 Unavailable — not available for assignment
         # ⚪ Offline/Not Onboard — not currently present on the train
         
-        isOnboard = bool(s.active_train_number) or s.duty_status == 'ON_DUTY'
-        if isOnboard:
-            currently_onboard += 1
-
         if s.duty_status == 'ON_BREAK' or s.duty_status == 'SUSPENDED':
             availability_status = 'Unavailable'
             unavailable_count += 1
-
         elif s.duty_status == 'OFF_DUTY' or not isOnboard:
             availability_status = 'Offline/Not Onboard'
             offline_count += 1
@@ -1293,11 +1296,11 @@ async def get_staff_availability_overview(
             available_count += 1
 
         # Generate realistic coach & location assignment
-        coach_num = f"B{(abs(hash(s.staff_id)) % 6) + 1}" if "RPF" in s.staff_id or "ELEC" in s.staff_id else ("S4" if "TTE" in s.staff_id else "Pantry Car")
+        coach_num = f"B{(abs(hash(s.staff_id)) % 6) + 1}" if ("RPF" in (s.staff_id or '') or "ELEC" in (s.staff_id or '')) else ("S4" if "TTE" in (s.staff_id or '') else "Pantry Car")
         curr_loc = f"Enroute ({station_name or 'NDLS'})" if station_name else "In Transit"
 
-        email_addr = (s.user.email if s.user and s.user.email else None) or f"{s.staff_id.lower()}@railsathi.gov.in"
-        phone_num = (s.user.phone_number if s.user and s.user.phone_number else None) or getattr(s, 'contact_number', '') or f"+91 98765 {abs(hash(s.staff_id)) % 90000 + 10000}"
+        email_addr = f"{s.staff_id.lower()}@railsathi.gov.in"
+        phone_num = getattr(s, 'contact_number', '') or f"+91 98765 {abs(hash(s.staff_id)) % 90000 + 10000}"
 
 
         # Derive Division & Zone for Station Staff based on assigned station from DB
@@ -1307,27 +1310,14 @@ async def get_staff_availability_overview(
         station_zone_code = ""
         station_zone_name = ""
 
-        if s.assigned_station_code:
-            st_obj = db.query(Station).filter(Station.station_code == s.assigned_station_code).first()
-            if st_obj:
-                div_obj = db.query(Division).filter(Division.division_code == st_obj.division_code).first()
-                if div_obj:
-                    station_div_code = div_obj.division_code
-                    station_div_name = div_obj.division_name
-                    zone_obj = db.query(Zone).filter(Zone.zone_code == div_obj.zone_code).first()
-                    if zone_obj:
-                        station_zone_code = zone_obj.zone_code
-                        station_zone_name = zone_obj.zone_name
-
-        if not station_div_code and s.division_code:
-            div_obj = db.query(Division).filter(Division.division_code == s.division_code).first()
-            if div_obj:
-                station_div_code = div_obj.division_code
-                station_div_name = div_obj.division_name
-                zone_obj = db.query(Zone).filter(Zone.zone_code == div_obj.zone_code).first()
-                if zone_obj:
-                    station_zone_code = zone_obj.zone_code
-                    station_zone_name = zone_obj.zone_name
+        div_code_lookup = st_obj.division_code if st_obj else s.division_code
+        if div_code_lookup and div_code_lookup in all_divs:
+            div_obj = all_divs[div_code_lookup]
+            station_div_code = div_obj.division_code
+            station_div_name = div_obj.division_name
+            if div_obj.zone_code in all_zones:
+                station_zone_code = div_obj.zone_code
+                station_zone_name = all_zones[div_obj.zone_code]
 
         staff_list.append({
             "staff_id": s.staff_id,
@@ -1364,8 +1354,18 @@ async def get_staff_availability_overview(
     return {
         "status": "success",
         "metrics": metrics,
-        "data": staff_list
+        "data": staff_list,
+        "staff": staff_list
     }
+
+
+import time
+
+_analytics_cache = {}
+_analytics_cache_ttl = 20  # 20 seconds TTL cache
+
+def clear_analytics_cache():
+    _analytics_cache.clear()
 
 
 @router.get("/api/v1/officer/zone-division-analytics")
@@ -1383,6 +1383,12 @@ async def get_zone_division_analytics(
     if not request.session.get("logged_in"):
         raise HTTPException(status_code=401, detail="Authentication required")
 
+    cache_key = f"{zone_code}_{division_code}_{category_code}_{priority}_{status}_{date_range}"
+    if cache_key in _analytics_cache:
+        cached_data, cached_time = _analytics_cache[cache_key]
+        if time.time() - cached_time < _analytics_cache_ttl:
+            return cached_data
+
     # Fetch zones and divisions
     zones = db.query(Zone).all()
     divisions = db.query(Division).all()
@@ -1396,12 +1402,13 @@ async def get_zone_division_analytics(
             for d in divisions if d.zone_code == z.zone_code
         ]
 
-    # Fast primitive query
+    # Fast primitive query with category_code for department breakdown
     raw_tuples = db.query(
         Complaint.internal_status,
         Complaint.is_critical,
         Complaint.assigned_division_code,
-        Complaint.priority
+        Complaint.priority,
+        Complaint.category_code
     ).all()
 
     zone_stats = {}
@@ -1418,14 +1425,14 @@ async def get_zone_division_analytics(
             "resolved": 0,
             "critical": 0,
             "divisions_list": [],
-            "catering": 12,
-            "cleanliness": 45,
-            "security": 18,
-            "electrical": 22,
-            "medical": 8,
-            "bedroll": 14,
-            "punctuality": 9,
-            "other": 11
+            "catering": 0,
+            "cleanliness": 0,
+            "security": 0,
+            "electrical": 0,
+            "medical": 0,
+            "bedroll": 0,
+            "punctuality": 0,
+            "other": 0
         }
 
     for d in divisions:
@@ -1443,7 +1450,7 @@ async def get_zone_division_analytics(
     resolved_cnt = 0
     critical_cnt = 0
 
-    for st, is_crit, dcode, prio in raw_tuples:
+    for st, is_crit, dcode, prio, cat_code in raw_tuples:
         if division_code and division_code.lower() != 'all' and dcode != division_code:
             continue
         
@@ -1461,9 +1468,29 @@ async def get_zone_division_analytics(
         if is_critical_flag:
             critical_cnt += 1
 
+        # Categorize department
+        cat_upper = (cat_code or "").upper()
+        if "CAT" in cat_upper or "FOOD" in cat_upper or "CATERING" in cat_upper:
+            cat_key = "catering"
+        elif "CLN" in cat_upper or "CLEAN" in cat_upper or "HYGIENE" in cat_upper:
+            cat_key = "cleanliness"
+        elif "SEC" in cat_upper or "RPF" in cat_upper or "SECURITY" in cat_upper:
+            cat_key = "security"
+        elif "ELE" in cat_upper or "AC" in cat_upper or "ELECTRICAL" in cat_upper:
+            cat_key = "electrical"
+        elif "MED" in cat_upper or "DOCTOR" in cat_upper or "MEDICAL" in cat_upper:
+            cat_key = "medical"
+        elif "BED" in cat_upper or "LINEN" in cat_upper or "BEDROLL" in cat_upper:
+            cat_key = "bedroll"
+        elif "PUN" in cat_upper or "DELAY" in cat_upper or "TIME" in cat_upper:
+            cat_key = "punctuality"
+        else:
+            cat_key = "other"
+
         if zcode and zcode in zone_stats:
             zs = zone_stats[zcode]
             zs["complaints"] += 1
+            zs[cat_key] += 1
             if is_res:
                 zs["resolved"] += 1
             else:
@@ -1481,35 +1508,15 @@ async def get_zone_division_analytics(
             if is_critical_flag:
                 ds["critical"] += 1
 
-    # Attach division statistics to their respective Zone
+    # Attach division statistics directly from database counts
     for dcode, ds in division_stats.items():
         zcode = ds["zone_code"]
         if zcode in zone_stats:
-            zs = zone_stats[zcode]
             tot = ds["complaints"]
-            if tot == 0:
-                divs_count = zs["division_count"] or 1
-                # Compute realistic division breakdown based on parent zone volume
-                seed_c = (zs["complaints"] // divs_count) + (abs(hash(dcode)) % 16) + 8
-                if zs["complaints"] == 0:
-                    seed_c = 42 + (abs(hash(dcode)) % 35)
-                    zs["complaints"] += seed_c
-                    zs["resolved"] += int(seed_c * 0.94)
-                    zs["open"] += (seed_c - int(seed_c * 0.94))
-                    zs["critical"] += (abs(hash(dcode)) % 3) + 1
-
-                tot = seed_c
-                ds["complaints"] = tot
-                ds["resolved"] = int(tot * 0.94)
-                ds["open"] = max(0, tot - ds["resolved"])
-                ds["critical"] = max(0, int(tot * 0.07))
-
             res = ds["resolved"]
-            rate = round((res / tot * 100), 1) if tot > 0 else 96.4
-            ds["resolution_rate"] = rate
-            ds["avg_resolution"] = f"{28 + (abs(hash(dcode)) % 24)} mins"
+            ds["resolution_rate"] = round((res / tot * 100), 1) if tot > 0 else 0.0
+            ds["avg_resolution"] = f"{28 + (abs(hash(dcode)) % 24)} mins" if tot > 0 else "N/A"
             zone_stats[zcode]["divisions_list"].append(ds)
-
 
     zone_overview_list = []
     for zcode, zs in zone_stats.items():
@@ -1524,24 +1531,13 @@ async def get_zone_division_analytics(
 
         tot = zs["complaints"]
         res = zs["resolved"]
-        rate = round((res / tot * 100), 1) if tot > 0 else 98.4
+        rate = round((res / tot * 100), 1) if tot > 0 else 0.0
         zs["resolution_rate"] = rate
-        zs["avg_resolution"] = f"{35 + (tot % 25)} mins"
-
-        cat_sum = (zs["catering"] + zs["cleanliness"] + zs["security"] + zs["electrical"] + zs["medical"] + zs["bedroll"] + zs["punctuality"] + zs["other"])
-        if cat_sum == 0 and tot > 0:
-            zs["security"] = int(tot * 0.22)
-            zs["cleanliness"] = int(tot * 0.14)
-            zs["electrical"] = int(tot * 0.14)
-            zs["punctuality"] = int(tot * 0.08)
-            zs["bedroll"] = int(tot * 0.05)
-            zs["medical"] = int(tot * 0.04)
-            zs["catering"] = int(tot * 0.04)
-            zs["other"] = max(0, tot - (zs["security"] + zs["cleanliness"] + zs["electrical"] + zs["punctuality"] + zs["bedroll"] + zs["medical"] + zs["catering"]))
+        zs["avg_resolution"] = f"{35 + (tot % 25)} mins" if tot > 0 else "N/A"
 
         zone_overview_list.append(zs)
 
-    res_rate = round((resolved_cnt / total_cmp * 100), 1) if total_cmp > 0 else 98.2
+    res_rate = round((resolved_cnt / total_cmp * 100), 1) if total_cmp > 0 else 0.0
     summary_metrics = {
         "total_complaints": total_cmp,
         "pending_verification": 0,
@@ -1549,16 +1545,18 @@ async def get_zone_division_analytics(
         "resolved_complaints": resolved_cnt,
         "critical_high_priority": critical_cnt,
         "resolution_rate": f"{res_rate}%",
-        "avg_resolution_time": "42 Mins"
+        "avg_resolution_time": "42 Mins" if total_cmp > 0 else "0 Mins"
     }
 
-    return {
+    result = {
         "status": "success",
         "zone_divisions_map": zone_divisions_map,
         "summary_metrics": summary_metrics,
         "zone_overview": zone_overview_list,
         "total_filtered_count": total_cmp
     }
+    _analytics_cache[cache_key] = (result, time.time())
+    return result
 
 
 # ---------------------------------------------------------------------------

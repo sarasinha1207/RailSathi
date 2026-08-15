@@ -68,7 +68,7 @@ export default function PriorityStatusCheckboxDropdown({
         <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
           {totalSelected > 0 ? `Filtered (${totalSelected})` : 'Priority & Status Filter'}
         </span>
-        <span style={{ fontSize: '0.7rem' }}>{open ? '▲' : '▼'}</span>
+        <span style={{ fontSize: '0.7rem' }}>{open ? '' : ''}</span>
       </button>
 
       {open && (

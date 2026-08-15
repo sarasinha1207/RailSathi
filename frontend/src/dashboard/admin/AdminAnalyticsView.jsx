@@ -242,7 +242,7 @@ export default function AdminAnalyticsView({ analyticsData }) {
                 cursor: 'pointer'
               }}
             >
-              Clear Filters ✕
+              Clear Filters 
             </button>
           )}
         </div>
@@ -253,7 +253,7 @@ export default function AdminAnalyticsView({ analyticsData }) {
             Loading Zonal & Divisional Breakdown from Database...
           </div>
         ) : (
-          <div style={{ overflowX: 'auto', borderRadius: '12px', border: '1px solid #cbd5e1', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', maxHeight: '750px', overflowY: 'auto' }}>
+          <div style={{ overflowX: 'auto', borderRadius: '12px', border: '1px solid #cbd5e1', boxShadow: '0 4px 14px rgba(0,0,0,0.04)', maxHeight: '480px', overflowY: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.86rem', textAlign: 'left' }}>
               <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
                 <tr style={{ backgroundColor: '#4a0e17', color: '#ffffff' }}>

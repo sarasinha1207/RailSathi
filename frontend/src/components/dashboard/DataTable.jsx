@@ -2,11 +2,11 @@ import React from 'react';
 
 export default function DataTable({ columns = [], data = [], renderRow, loading = false, emptyMessage = 'No records found.' }) {
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '40px 0', color: '#666', fontWeight: 600 }}>⏳ Loading table records...</div>;
+    return <div style={{ textAlign: 'center', padding: '40px 0', color: '#666', fontWeight: 600 }}> Loading table records...</div>;
   }
 
   if (!data || data.length === 0) {
-    return <div style={{ textAlign: 'center', padding: '40px 0', color: '#777', fontWeight: 600 }}>📭 {emptyMessage}</div>;
+    return <div style={{ textAlign: 'center', padding: '40px 0', color: '#777', fontWeight: 600 }}> {emptyMessage}</div>;
   }
 
   return (

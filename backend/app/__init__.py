@@ -9,11 +9,16 @@ from .config import settings
 from .routes import router
 from .seeding import seed_database
 
+from fastapi.middleware.gzip import GZipMiddleware
+
 app = FastAPI(
     title="RailSathi",
     description="Railway Grievance Redressal and Monitoring Portal",
     version="1.0.0"
 )
+
+# Enable response GZip compression (compresses large JSON responses by 80-90%)
+app.add_middleware(GZipMiddleware, minimum_size=500)
 
 # Enable encrypted cookie-based session support (matches Flask session)
 app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)

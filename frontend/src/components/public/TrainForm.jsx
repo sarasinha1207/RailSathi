@@ -62,7 +62,7 @@ export default function TrainForm({ onSwitchToTrack }) {
           const res = await fetch(`/api/v1/pnr/${pnrVal}`);
           if (res.ok) {
             const data = await res.json();
-            setPnrStatus('✓ PNR Verified');
+            setPnrStatus(' PNR Verified');
             setPnrStatusColor('#2e7d32'); // green
             setFormData(prev => ({
               ...prev,
@@ -71,12 +71,12 @@ export default function TrainForm({ onSwitchToTrack }) {
               phone_number: data.phone_number || prev.phone_number
             }));
           } else {
-            setPnrStatus('✗ PNR not found');
+            setPnrStatus(' PNR not found');
             setPnrStatusColor('var(--error-color)');
           }
         } catch (err) {
           console.error(err);
-          setPnrStatus('✗ Connection error');
+          setPnrStatus(' Connection error');
           setPnrStatusColor('var(--error-color)');
         }
       } else if (pnrVal.length > 0) {
