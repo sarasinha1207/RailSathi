@@ -29,24 +29,21 @@ export default function DashboardRoutes({ user, activeTab = 'home', onNavigate }
     return <SettingsPage user={user} />;
   }
 
-  // Staff & Availability Page
+  // ADMIN ROUTE: Always render AdminDashboardPage for Admin users
+  if (user.role === ROLES.ADMIN) {
+    return (
+      <RoleRoute user={user} allowedRoles={[ROLES.ADMIN]}>
+        <AdminDashboardPage user={user} activeTab={activeTab} onNavigate={onNavigate} />
+      </RoleRoute>
+    );
+  }
+
+  // Staff & Availability Page for Officers
   if (activeTab === 'staff_availability' || activeTab === 'staff') {
     return <StaffAvailabilityPage user={user} />;
   }
 
-  // Zone & Division-wise Page
-  if (activeTab === 'zone_division_complaints' || activeTab === 'zones' || activeTab === 'zone_division') {
-    return <ZoneDivisionPage user={user} />;
-  }
-
   switch (user.role) {
-    case ROLES.ADMIN:
-      return (
-        <RoleRoute user={user} allowedRoles={[ROLES.ADMIN]}>
-          <AdminDashboardPage user={user} />
-        </RoleRoute>
-      );
-
     case ROLES.COMPLAINT_OFFICER:
       return (
         <RoleRoute user={user} allowedRoles={[ROLES.COMPLAINT_OFFICER, ROLES.ADMIN]}>

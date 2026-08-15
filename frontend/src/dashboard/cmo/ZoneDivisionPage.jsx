@@ -418,51 +418,12 @@ export default function ZoneDivisionPage({ user }) {
       {/* 3. ZONE & DIVISION OVERVIEW TABLE */}
       <div style={{ backgroundColor: '#ffffff', borderRadius: '14px', padding: '26px 28px', border: '1px solid #e5e7eb', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
         
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px', marginBottom: '18px', borderBottom: '2.5px solid #f3d0d8', paddingBottom: '12px' }}>
-          <div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#800020', margin: 0 }}>
-              3. Zone & Division-wise Performance Breakdown
-            </h2>
-            <div style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '2px' }}>
-              Database-driven breakdown of complaints, open cases, resolved cases, critical cases, and SLA metrics for every Division within each Zone.
-            </div>
-          </div>
-
-          {/* Sorting Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#4b5563' }}>Sort Zones By:</span>
-            
-            <button
-              type="button"
-              onClick={() => setSortBy('complaints_desc')}
-              style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '0.76rem', fontWeight: 800, border: 'none', cursor: 'pointer', backgroundColor: sortBy === 'complaints_desc' ? '#800020' : '#f1f5f9', color: sortBy === 'complaints_desc' ? '#ffffff' : '#475569' }}
-            >
-              Highest Complaints
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setSortBy('resolution_asc')}
-              style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '0.76rem', fontWeight: 800, border: 'none', cursor: 'pointer', backgroundColor: sortBy === 'resolution_asc' ? '#c5221f' : '#f1f5f9', color: sortBy === 'resolution_asc' ? '#ffffff' : '#475569' }}
-            >
-              Lowest Resolution Rate
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setSortBy('critical_desc')}
-              style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '0.76rem', fontWeight: 800, border: 'none', cursor: 'pointer', backgroundColor: sortBy === 'critical_desc' ? '#e65c00' : '#f1f5f9', color: sortBy === 'critical_desc' ? '#ffffff' : '#475569' }}
-            >
-              Highest Critical
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setSortBy('time_desc')}
-              style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '0.76rem', fontWeight: 800, border: 'none', cursor: 'pointer', backgroundColor: sortBy === 'time_desc' ? '#b06000' : '#f1f5f9', color: sortBy === 'time_desc' ? '#ffffff' : '#475569' }}
-            >
-              Slowest Resolution Time
-            </button>
+        <div style={{ marginBottom: '18px', borderBottom: '2.5px solid #f3d0d8', paddingBottom: '12px' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#800020', margin: 0 }}>
+            3. Zone & Division-wise Performance Breakdown
+          </h2>
+          <div style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '2px' }}>
+            Database-driven breakdown of complaints, open cases, resolved cases, critical cases, and SLA metrics for every Division within each Zone.
           </div>
         </div>
 

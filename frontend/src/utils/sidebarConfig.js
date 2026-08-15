@@ -2,12 +2,8 @@ export const SIDEBAR_NAV_ITEMS = {
   Admin: [
     { id: 'home', label: 'Home', icon: 'home' },
     { id: 'complaints', label: 'Complaints', icon: 'clipboard-list' },
-    { id: 'zones', label: 'Zones', icon: 'map' },
-    { id: 'divisions', label: 'Divisions', icon: 'building' },
-    { id: 'departments', label: 'Departments', icon: 'grid' },
-    { id: 'staff', label: 'Staff', icon: 'users' },
-    { id: 'escalations', label: 'Escalations', icon: 'alert-triangle' },
-    { id: 'reports', label: 'Reports', icon: 'bar-chart' }
+    { id: 'analytics', label: 'Analytics', icon: 'bar-chart' },
+    { id: 'staff_management', label: 'Staff Management', icon: 'users' }
   ],
 
   ComplaintOfficer: [
