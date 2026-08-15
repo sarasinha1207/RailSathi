@@ -660,9 +660,9 @@ STATIONS_DATA = [
 ]
 
 from .models import (
-    Zone, Division, Station, Train, TrainRoute, User, Department,
+    Zone, Division, Station, Train, TrainRoute, TrainCoach, User, Department,
     Staff, StaffDutyAssignment, StaffGpsLocation, PnrBooking, ComplaintCategory, Complaint,
-    Feedback, ComplaintStatusHistory, OtpVerification, Notification
+    Feedback, ComplaintStatusHistory, OtpVerification, Notification, TrainInventory
 )
 
 
@@ -707,8 +707,19 @@ def clean_station_name(name_raw):
 
 from sqlalchemy import text
 
-def seed_database():
-    # Use raw connection to drop tables cleanly
+def seed_database(force: bool = False):
+    if not force:
+        try:
+            db_check = SessionLocal()
+            user_count = db_check.query(User).count()
+            db_check.close()
+            if user_count > 0:
+                print("--- DATABASE ALREADY SEEDED WITH POPULATED DATA. SKIPPING RE-SEEDING. ---")
+                return
+        except Exception:
+            pass
+
+    # Use raw connection to drop tables cleanly if force=True or empty DB
     with engine.begin() as conn:
         conn.execute(text("SET FOREIGN_KEY_CHECKS = 0;"))
         result = conn.execute(text("SHOW TABLES;"))
@@ -800,6 +811,7 @@ def seed_database():
             ("Security (RPF)", "RPF"),
             ("Mechanical (Cleanliness)", "MECH_CLEAN"),
             ("Commercial (Catering)", "COMM_CATER"),
+            ("Catering & Vending Services", "CATERING"),
             ("Electrical", "ELEC"),
             ("Mechanical (Coaching)", "MECH_COACH"),
             ("Medical", "MED"),
@@ -853,18 +865,35 @@ def seed_database():
         db.add_all([officer1, officer2])
         db.flush()
 
-        # Seed Departmental Staff Accounts
-        staff_elec = User(user_id="USR_STAFF_ELEC", username="staff_elec", password_hash="staff123", role="Staff", email="elec@railsathi.gov.in")
-        staff_hyg  = User(user_id="USR_STAFF_HYG",  username="staff_hyg",  password_hash="staff123", role="Staff", email="hyg@railsathi.gov.in")
-        staff_sec  = User(user_id="USR_STAFF_SEC",  username="staff_sec",  password_hash="staff123", role="Staff", email="sec@railsathi.gov.in")
-        db.add_all([staff_elec, staff_hyg, staff_sec])
-        db.flush()
+        # Seed Pantry Manager Staff Account (Vande Bharat Express 22477)
+        staff_cat = db.query(User).filter(User.username == "stf_cat_22477").first()
+        if not staff_cat:
+            staff_cat = User(
+                user_id="USR_STF_CAT_22477",
+                username="stf_cat_22477",
+                password_hash="staff123",
+                role="Staff",
+                full_name="Praveen Yadav (Pantry Manager)",
+                email="stf_cat_22477@railsathi.gov.in",
+                phone_number="9876522477"
+            )
+            db.add(staff_cat)
+            db.flush()
 
-        stf_elec_profile = Staff(staff_id="STF_ELEC1", user_id=staff_elec.user_id, name="Rajesh Kumar (Electrical)", department_code="ELEC",       division_code="DLI", is_on_duty=True)
-        stf_hyg_profile  = Staff(staff_id="STF_HYG1",  user_id=staff_hyg.user_id,  name="Suresh Verma (Hygiene)",    department_code="MECH_CLEAN", division_code="DLI", is_on_duty=True)
-        stf_sec_profile  = Staff(staff_id="STF_SEC1",  user_id=staff_sec.user_id,  name="Vikram Singh (Security)",   department_code="RPF",        division_code="DLI", is_on_duty=True)
-        db.add_all([stf_elec_profile, stf_hyg_profile, stf_sec_profile])
-        db.flush()
+        stf_cat_profile = db.query(Staff).filter(Staff.staff_id == "STF_CAT_22477").first()
+        if not stf_cat_profile:
+            stf_cat_profile = Staff(
+                staff_id="STF_CAT_22477",
+                user_id=staff_cat.user_id,
+                name="Praveen Yadav",
+                designation="Pantry Manager",
+                department_code="CATERING",
+                division_code="DLI",
+                active_train_number=None,
+                is_on_duty=True
+            )
+            db.add(stf_cat_profile)
+            db.flush()
 
         # 5. Seed Complaint Categories ( Taxonomy mapping )
         category_tuples = [
@@ -1593,18 +1622,19 @@ def seed_onboarded_staff_system(db: Session):
         "S&T": "Signal & Telecommunication",
         "CIVIL": "Civil Engineering & Works"
     }
+    existing_codes = {d.department_code for d in db.query(Department).all()}
     for code, name in dept_mappings.items():
-        existing_dept = db.query(Department).filter(Department.department_code == code).first()
-        if not existing_dept:
+        if code not in existing_codes:
             db.add(Department(department_code=code, department_name=name, description=name))
-            db.flush()
+            existing_codes.add(code)
+    db.flush()
 
 
     # 2. Get list of actual trains & stations from DB
     trains = db.query(Train).all()
     stations = db.query(Station).all()
 
-    target_trains = ["12801", "12002", "12301", "12951", "10215", "12424", "12260", "12626", "12724", "12622"]
+    target_trains = ["22477", "22478", "12801", "12002", "12301", "12951", "10215", "12424", "12260", "12626", "12724", "12622"]
     for t in trains[:20]:
         if t.train_number not in target_trains:
             target_trains.append(t.train_number)
@@ -1627,16 +1657,17 @@ def seed_onboarded_staff_system(db: Session):
 
         user = db.query(User).filter(User.user_id == user_id).first()
         if not user:
+            is_pantry = (staff_id == "STF_CAT_22477")
             user = User(
                 user_id=user_id,
-                username=username,
-                password_hash="staff123",
+                username=username if is_pantry else f"disabled_{username}",
+                password_hash="staff123" if is_pantry else "disabled",
                 role="Staff",
                 full_name=name,
                 department_code=dept_code,
                 email=f"{username}@railsathi.gov.in",
                 phone_number=f"98765{staff_created_count:05d}",
-                is_active=True
+                is_active=is_pantry
             )
             db.add(user)
             db.flush()
@@ -1728,6 +1759,99 @@ def seed_onboarded_staff_system(db: Session):
             sid = f"{prefix}_{s_code}"
             sname = f"{base_name} ({s_code})"
             upsert_staff_member(sid, sname, desig, dept_code, stn_code=s_code)
+
+    # Seed Coach Composition & Routes for Train 22477
+    existing_coaches = db.query(TrainCoach).filter(TrainCoach.train_number == "22477").count()
+    if existing_coaches == 0:
+        coaches_22477 = [
+            ("ENGINE", "Locomotive Engine", 1, "Pantry Crew: Praveen Yadav (STF_CAT_22477)"),
+            ("C1", "AC Chair Car", 2, "Automatic Doors, Bio-Toilet, Charging Points, CCTV"),
+            ("C2", "AC Chair Car", 3, "Automatic Doors, Bio-Toilet, Charging Points, CCTV"),
+            ("C3", "AC Chair Car", 4, "Automatic Doors, Bio-Toilet, Charging Points, CCTV"),
+            ("C4", "AC Chair Car", 5, "Automatic Doors, Bio-Toilet, Charging Points, CCTV"),
+            ("C5", "AC Chair Car", 6, "Automatic Doors, Bio-Toilet, Charging Points, CCTV"),
+            ("C6", "AC Chair Car", 7, "Automatic Doors, Bio-Toilet, Charging Points, CCTV"),
+            ("C7", "AC Chair Car", 8, "Automatic Doors, Bio-Toilet, Charging Points, CCTV"),
+            ("E1", "Executive Class", 9, "360° Reclining Seats, Mini Pantry, Executive Dining, CCTV"),
+            ("E2", "Executive Class", 10, "360° Reclining Seats, Mini Pantry, Executive Dining, CCTV"),
+            ("C8", "AC Chair Car", 11, "Automatic Doors, Bio-Toilet, Charging Points, CCTV"),
+            ("C9", "AC Chair Car", 12, "Automatic Doors, Bio-Toilet, Charging Points, CCTV"),
+            ("C10", "AC Chair Car", 13, "Automatic Doors, Bio-Toilet, Charging Points, CCTV"),
+            ("C11", "AC Chair Car", 14, "Automatic Doors, Bio-Toilet, Charging Points, CCTV"),
+            ("C12", "AC Chair Car", 15, "Automatic Doors, Bio-Toilet, Charging Points, CCTV"),
+            ("C13", "AC Chair Car", 16, "Automatic Doors, Bio-Toilet, Charging Points, CCTV"),
+            ("C14", "AC Chair Car", 17, "Automatic Doors, Bio-Toilet, Charging Points, CCTV"),
+            ("TAIL", "Rear Guard Cab", 18, "Emergency Brake Controls, Guard Telemetry, Driver Intercom")
+        ]
+        for cnum, ctype, seq, fac in coaches_22477:
+            db.add(TrainCoach(
+                train_number="22477",
+                coach_number=cnum,
+                coach_type=ctype,
+                position_sequence=seq,
+                facilities=fac,
+                assigned_staff_id="STF_CAT_22477" if cnum in ('E1', 'E2', 'C3', 'C7') else None
+            ))
+
+    # Ensure MCTM and KTHU exist in Station table
+    for scode, sname in [("MCTM", "MARTYR CAPTAIN TUSHAR MAHAJAN"), ("KTHU", "KATHUA")]:
+        st_obj = db.query(Station).filter(Station.station_code == scode).first()
+        if not st_obj:
+            db.add(Station(
+                station_code=scode,
+                station_name=sname,
+                division_code="FZR",
+                latitude=32.9,
+                longitude=75.1,
+                platforms_count=3
+            ))
+            db.flush()
+
+    existing_routes = db.query(TrainRoute).filter(TrainRoute.train_number == "22477").count()
+    if existing_routes == 0:
+        routes_22477 = [
+            (1, "NDLS", time(6, 0), time(6, 0), 0, 0.0),
+            (2, "UMB",  time(8, 10), time(8, 12), 2, 198.0),
+            (3, "LDH",  time(9, 19), time(9, 21), 2, 312.0),
+            (4, "KTHU", time(11, 44), time(11, 46), 2, 505.0),
+            (5, "JAT",  time(12, 38), time(12, 40), 2, 581.0),
+            (6, "MCTM", time(13, 30), time(13, 32), 2, 634.0),
+            (7, "SVDK", time(14, 0), time(14, 0), 0, 655.0)
+        ]
+        for seq, scode, arr, dep, dur, dist in routes_22477:
+            db.add(TrainRoute(
+                train_number="22477",
+                stop_sequence=seq,
+                station_code=scode,
+                arrival_time=arr,
+                departure_time=dep,
+                halt_duration_minutes=dur,
+                distance_km=dist
+            ))
+
+    existing_inventory = db.query(TrainInventory).filter(TrainInventory.train_number == "22477").count()
+    if existing_inventory == 0:
+        inventory_items = [
+            ("22477", "Rail Neer 1-Litre Packaged Drinking Water", "Beverages", 1200, "Bottles", 200, "In Stock"),
+            ("22477", "Morning Tea / Coffee Kit (Dairy Creamer + Tea Bags)", "Breakfast", 550, "Kits", 100, "In Stock"),
+            ("22477", "Hot Executive Class Breakfast Trays (Vande Bharat Spec)", "Meals", 180, "Trays", 30, "In Stock"),
+            ("22477", "Standard Chair Car Hot Meal Boxes (RTE)", "Meals", 520, "Boxes", 50, "In Stock"),
+            ("22477", "Evening Snacks & Bakery Cookies Kit", "Snacks", 500, "Packets", 80, "In Stock"),
+            ("22477", "Bio-Degradable Meal Service Trays & Cutlery", "Pantry Supplies", 800, "Sets", 150, "In Stock"),
+            ("22477", "Hand Sanitizer Sachet Packets (10ml)", "Hygiene", 600, "Sachets", 100, "In Stock"),
+            ("22477", "Paper Napkin Rolls (100 Pulls)", "Hygiene", 150, "Rolls", 20, "In Stock")
+        ]
+        for tnum, iname, cat, qty, unit, thresh, st in inventory_items:
+            db.add(TrainInventory(
+                train_number=tnum,
+                item_name=iname,
+                category=cat,
+                quantity=qty,
+                unit=unit,
+                min_threshold=thresh,
+                status=st,
+                last_updated=datetime.now()
+            ))
 
     db.flush()
     print(f"[OK] Onboarded staff system seeded successfully: {staff_created_count} staff records.")

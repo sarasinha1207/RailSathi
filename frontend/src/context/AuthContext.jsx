@@ -50,12 +50,18 @@ export function AuthProvider({ children }) {
     setLoggedIn(false);
   };
 
+  const setUserSession = (userData) => {
+    setUser(userData);
+    setLoggedIn(true);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loggedIn, loading, login, logout, checkSession }}>
+    <AuthContext.Provider value={{ user, loggedIn, loading, login, logout, checkSession, setUserSession }}>
       {children}
     </AuthContext.Provider>
   );
 }
+
 
 export function useAuth() {
   const context = useContext(AuthContext);

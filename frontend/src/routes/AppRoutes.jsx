@@ -1,31 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import PublicLayout from '../layouts/PublicLayout';
-import DashboardLayout from '../layouts/DashboardLayout';
+import PublicLayout from '../components/public/PublicLayout';
+import DashboardLayout from '../components/dashboard/DashboardLayout';
 import DashboardRoutes from './DashboardRoutes';
-import Home from '../components/Home';
-import TrainForm from '../components/TrainForm';
-import StationForm from '../components/StationForm';
-import TrackConcern from '../components/TrackConcern';
-import About from '../components/About';
-import Faq from '../components/Faq';
-import Login from '../components/Login';
+import Home from '../pages/public/Home';
+import TrainForm from '../components/public/TrainForm';
+import StationForm from '../components/public/StationForm';
+import TrackConcern from '../components/public/TrackConcern';
+import About from '../pages/public/About';
+import Faq from '../pages/public/Faq';
+import Login from '../pages/public/Login';
+
 
 export default function AppRoutes() {
-  const { user, loggedIn, loading, login, logout } = useAuth();
+  const { user, loggedIn, loading, logout, setUserSession } = useAuth();
 
   // Determine initial page state synchronously from hash/localStorage to avoid any flash of Homepage
   const getInitialPage = () => {
     try {
       const hash = window.location.hash.replace('#', '').trim();
-      const savedTab = localStorage.getItem('dashboard_active_tab');
-      if (
-        hash.startsWith('dashboard') ||
-        ['home', 'complaints', 'analytics', 'users', 'settings'].includes(hash) ||
-        savedTab
-      ) {
-        return 'dashboard';
-      }
+      if (hash.startsWith('dashboard')) return 'dashboard';
       if (['train', 'station', 'track'].includes(hash)) return 'complaint';
       if (['about', 'faq', 'login'].includes(hash)) return hash;
     } catch (e) {}
@@ -40,7 +34,6 @@ export default function AppRoutes() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '').trim();
-      const savedTab = localStorage.getItem('dashboard_active_tab');
 
       if (loggedIn) {
         if (['about', 'faq'].includes(hash)) {
@@ -54,8 +47,7 @@ export default function AppRoutes() {
           setActiveSubTab(hash);
         } else if (['about', 'faq', 'login'].includes(hash)) {
           setActivePage(hash);
-        } else if (savedTab || hash.startsWith('dashboard')) {
-          // Stay on dashboard page until auth check resolves
+        } else if (hash.startsWith('dashboard')) {
           setActivePage('dashboard');
         } else {
           setActivePage('home');
@@ -82,16 +74,23 @@ export default function AppRoutes() {
   };
 
   const handleLoginSuccess = async (username, role) => {
-    handlePageChange('dashboard');
+    if (setUserSession) {
+      setUserSession({ username, role });
+    }
+    setActivePage('dashboard');
+    window.location.hash = 'dashboard';
   };
+
 
   const handleLogout = async () => {
     try {
       localStorage.removeItem('dashboard_active_tab');
     } catch (e) {}
     await logout();
-    handlePageChange('complaint');
+    setActivePage('home');
+    window.location.hash = 'home';
   };
+
 
   const handleSwitchToTrack = (complaintId) => {
     setTrackedId(complaintId);
@@ -113,8 +112,11 @@ export default function AppRoutes() {
     setTimeout(scrollToForm, 100);
   };
 
+  // Determine effective active page: if not logged in and not loading, fallback 'dashboard' to 'home'
+  const effectivePage = (!loggedIn && !loading && activePage === 'dashboard') ? 'home' : activePage;
+
   // If user is logged in (or session is still verifying and initial page is dashboard), render Dashboard layout
-  if ((loggedIn || loading) && activePage === 'dashboard') {
+  if ((loggedIn || loading) && effectivePage === 'dashboard') {
     return (
       <DashboardLayout user={user} onLogout={handleLogout}>
         <DashboardRoutes user={user} />
@@ -124,16 +126,16 @@ export default function AppRoutes() {
 
   return (
     <PublicLayout
-      activePage={activePage}
+      activePage={effectivePage}
       setActivePage={handlePageChange}
       loggedIn={loggedIn}
       onLogout={handleLogout}
     >
-      {activePage === 'home' && (
+      {effectivePage === 'home' && (
         <Home onRegisterClick={handleRegisterClick} onTrackClick={handleTrackClick} />
       )}
 
-      {activePage === 'complaint' && (
+      {effectivePage === 'complaint' && (
         <main className="main-content">
           <div id="complaint-section" style={{ width: '100%', maxWidth: '1000px', scrollMarginTop: '110px' }} />
           <div className="form-tabs-container" style={{ width: '100%', maxWidth: '1000px' }}>
@@ -174,9 +176,10 @@ export default function AppRoutes() {
         </main>
       )}
 
-      {activePage === 'about' && <About />}
-      {activePage === 'faq' && <Faq />}
-      {activePage === 'login' && <Login onLoginSuccess={handleLoginSuccess} />}
+      {effectivePage === 'about' && <About />}
+      {effectivePage === 'faq' && <Faq />}
+      {effectivePage === 'login' && <Login onLoginSuccess={handleLoginSuccess} />}
     </PublicLayout>
   );
 }
+

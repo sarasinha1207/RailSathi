@@ -155,6 +155,7 @@ from datetime import datetime, date, time
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Form, Request
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from .database import get_db
 from .schemas import (
     ComplaintResponse, PnrResponse, LoginRequest, UpdateStatusRequest, ChangePasswordRequest, UpdateProfileRequest,
@@ -363,8 +364,11 @@ def determine_nearest_station(db: Session, train_number: str) -> Station:
 @router.post("/api/v1/auth/login")
 async def login_api(request: Request, payload: LoginRequest, db: Session = Depends(get_db)):
     """Handles Official / Admin login authentication."""
-    user = db.query(User).filter(User.username == payload.username).first()
-    if user and user.password_hash == payload.password:
+    clean_username = payload.username.strip() if payload.username else ""
+    clean_password = payload.password.strip() if payload.password else ""
+    
+    user = db.query(User).filter(func.lower(User.username) == clean_username.lower()).first()
+    if user and user.password_hash == clean_password:
         request.session["logged_in"] = True
         request.session["role"]      = user.role
         request.session["username"]  = user.username
@@ -784,16 +788,26 @@ async def get_cmo_analytics(
         div_chart_data.sort(key=lambda x: x["total"], reverse=True)
         div_chart_data = div_chart_data[:15]
 
-    # 3. Department-wise Open Complaints Chart
+    # 3. Department-wise Open & Closed Complaints Chart
     depts = db.query(Department).all()
     dept_chart_data = []
+
+    # If zone_code filter selected for closed complaints as well
+    filtered_closed = [c for c in all_raw if c.internal_status in ["Resolved", "Closed"]]
+    if zone_code and zone_code != "all":
+        z_target_divs = [d.division_code for d in divisions if d.zone_code == zone_code]
+        filtered_closed = [c for c in filtered_closed if c.assigned_division_code in z_target_divs or (c.station and c.station.division_code in z_target_divs)]
+
     for dept in depts:
         d_open = [c for c in filtered_open if c.assigned_department_code == dept.department_code or (c.verified_category and c.verified_category.department_code == dept.department_code)]
+        d_closed = [c for c in filtered_closed if c.assigned_department_code == dept.department_code or (c.verified_category and c.verified_category.department_code == dept.department_code)]
         dept_chart_data.append({
             "department_code": dept.department_code,
             "department_name": dept.department_name,
-            "total_open": len(d_open)
+            "total_open": len(d_open),
+            "total_closed": len(d_closed)
         })
+
 
     return {
         "status": "success",
@@ -1557,9 +1571,9 @@ async def get_staff_me_overview(request: Request, db: Session = Depends(get_db))
     train_info = {
         "train_number": tr_num,
         "train_name": train.train_name if train else f"Train {tr_num} Express",
-        "direction": "Down Journey (SVDK ➔ NDLS)" if tr_num == "22477" else "Up Journey (NDLS ➔ SVDK)",
-        "source": train.source_station.station_name if (train and train.source_station) else ("Katra" if tr_num == "22477" else "New Delhi"),
-        "destination": train.destination_station.station_name if (train and train.destination_station) else ("New Delhi" if tr_num == "22477" else "Katra"),
+        "direction": "Down Journey (NDLS ➔ SVDK)" if tr_num == "22477" else "Up Journey (SVDK ➔ NDLS)",
+        "source": train.source_station.station_name if (train and train.source_station) else ("New Delhi" if tr_num == "22477" else "Katra"),
+        "destination": train.destination_station.station_name if (train and train.destination_station) else ("Katra" if tr_num == "22477" else "New Delhi"),
         "journey_date": date.today().strftime("%d %b %Y"),
         "onboard_status": "Onboard Active Duty" if staff.is_on_duty else "Off Duty"
     }
@@ -1773,8 +1787,8 @@ async def get_staff_train_journey(request: Request, db: Session = Depends(get_db
         "train_info": {
             "train_number": tr_num,
             "train_name": train.train_name if train else f"Train {tr_num} Express",
-            "source": train.source_station.station_name if (train and train.source_station) else ("Katra" if tr_num == "22477" else "New Delhi"),
-            "destination": train.destination_station.station_name if (train and train.destination_station) else ("New Delhi" if tr_num == "22477" else "Katra"),
+            "source": train.source_station.station_name if (train and train.source_station) else ("New Delhi" if tr_num == "22477" else "Katra"),
+            "destination": train.destination_station.station_name if (train and train.destination_station) else ("Katra" if tr_num == "22477" else "New Delhi"),
             "total_coaches": len(coach_list),
             "total_halts": len(halt_list)
         },

@@ -1,6 +1,8 @@
 import React from 'react';
 import { STATUS_COLORS } from '../../utils/statusMapper';
 
+
+
 export default function StatusBadge({ status }) {
   const color = STATUS_COLORS[status] || { bg: '#e8f0fe', text: '#1a73e8' };
   return (

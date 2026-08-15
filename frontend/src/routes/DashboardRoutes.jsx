@@ -1,22 +1,20 @@
 import React from 'react';
 import { ROLES } from '../utils/roles';
 import RoleRoute from './RoleRoute';
-import AdminDashboardPage from '../dashboards/admin/pages/AdminDashboardPage';
-import Home from '../dashboards/complaintOfficer/pages/Home';
-import ComplaintsPage from '../dashboards/complaintOfficer/pages/ComplaintsPage';
-import OfficerDashboardPage from '../dashboards/complaintOfficer/pages/OfficerDashboardPage';
-import ZoneHeadDashboardPage from '../dashboards/zoneHead/pages/ZoneHeadDashboardPage';
-import DivisionHeadDashboardPage from '../dashboards/divisionHead/pages/DivisionHeadDashboardPage';
-import StaffDashboardPage from '../dashboards/staff/pages/StaffDashboardPage';
-import StaffComplaintsPage from '../dashboards/staff/pages/StaffComplaintsPage';
-import StaffOtherStaffPage from '../dashboards/staff/pages/StaffOtherStaffPage';
-import StaffTrainJourneyPage from '../dashboards/staff/pages/StaffTrainJourneyPage';
-import StaffInventoryPage from '../dashboards/staff/pages/StaffInventoryPage';
-import PassengerDashboardPage from '../dashboards/passenger/pages/PassengerDashboardPage';
+import AdminDashboardPage from '../dashboard/admin/AdminDashboardPage';
+import CmoHome from '../dashboard/cmo/CmoHome';
+import ComplaintsPage from '../dashboard/cmo/ComplaintsPage';
+import StaffAvailabilityPage from '../dashboard/cmo/StaffAvailabilityPage';
+import ZoneDivisionPage from '../dashboard/cmo/ZoneDivisionPage';
+import StaffDashboardPage from '../dashboard/staff/StaffDashboardPage';
+import StaffComplaintsPage from '../dashboard/staff/StaffComplaintsPage';
+import StaffOtherStaffPage from '../dashboard/staff/StaffOtherStaffPage';
+import StaffTrainJourneyPage from '../dashboard/staff/StaffTrainJourneyPage';
+import StaffInventoryPage from '../dashboard/staff/StaffInventoryPage';
+import ZoneHeadDashboardPage from '../dashboard/zone-head/ZoneHeadDashboardPage';
+import DivisionHeadDashboardPage from '../dashboard/division-head/DivisionHeadDashboardPage';
 import HelpPage from '../components/dashboard/HelpPage';
 import SettingsPage from '../components/dashboard/SettingsPage';
-import StaffAvailabilityPage from '../dashboards/complaintOfficer/pages/StaffAvailabilityPage';
-import ZoneDivisionPage from '../dashboards/complaintOfficer/pages/ZoneDivisionPage';
 
 export default function DashboardRoutes({ user, activeTab = 'home', onNavigate }) {
   if (!user) return null;
@@ -52,12 +50,12 @@ export default function DashboardRoutes({ user, activeTab = 'home', onNavigate }
     case ROLES.COMPLAINT_OFFICER:
       return (
         <RoleRoute user={user} allowedRoles={[ROLES.COMPLAINT_OFFICER, ROLES.ADMIN]}>
-          {activeTab === 'home' ? (
-            <Home user={user} />
-          ) : activeTab === 'complaints' ? (
-            <ComplaintsPage user={user} />
+          {activeTab === 'complaints' ? (
+            <ComplaintsPage user={user} initialSubTab="pending" />
+          ) : activeTab === 'reassignment_requests' ? (
+            <ComplaintsPage user={user} initialSubTab="reassignment" />
           ) : (
-            <OfficerDashboardPage user={user} initialTab={activeTab} />
+            <CmoHome user={user} />
           )}
         </RoleRoute>
       );
@@ -100,12 +98,13 @@ export default function DashboardRoutes({ user, activeTab = 'home', onNavigate }
         </RoleRoute>
       );
 
-
     default:
       return (
-        <RoleRoute user={user} allowedRoles={Object.values(ROLES)}>
-          <PassengerDashboardPage user={user} />
+        <RoleRoute user={user} allowedRoles={[ROLES.COMPLAINT_OFFICER, ROLES.ADMIN]}>
+          <CmoHome user={user} />
         </RoleRoute>
       );
   }
 }
+
+
