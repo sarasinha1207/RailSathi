@@ -189,7 +189,7 @@ export default function StaffInventoryPage({ user }) {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '16px' }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '14px', width: '100%', maxWidth: '460px', padding: '24px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
             <h3 style={{ margin: '0 0 8px 0', fontSize: '1.2rem', fontWeight: 800, color: '#800020' }}>
-              Update Stock — {selectedItem.item_name}
+              Update Stock - {selectedItem.item_name}
             </h3>
             <p style={{ margin: '0 0 16px 0', fontSize: '0.85rem', color: '#6b7280' }}>
               Category: {selectedItem.category} • Unit: {selectedItem.unit}

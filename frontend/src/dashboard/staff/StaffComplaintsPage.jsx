@@ -315,7 +315,7 @@ export default function StaffComplaintsPage({ user }) {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '16px' }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px', maxWidth: '650px', width: '90%', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
             <h3 style={{ margin: '0 0 12px 0', color: '#800020', fontSize: '1.3rem', fontWeight: 800 }}>
-              Complaint Audit Record — {selectedComplaint.complaint_id}
+              Complaint Audit Record - {selectedComplaint.complaint_id}
             </h3>
 
             {/* 3-Tier SLA Status Highlight Box */}

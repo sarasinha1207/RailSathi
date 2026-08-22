@@ -131,20 +131,21 @@ export default function StaffDashboardPage({ user, onNavigate }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '0.85rem',
-            fontWeight: 800
+            boxShadow: '0 2px 6px rgba(128,0,32,0.25)'
           }}>
-            TRAIN
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2c-4 0-8 1-8 4v10c0 1.5 1 2.5 2.5 2.5L5 20v1h2l1.5-2h7l1.5 2h2v-1l-1.5-1.5c1.5 0 2.5-1 2.5-2.5V6c0-3-4-4-8-4zm-5 13c-.83 0-1.5-.67-1.5-1.5S6.17 12 7 12s1.5.67 1.5 1.5S7.83 15 7 15zm10 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-5h-13V6h13v4z"/>
+            </svg>
           </div>
           <div>
             <div style={{ fontSize: '0.78rem', color: '#800020', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               CURRENT ASSIGNED TRAIN JOURNEY
             </div>
             <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#111827' }}>
-              Train {train_info?.train_number} — {train_info?.train_name}
+              22477 - Shri Mata Vaishno Devi Katra Vande Bharat Express
             </div>
             <div style={{ fontSize: '0.88rem', color: '#6b7280', marginTop: '2px' }}>
-              Route: <strong>{train_info?.source}</strong> ➔ <strong>{train_info?.destination}</strong> ({train_info?.direction})
+              Route: New Delhi (NDLS) - Shri Mata Vaishno Devi Katra (SVDK)
             </div>
           </div>
         </div>

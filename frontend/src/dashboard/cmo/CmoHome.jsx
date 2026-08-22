@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { officerService } from '../../services/officerService';
-import { CMOKPISection, ComplaintOverviewTable, DepartmentComplaintChart } from '../../components/dashboard/CmoCharts';
+import { CMOKPISection, DepartmentComplaintChart } from '../../components/dashboard/CmoCharts';
+import AdminCmoStyleOverviewTable from '../admin/AdminCmoStyleOverviewTable';
 
 export default function Home({ user }) {
   const [selectedZone, setSelectedZone] = useState('all');
@@ -91,7 +92,7 @@ export default function Home({ user }) {
           Loading division complaint overview...
         </div>
       ) : (
-        <ComplaintOverviewTable overviewData={overviewTable} />
+        <AdminCmoStyleOverviewTable overviewData={overviewTable} />
       )}
 
     </div>

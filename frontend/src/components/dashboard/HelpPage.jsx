@@ -404,7 +404,7 @@ export default function HelpPage({ user }) {
       <div style={{ backgroundColor: '#ffffff', borderRadius: '14px', padding: '28px 32px', border: '1px solid #e5e7eb', boxShadow: '0 4px 16px rgba(0,0,0,0.04)' }}>
         <div style={{ borderBottom: '2.5px solid #f3d0d8', paddingBottom: '10px', marginBottom: '20px' }}>
           <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#800020', margin: 0 }}>
-            Contact & Support Channels — Railway Officials Directory
+            Contact & Support Channels - Railway Officials Directory
           </h2>
           <div style={{ fontSize: '0.82rem', color: '#6b7280', marginTop: '4px' }}>
             Official directory of Indian Railways Nodal Officers and Helpdesk maintaining the RailSathi Portal.

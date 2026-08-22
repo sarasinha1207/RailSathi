@@ -192,28 +192,28 @@ export default function ReassignmentPage({ user }) {
 
       {/* KPI SUMMARY CARDS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-          <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Total Reassignment Log</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#111827', margin: '4px 0' }}>{totalReqs}</div>
-          <div style={{ fontSize: '0.75rem', color: '#800020', fontWeight: 700 }}>Network-wide transfer requests</div>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
+          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Total Reassignment Log</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#111827', margin: '6px 0', lineHeight: 1 }}>{totalReqs}</div>
+          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#800020', fontWeight: 700, lineHeight: 1.3 }}>Network-wide transfer requests</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #F57C00', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-          <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Pending CMO Review</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#F57C00', margin: '4px 0' }}>{pendingReqs}</div>
-          <div style={{ fontSize: '0.75rem', color: '#C2410C', fontWeight: 700 }}>Action Required by CMO</div>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #F57C00', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
+          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Pending CMO Review</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#F57C00', margin: '6px 0', lineHeight: 1 }}>{pendingReqs}</div>
+          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#C2410C', fontWeight: 700, lineHeight: 1.3 }}>Action Required by CMO</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #388E3C', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-          <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Approved & Transferred</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#388E3C', margin: '4px 0' }}>{approvedReqs}</div>
-          <div style={{ fontSize: '0.75rem', color: '#2E7D32', fontWeight: 700 }}>Reassigned to new officer</div>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #388E3C', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
+          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Approved & Transferred</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#388E3C', margin: '6px 0', lineHeight: 1 }}>{approvedReqs}</div>
+          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#2E7D32', fontWeight: 700, lineHeight: 1.3 }}>Reassigned to new officer</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #D32F2F', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-          <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Rejected / Declined</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#D32F2F', margin: '4px 0' }}>{rejectedReqs}</div>
-          <div style={{ fontSize: '0.75rem', color: '#C62828', fontWeight: 700 }}>Retained in original division</div>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #D32F2F', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
+          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Rejected / Declined</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#D32F2F', margin: '6px 0', lineHeight: 1 }}>{rejectedReqs}</div>
+          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#C62828', fontWeight: 700, lineHeight: 1.3 }}>Retained in original division</div>
         </div>
       </div>
 
@@ -271,12 +271,12 @@ export default function ReassignmentPage({ user }) {
             style={{ flex: 1, minWidth: '150px', padding: '9px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.86rem', fontWeight: 600, color: '#374151', backgroundColor: '#ffffff' }}
           >
             <option value="all">All Railway Zones</option>
-            <option value="NR">NR — Northern Railway</option>
-            <option value="WR">WR — Western Railway</option>
-            <option value="SR">SR — Southern Railway</option>
-            <option value="ER">ER — Eastern Railway</option>
-            <option value="CR">CR — Central Railway</option>
-            <option value="ECR">ECR — East Central Railway</option>
+            <option value="NR">NR - Northern Railway</option>
+            <option value="WR">WR - Western Railway</option>
+            <option value="SR">SR - Southern Railway</option>
+            <option value="ER">ER - Eastern Railway</option>
+            <option value="CR">CR - Central Railway</option>
+            <option value="ECR">ECR - East Central Railway</option>
           </select>
         </div>
 
@@ -403,7 +403,7 @@ export default function ReassignmentPage({ user }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #e5e7eb', paddingBottom: '12px', marginBottom: '16px' }}>
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: '#360412' }}>
-                  CMO Reassignment Review — {selectedRequest.id}
+                  CMO Reassignment Review - {selectedRequest.id}
                 </h3>
                 <div style={{ fontSize: '0.8rem', color: '#6b7280', marginTop: '2px' }}>
                   Complaint ID: {selectedRequest.complaint_id}

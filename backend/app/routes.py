@@ -1785,10 +1785,10 @@ async def get_staff_me_overview(request: Request, db: Session = Depends(get_db))
     # Train Info Card
     train_info = {
         "train_number": tr_num,
-        "train_name": train.train_name if train else f"Train {tr_num} Express",
-        "direction": "Down Journey (NDLS ➔ SVDK)" if tr_num == "22477" else "Up Journey (SVDK ➔ NDLS)",
-        "source": train.source_station.station_name if (train and train.source_station) else ("New Delhi" if tr_num == "22477" else "Katra"),
-        "destination": train.destination_station.station_name if (train and train.destination_station) else ("Katra" if tr_num == "22477" else "New Delhi"),
+        "train_name": "Shri Mata Vaishno Devi Katra Vande Bharat Express" if tr_num == "22477" else (train.train_name if train else f"Train {tr_num} Express"),
+        "direction": "Down Journey (NDLS - SVDK)" if tr_num == "22477" else "Up Journey (SVDK - NDLS)",
+        "source": "New Delhi (NDLS)" if tr_num == "22477" else (train.source_station.station_name if (train and train.source_station) else "New Delhi"),
+        "destination": "Shri Mata Vaishno Devi Katra (SVDK)" if tr_num == "22477" else (train.destination_station.station_name if (train and train.destination_station) else "Katra"),
         "journey_date": date.today().strftime("%d %b %Y"),
         "onboard_status": "Onboard Active Duty" if staff.is_on_duty else "Off Duty"
     }
@@ -2005,9 +2005,9 @@ async def get_staff_train_journey(request: Request, db: Session = Depends(get_db
         "status": "success",
         "train_info": {
             "train_number": tr_num,
-            "train_name": train.train_name if train else f"Train {tr_num} Express",
-            "source": train.source_station.station_name if (train and train.source_station) else ("New Delhi" if tr_num == "22477" else "Katra"),
-            "destination": train.destination_station.station_name if (train and train.destination_station) else ("Katra" if tr_num == "22477" else "New Delhi"),
+            "train_name": "Shri Mata Vaishno Devi Katra Vande Bharat Express" if tr_num == "22477" else (train.train_name if train else f"Train {tr_num} Express"),
+            "source": "New Delhi (NDLS)" if tr_num == "22477" else (train.source_station.station_name if (train and train.source_station) else "New Delhi"),
+            "destination": "Shri Mata Vaishno Devi Katra (SVDK)" if tr_num == "22477" else (train.destination_station.station_name if (train and train.destination_station) else "Katra"),
             "total_coaches": len(coach_list),
             "total_halts": len(halt_list)
         },

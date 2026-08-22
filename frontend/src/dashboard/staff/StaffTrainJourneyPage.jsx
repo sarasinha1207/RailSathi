@@ -137,10 +137,10 @@ export default function StaffTrainJourneyPage({ user }) {
             ONBOARD TRAIN ARCHITECTURE & SCHEDULE
           </div>
           <h2 style={{ margin: '2px 0 0 0', fontSize: '1.4rem', fontWeight: 800, color: '#800020' }}>
-            Train {train_info?.train_number} — {train_info?.train_name}
+            22477 - Shri Mata Vaishno Devi Katra Vande Bharat Express
           </h2>
           <p style={{ margin: '4px 0 0 0', fontSize: '0.88rem', color: '#6b7280' }}>
-            Origin: <strong>{train_info?.source}</strong>  Destination: <strong>{train_info?.destination}</strong> • Total Rake Coaches: <strong>{train_info?.total_coaches}</strong>
+            Route: <strong>New Delhi (NDLS) - Shri Mata Vaishno Devi Katra (SVDK)</strong> • Total Rake Coaches: <strong>{train_info?.total_coaches}</strong>
           </p>
         </div>
       </div>
@@ -154,10 +154,10 @@ export default function StaffTrainJourneyPage({ user }) {
       }}>
         <div style={{ marginBottom: '18px' }}>
           <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#111827' }}>
-            Train Physical Coach Composition (Engine  Tail)
+            Train Physical Coach Composition (Engine - Tail)
           </h3>
           <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: '#6b7280' }}>
-            Physical 18-coach rake sequence displayed in 3 rows of 6 coaches each (Engine  Tail). Click any coach to inspect details.
+            Physical 18-coach rake sequence displayed in 3 rows of 6 coaches each (Engine - Tail). Click any coach to inspect details.
           </p>
         </div>
 
@@ -205,7 +205,7 @@ export default function StaffTrainJourneyPage({ user }) {
                 SELECTED COACH INSPECTION SPECIFICATIONS
               </div>
               <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#111827', marginTop: '2px' }}>
-                Coach {selectedCoach.coach_number} — {selectedCoach.coach_type} (Sequence #{selectedCoach.position_sequence})
+                Coach {selectedCoach.coach_number} - {selectedCoach.coach_type} (Sequence #{selectedCoach.position_sequence})
               </div>
               <div style={{ fontSize: '0.86rem', color: '#4b5563', marginTop: '6px' }}>
                 <strong>Facilities & Equipment:</strong> {selectedCoach.facilities}
@@ -235,7 +235,7 @@ export default function StaffTrainJourneyPage({ user }) {
             Scheduled Halts & Route Timeline ({journey_halts?.length || 7} Stopping Stations)
           </h3>
           <p style={{ margin: '2px 0 0 0', fontSize: '0.85rem', color: '#6b7280' }}>
-            Official railway timetable for Train {train_info?.train_number} — New Delhi  SVDK Katra Vande Bharat Express
+            Official railway timetable for 22477 - Shri Mata Vaishno Devi Katra Vande Bharat Express
           </p>
         </div>
 

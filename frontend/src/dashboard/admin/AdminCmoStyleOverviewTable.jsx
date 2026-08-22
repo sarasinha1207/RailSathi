@@ -100,7 +100,7 @@ export default function AdminCmoStyleOverviewTable({ overviewData = [] }) {
 
           {/* PRIORITY COLOR LEGEND BADGES IN TOP RIGHT CORNER OF THE CARD */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#f9fafb', padding: '6px 14px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-            <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.3px' }}>
+            <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#374151', letterSpacing: '0.3px' }}>
               Priority:
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.76rem', fontWeight: 800, color: '#D32F2F' }}>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import KPICard from './KPICard';
+import AdminCmoStyleOverviewTable from '../../dashboard/admin/AdminCmoStyleOverviewTable';
 
 /* ==========================================
    SECTION A — CMO KPI SECTION (5 KPI CARDS)
@@ -16,8 +17,8 @@ export function CMOKPISection({ kpis = {} }) {
         title="Pending Complaints"
         value={kpis.pending_complaints || 0}
         subtitle="Complaints waiting for CMO review"
-        accentColor="#ea4335"
-        textColor="#ea4335"
+        accentColor="#F57C00"
+        textColor="#F57C00"
       />
 
       {/* 2. Assigned Complaints */}
@@ -25,8 +26,8 @@ export function CMOKPISection({ kpis = {} }) {
         title="Assigned Complaints"
         value={kpis.assigned_complaints || 0}
         subtitle="Currently assigned to staff"
-        accentColor="#1a73e8"
-        textColor="#1a73e8"
+        accentColor="#2563eb"
+        textColor="#2563eb"
       />
 
       {/* 3. Reassignment Requests */}
@@ -34,8 +35,8 @@ export function CMOKPISection({ kpis = {} }) {
         title="Reassignment Requests"
         value={kpis.reassignment_requests || 0}
         subtitle="Staff requested reassignment"
-        accentColor="#a142f4"
-        textColor="#8430ce"
+        accentColor="#800020"
+        textColor="#800020"
       />
 
       {/* 4. Resolved Complaints */}
@@ -43,8 +44,8 @@ export function CMOKPISection({ kpis = {} }) {
         title="Resolved Complaints"
         value={kpis.resolved_complaints || 0}
         subtitle="Successfully resolved grievances"
-        accentColor="#34a853"
-        textColor="#137333"
+        accentColor="#388E3C"
+        textColor="#388E3C"
       />
 
       {/* 5. Critical Complaints */}
@@ -52,8 +53,8 @@ export function CMOKPISection({ kpis = {} }) {
         title="Critical Complaints"
         value={kpis.critical_complaints || 0}
         subtitle="Open / In-Progress safety risks"
-        accentColor="#c5221f"
-        textColor="#c5221f"
+        accentColor="#D32F2F"
+        textColor="#D32F2F"
       />
     </div>
   );
@@ -63,202 +64,7 @@ export function CMOKPISection({ kpis = {} }) {
    SECTION B — ZONE & DIVISION OVERVIEW TABLE
    ========================================== */
 export function ComplaintOverviewTable({ overviewData = [] }) {
-  const [filterZone, setFilterZone] = useState('all');
-
-  if (!overviewData || overviewData.length === 0) {
-    return (
-      <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px', textAlign: 'center', color: '#666' }}>
-        No zone & division overview data available.
-      </div>
-    );
-  }
-
-  // Extract unique zones for filter dropdown
-  const uniqueZones = Array.from(
-    new Map(overviewData.map(item => [item.zone_code, item.zone_name])).entries()
-  ).map(([code, name]) => ({ code, name }));
-
-  // Apply zone filter
-  const filteredData = filterZone === 'all'
-    ? overviewData
-    : overviewData.filter(d => d.zone_code === filterZone);
-
-  // Group by zone_code for rowSpan calculation
-  const zoneGroupsMap = new Map();
-  filteredData.forEach(row => {
-    if (!zoneGroupsMap.has(row.zone_code)) {
-      zoneGroupsMap.set(row.zone_code, {
-        zone_code: row.zone_code,
-        zone_name: row.zone_name,
-        divisions: []
-      });
-    }
-    zoneGroupsMap.get(row.zone_code).divisions.push(row);
-  });
-
-  const groupedZones = Array.from(zoneGroupsMap.values()).map((z, idx) => ({
-    ...z,
-    sNo: idx + 1
-  }));
-
-  const zoneBgColors = ['#ffffff', '#f9fafb'];
-
-  return (
-    <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px 24px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }}>
-      {/* Table Header & Controls */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', gap: '12px' }}>
-        <div>
-          <h4 style={{ margin: 0, color: '#800020', fontSize: '1.1rem', fontWeight: 800 }}>
-            Section B — Zone & Division Complaint Overview ({groupedZones.length} Zones)
-          </h4>
-          
-          {/* Priority Color Legend */}
-          <div style={{ display: 'flex', gap: '16px', marginTop: '6px', fontSize: '0.78rem', fontWeight: 700 }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ width: '12px', height: '12px', borderRadius: '3px', backgroundColor: '#ea4335', display: 'inline-block' }} />
-              High Priority
-            </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ width: '12px', height: '12px', borderRadius: '3px', backgroundColor: '#fbbc04', display: 'inline-block' }} />
-              Medium Priority
-            </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ width: '12px', height: '12px', borderRadius: '3px', backgroundColor: '#34a853', display: 'inline-block' }} />
-              Low Priority
-            </span>
-          </div>
-        </div>
-
-        {/* Filter Control */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#4b5563' }}>Filter by Zone:</label>
-          <select
-            value={filterZone}
-            onChange={(e) => setFilterZone(e.target.value)}
-            style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '0.85rem', fontWeight: 700, backgroundColor: '#fff' }}
-          >
-            <option value="all">All Zones ({uniqueZones.length})</option>
-            {uniqueZones.map(z => (
-              <option key={z.code} value={z.code}>{z.name} ({z.code})</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Scroll Container with Increased Height for 18 Zones */}
-      <div style={{ overflowX: 'auto', maxHeight: '800px', overflowY: 'auto', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', textAlign: 'left' }}>
-          <thead style={{ position: 'sticky', top: 0, zIndex: 5 }}>
-            <tr style={{ backgroundColor: '#4a071a', color: '#ffffff', fontSize: '0.85rem', fontWeight: 800 }}>
-              <th style={{ padding: '12px 10px', width: '5%', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.15)' }}>S.No.</th>
-              <th style={{ padding: '12px 14px', width: '20%', borderRight: '1px solid rgba(255,255,255,0.15)' }}>Zone Name</th>
-              <th style={{ padding: '12px 10px', width: '13%', borderRight: '1px solid rgba(255,255,255,0.15)' }}>Division Name</th>
-              <th style={{ padding: '12px 10px', width: '9%', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.15)' }}>Total Received</th>
-              <th style={{ padding: '12px 10px', width: '10%', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.15)' }}>Total Open</th>
-              <th style={{ padding: '12px 14px', width: '43%', textAlign: 'center' }}>Priority Graph (High | Med | Low)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {groupedZones.map((zoneGroup, zoneIdx) => {
-              const bg = zoneBgColors[zoneIdx % zoneBgColors.length];
-              const totalDivs = zoneGroup.divisions.length;
-
-              return zoneGroup.divisions.map((row, divIdx) => {
-                const isFirstRow = divIdx === 0;
-                const p = row.priority_distribution || { high: 0, medium: 0, low: 0 };
-                const rowTotal = p.high + p.medium + p.low || row.total_received || 1;
-                const highWidth = (p.high / rowTotal) * 100;
-                const medWidth = (p.medium / rowTotal) * 100;
-                const lowWidth = (p.low / rowTotal) * 100;
-                const borderBottomStyle = divIdx === totalDivs - 1 ? '2px solid #d1d5db' : '1px solid #eeeeee';
-
-                return (
-                  <tr key={`${row.zone_code}_${row.division_code}`} style={{ backgroundColor: bg, borderBottom: borderBottomStyle }}>
-                    
-                    {/* S.No. Column */}
-                    {isFirstRow && (
-                      <td
-                        rowSpan={totalDivs}
-                        style={{
-                          padding: '12px 8px',
-                          fontWeight: 800,
-                          color: '#800020',
-                          textAlign: 'center',
-                          verticalAlign: 'top',
-                          borderRight: '1px solid #e5e7eb',
-                          backgroundColor: bg,
-                          fontSize: '0.9rem'
-                        }}
-                      >
-                        {zoneGroup.sNo}
-                      </td>
-                    )}
-
-                    {/* Zone Name Column */}
-                    {isFirstRow && (
-                      <td
-                        rowSpan={totalDivs}
-                        style={{
-                          padding: '12px 14px',
-                          fontWeight: 800,
-                          color: '#800020',
-                          verticalAlign: 'top',
-                          borderRight: '1px solid #e5e7eb',
-                          backgroundColor: bg,
-                          lineHeight: 1.3
-                        }}
-                      >
-                        {zoneGroup.zone_name}
-                        <span style={{ display: 'block', fontSize: '0.73rem', color: '#6b7280', fontWeight: 600 }}>
-                          ({zoneGroup.zone_code})
-                        </span>
-                      </td>
-                    )}
-
-                    {/* Division Name Column */}
-                    <td style={{ padding: '10px 10px', fontWeight: 700, color: '#1f2937', borderRight: '1px solid #f0f0f0' }}>
-                      {row.division_name} <span style={{ fontSize: '0.72rem', color: '#6b7280', fontWeight: 600 }}>({row.division_code})</span>
-                    </td>
-
-                    {/* Total Complaints Received Column */}
-                    <td style={{ padding: '10px 8px', fontWeight: 800, color: '#111827', textAlign: 'center', borderRight: '1px solid #f0f0f0' }}>
-                      {row.total_received}
-                    </td>
-
-                    {/* Total Open Complaints Column */}
-                    <td style={{ padding: '10px 8px', fontWeight: 800, color: row.total_open > 0 ? '#c5221f' : '#137333', textAlign: 'center', borderRight: '1px solid #f0f0f0' }}>
-                      {row.total_open || 0}
-                    </td>
-
-                    {/* Priority Distribution Column */}
-                    <td style={{ padding: '10px 16px', textAlign: 'center' }}>
-                      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <div style={{
-                          height: '18px',
-                          width: '100%',
-                          maxWidth: '340px',
-                          backgroundColor: '#e5e7eb',
-                          borderRadius: '6px',
-                          display: 'flex',
-                          overflow: 'hidden',
-                          boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.1)'
-                        }}>
-                          <div style={{ width: `${highWidth}%`, backgroundColor: '#ea4335', transition: 'width 0.3s' }} title={`High: ${p.high} (${highWidth.toFixed(0)}%)`} />
-                          <div style={{ width: `${medWidth}%`, backgroundColor: '#fbbc04', transition: 'width 0.3s' }} title={`Medium: ${p.medium} (${medWidth.toFixed(0)}%)`} />
-                          <div style={{ width: `${lowWidth}%`, backgroundColor: '#34a853', transition: 'width 0.3s' }} title={`Low: ${p.low} (${lowWidth.toFixed(0)}%)`} />
-                        </div>
-                      </div>
-                    </td>
-
-                  </tr>
-                );
-              });
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+  return <AdminCmoStyleOverviewTable overviewData={overviewData} />;
 }
 
 /* =========================================================================

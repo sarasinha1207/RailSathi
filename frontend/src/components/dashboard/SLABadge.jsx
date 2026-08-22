@@ -8,8 +8,7 @@ export default function SLABadge({ slaStatus, slaTier, slaTimeDetails, slaBreach
     bg: '#e6f4ea',
     text: '#137333',
     border: '1px solid #86efac',
-    label: slaStatus || 'SLA-1 On-Track',
-    icon: '⏱️'
+    label: slaStatus || 'SLA-1 On-Track'
   };
 
   if (isBreached) {
@@ -17,16 +16,14 @@ export default function SLABadge({ slaStatus, slaTier, slaTimeDetails, slaBreach
       bg: '#fce8e6',
       text: '#c5221f',
       border: '1px solid #f87171',
-      label: slaStatus || 'SLA-3 Breached',
-      icon: '🚨'
+      label: slaStatus || 'SLA-3 Breached'
     };
   } else if (isWarning) {
     style = {
       bg: '#fef3c7',
       text: '#b45309',
       border: '1px solid #fde047',
-      label: slaStatus || 'SLA-2 Warning',
-      icon: '⚠️'
+      label: slaStatus || 'SLA-2 Warning'
     };
   }
 
@@ -47,7 +44,6 @@ export default function SLABadge({ slaStatus, slaTier, slaTimeDetails, slaBreach
           whiteSpace: 'nowrap'
         }}
       >
-        <span style={{ fontSize: '0.7rem' }}>{style.icon}</span>
         {style.label}
       </span>
       {slaTimeDetails && (

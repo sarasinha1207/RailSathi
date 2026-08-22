@@ -266,7 +266,7 @@ export default function ComplaintsPage({ user, initialSubTab = 'pending' }) {
       }}>
         <div>
           <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#800020', fontWeight: 800 }}>
-            Complaint Management Officer — Detailed Complaints Workspace
+            Complaint Management Officer - Detailed Complaints Workspace
           </h2>
           <p style={{ margin: '4px 0 0 0', fontSize: '0.88rem', color: '#666' }}>
             Verify, categorize, assign, and audit full passenger complaint records across Indian Railways.
@@ -786,7 +786,7 @@ export default function ComplaintsPage({ user, initialSubTab = 'pending' }) {
               <div style={{ fontSize: '0.82rem', color: '#374151', padding: '6px 10px', backgroundColor: '#edf2f7', borderRadius: '6px', marginBottom: '10px' }}>
                 <strong>Passenger Category Chosen:</strong>{' '}
                 <span style={{ color: '#800020', fontWeight: 800 }}>
-                  {selectedComplaint.main_class || selectedComplaint.category_name || 'General'} — {selectedComplaint.sub_class || selectedComplaint.subcategory_name || 'General'}
+                  {selectedComplaint.main_class || selectedComplaint.category_name || 'General'} - {selectedComplaint.sub_class || selectedComplaint.subcategory_name || 'General'}
                 </span>
               </div>
 
@@ -862,7 +862,7 @@ export default function ComplaintsPage({ user, initialSubTab = 'pending' }) {
                     type="button"
                     onClick={() => {
                       const match = categoriesList.find(c => c.category_code === modalSubClassCode);
-                      const catText = match ? `${match.category_name} — ${match.subcategory_name}` : modalMainClass;
+                      const catText = match ? `${match.category_name} - ${match.subcategory_name}` : modalMainClass;
                       showToast(`Primary category updated to: ${catText}`);
                     }}
                     style={{
@@ -997,7 +997,7 @@ export default function ComplaintsPage({ user, initialSubTab = 'pending' }) {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px', maxWidth: '650px', width: '90%', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
             <h3 style={{ margin: '0 0 12px 0', color: '#800020', fontSize: '1.3rem', fontWeight: 800 }}>
-              Complaint Audit Record — {selectedComplaint.complaint_id}
+              Complaint Audit Record - {selectedComplaint.complaint_id}
             </h3>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '0.85rem', color: '#374151', marginBottom: '16px' }}>

@@ -344,30 +344,30 @@ export default function AdminHomeView({ analyticsData, loading, onRefresh }) {
 
       {/* SUMMARY KPI CARDS WITH REAL DATABASE CRITICAL COMPLAINTS COUNT */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-          <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Total Network Grievances</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#111827', margin: '4px 0' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
+          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Total Network Grievances</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#111827', margin: '6px 0', lineHeight: 1 }}>
             {(kpis.assigned_complaints || 0) + (kpis.pending_complaints || 0) + (kpis.resolved_complaints || 0)}
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#800020', fontWeight: 700 }}>Network-wide Logged Complaints</div>
+          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#800020', fontWeight: 700, lineHeight: 1.3 }}>Network-wide Logged Complaints</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #F57C00', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-          <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Pending Field Action</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#F57C00', margin: '4px 0' }}>{kpis.pending_complaints || 0}</div>
-          <div style={{ fontSize: '0.75rem', color: '#C2410C', fontWeight: 700 }}>Action Pending Verification</div>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #F57C00', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
+          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Pending Field Action</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#F57C00', margin: '6px 0', lineHeight: 1 }}>{kpis.pending_complaints || 0}</div>
+          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#C2410C', fontWeight: 700, lineHeight: 1.3 }}>Action Pending Verification</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #388E3C', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-          <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Resolved Grievances</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#388E3C', margin: '4px 0' }}>{kpis.resolved_complaints || 0}</div>
-          <div style={{ fontSize: '0.75rem', color: '#2E7D32', fontWeight: 700 }}>Closed & Passenger Verified</div>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #388E3C', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
+          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Resolved Grievances</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#388E3C', margin: '6px 0', lineHeight: 1 }}>{kpis.resolved_complaints || 0}</div>
+          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#2E7D32', fontWeight: 700, lineHeight: 1.3 }}>Closed & Passenger Verified</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #D32F2F', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-          <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Critical Complaints</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#D32F2F', margin: '4px 0' }}>{dbCriticalCount.toLocaleString()}</div>
-          <div style={{ fontSize: '0.75rem', color: '#C62828', fontWeight: 700 }}>Database Logged Critical Safety Risks</div>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #D32F2F', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
+          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Critical Complaints</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#D32F2F', margin: '6px 0', lineHeight: 1 }}>{dbCriticalCount.toLocaleString()}</div>
+          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#C62828', fontWeight: 700, lineHeight: 1.3 }}>Database Logged Critical Safety Risks</div>
         </div>
       </div>
 

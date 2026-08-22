@@ -55,13 +55,13 @@ const RAILWAY_ZONES = [
   {
     name: 'Northeast Frontier Railway', abbr: 'NFR', hq: 'Maligaon, Guwahati',
     established: '15 Jan 1958', routeKm: '3,907 km', divisions: 5, stations: 692,
-    description: 'Connecting India\'s Seven Sisters through extraordinary terrain — river valleys, dense forests, and high altitude. The Bogibeel Bridge on the Brahmaputra is a crowning achievement of NFR.',
+    description: 'Connecting India\'s Seven Sisters through extraordinary terrain - river valleys, dense forests, and high altitude. The Bogibeel Bridge on the Brahmaputra is a crowning achievement of NFR.',
     image: '/zone_nfr.jpg', accent: '#1e5631',
   },
   {
     name: 'North Central Railway', abbr: 'NCR', hq: 'Prayagraj',
     established: '01 Apr 2003', routeKm: '3,151 km', divisions: 3, stations: 345,
-    description: 'Commands the strategic Delhi–Kolkata and Delhi–Mumbai trunk routes. Headquartered at the Sangam city of Prayagraj, with one of the most critical rail junctions in the country.',
+    description: 'Commands the strategic Delhi-Kolkata and Delhi-Mumbai trunk routes. Headquartered at the Sangam city of Prayagraj, with one of the most critical rail junctions in the country.',
     image: '/zone_ncr.jpg', accent: '#1a3a6b',
   },
   {
@@ -79,13 +79,13 @@ const RAILWAY_ZONES = [
   {
     name: 'South Central Railway', abbr: 'SCR', hq: 'Secunderabad',
     established: '02 Oct 1966', routeKm: '5,803 km', divisions: 5, stations: 698,
-    description: 'Serving the Deccan plateau across Telangana and Andhra Pradesh, SCR is known for high-speed Rajdhani and Shatabdi operations and manages the twin-city hub of Hyderabad–Secunderabad.',
+    description: 'Serving the Deccan plateau across Telangana and Andhra Pradesh, SCR is known for high-speed Rajdhani and Shatabdi operations and manages the twin-city hub of Hyderabad-Secunderabad.',
     image: '/zone_scr.jpg', accent: '#6b4a1a',
   },
   {
     name: 'Southern Railway', abbr: 'SR', hq: 'Chennai',
     established: '14 Apr 1951', routeKm: '5,098 km', divisions: 6, stations: 689,
-    description: 'Serving Tamil Nadu, Kerala, and Puducherry. SR operates the Nilgiri Mountain Railway — a UNESCO World Heritage Site — along with major suburban networks in Chennai.',
+    description: 'Serving Tamil Nadu, Kerala, and Puducherry. SR operates the Nilgiri Mountain Railway - a UNESCO World Heritage Site - along with major suburban networks in Chennai.',
     image: '/zone_sr.jpg', accent: '#1e5631',
   },
   {
@@ -97,7 +97,7 @@ const RAILWAY_ZONES = [
   {
     name: 'South Eastern Railway', abbr: 'SER', hq: 'Kolkata',
     established: '01 Aug 1955', routeKm: '2,631 km', divisions: 4, stations: 492,
-    description: 'A freight powerhouse spanning West Bengal, Jharkhand and Odisha. SER handles the highest freight loading among all zones — primarily coal from Jharkhand\'s mineral belt.',
+    description: 'A freight powerhouse spanning West Bengal, Jharkhand and Odisha. SER handles the highest freight loading among all zones - primarily coal from Jharkhand\'s mineral belt.',
     image: '/zone_ser.jpg', accent: '#1a3a6b',
   },
   {
@@ -109,7 +109,7 @@ const RAILWAY_ZONES = [
   {
     name: 'East Central Railway', abbr: 'ECR', hq: 'Hajipur',
     established: '01 Oct 2002', routeKm: '3,628 km', divisions: 5, stations: 555,
-    description: 'Spanning Bihar and Jharkhand, ECR commands the Varanasi–Patna–Hajipur corridor. The Mahatma Gandhi Setu bridge near Hajipur was once the longest river bridge in Asia.',
+    description: 'Spanning Bihar and Jharkhand, ECR commands the Varanasi-Patna-Hajipur corridor. The Mahatma Gandhi Setu bridge near Hajipur was once the longest river bridge in Asia.',
     image: '/zone_ecr.jpg', accent: '#1a3a6b',
   },
   {
@@ -133,7 +133,7 @@ const RAILWAY_ZONES = [
   {
     name: 'West Central Railway', abbr: 'WCR', hq: 'Jabalpur',
     established: '01 Apr 2003', routeKm: '2,965 km', divisions: 3, stations: 284,
-    description: 'Covering Madhya Pradesh, WCR handles the strategic Itarsi–Bhopal corridor — one of the busiest trunk routes in India. Jabalpur sits near the stunning Marble Rocks of Bhedaghat.',
+    description: 'Covering Madhya Pradesh, WCR handles the strategic Itarsi-Bhopal corridor - one of the busiest trunk routes in India. Jabalpur sits near the stunning Marble Rocks of Bhedaghat.',
     image: '/zone_wcr.jpg', accent: '#5c4a1a',
   },
   {

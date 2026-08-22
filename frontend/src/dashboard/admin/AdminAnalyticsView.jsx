@@ -215,10 +215,10 @@ function SlaPieChart({ data, title, subtitle }) {
   const [hoveredSlice, setHoveredSlice] = useState(null);
 
   const total = data.reduce((sum, item) => sum + item.value, 0) || 1;
-  const radius = 115;
-  const innerRadius = 60;
-  const cx = 125;
-  const cy = 125;
+  const radius = 88;
+  const innerRadius = 46;
+  const cx = 95;
+  const cy = 95;
 
   // Minimum slice angle to guarantee small slices (e.g. SLA-3 red slice) are prominently visible!
   const minAngle = 0.12; // ~7 degrees visual arc minimum
@@ -299,31 +299,30 @@ function SlaPieChart({ data, title, subtitle }) {
     <div style={{
       backgroundColor: '#ffffff',
       borderRadius: '16px',
-      padding: '20px 24px',
+      padding: '16px 20px',
       border: '1px solid #e5e7eb',
       boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
       display: 'flex',
       flexDirection: 'column',
-      height: '100%',
       boxSizing: 'border-box'
     }}>
       {/* Title Header Centered */}
-      <div style={{ width: '100%', marginBottom: '14px', textAlign: 'center' }}>
-        <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#800020' }}>
+      <div style={{ width: '100%', marginBottom: '10px', textAlign: 'center' }}>
+        <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#800020' }}>
           {title}
         </h3>
         {subtitle && (
-          <span style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 600, display: 'block', marginTop: '3px' }}>
+          <span style={{ fontSize: '0.76rem', color: '#6b7280', fontWeight: 600, display: 'block', marginTop: '2px' }}>
             {subtitle}
           </span>
         )}
       </div>
 
-      {/* HORIZONTAL LAYOUT: TALLER ENLARGED PIE CHART ON LEFT + COMPACT RIGHT SIDE LEGENDS */}
+      {/* HORIZONTAL LAYOUT: COMPACT PIE CHART ON LEFT + RIGHT SIDE LEGENDS */}
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flex: 1, width: '100%' }}>
-        {/* SVG PIE CHART (ENLARGED HEIGHT TO 250PX WITH VISIBLE SLA-3 SLICE) */}
-        <div style={{ position: 'relative', width: '250px', height: '250px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <svg width="250" height="250" viewBox="0 0 250 250" style={{ overflow: 'visible' }}>
+        {/* SVG PIE CHART */}
+        <div style={{ position: 'relative', width: '190px', height: '190px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="190" height="190" viewBox="0 0 190 190" style={{ overflow: 'visible' }}>
             {slices.map((slice) => {
               const isHovered = activeInfo && activeInfo.id === slice.id;
               return slice.value > 0 ? (
@@ -338,7 +337,7 @@ function SlaPieChart({ data, title, subtitle }) {
                   style={{
                     transition: 'transform 0.25s ease, filter 0.25s ease, opacity 0.2s ease',
                     transform: isHovered ? 'scale(1.05)' : 'scale(1)',
-                    transformOrigin: '125px 125px',
+                    transformOrigin: '95px 95px',
                     filter: isHovered ? 'drop-shadow(0 6px 12px rgba(0,0,0,0.35))' : 'none',
                     cursor: 'pointer',
                     opacity: activeInfo && !isHovered ? 0.75 : 1
@@ -358,33 +357,33 @@ function SlaPieChart({ data, title, subtitle }) {
             transform: 'translate(-50%, -50%)',
             textAlign: 'center',
             pointerEvents: 'none',
-            width: '110px'
+            width: '95px'
           }}>
             {activeInfo ? (
               <div style={{
                 backgroundColor: '#ffffff',
-                padding: '4px 6px',
+                padding: '3px 5px',
                 borderRadius: '8px',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                 border: `2px solid ${activeInfo.color}`,
                 width: '100%'
               }}>
-                <div style={{ fontSize: '0.68rem', fontWeight: 900, color: activeInfo.color, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: '0.64rem', fontWeight: 900, color: activeInfo.color, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {activeInfo.label}
                 </div>
-                <div style={{ fontSize: '1.15rem', fontWeight: 900, color: '#111827', margin: '2px 0 0 0', lineHeight: 1 }}>
+                <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#111827', margin: '1px 0 0 0', lineHeight: 1 }}>
                   {activeInfo.value.toLocaleString()}
                 </div>
-                <div style={{ fontSize: '0.64rem', fontWeight: 800, color: '#4b5563', marginTop: '2px' }}>
+                <div style={{ fontSize: '0.6rem', fontWeight: 800, color: '#4b5563', marginTop: '1px' }}>
                   {activeInfo.percentage}% Share
                 </div>
               </div>
             ) : (
               <>
-                <div style={{ fontSize: '1.55rem', fontWeight: 900, color: '#111827', lineHeight: 1 }}>
+                <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#111827', lineHeight: 1 }}>
                   {total.toLocaleString()}
                 </div>
-                <div style={{ fontSize: '0.68rem', color: '#6b7280', fontWeight: 800, textTransform: 'uppercase', marginTop: '3px' }}>
+                <div style={{ fontSize: '0.65rem', color: '#6b7280', fontWeight: 800, textTransform: 'uppercase', marginTop: '2px' }}>
                   TOTAL TASKS
                 </div>
               </>
@@ -393,7 +392,7 @@ function SlaPieChart({ data, title, subtitle }) {
         </div>
 
         {/* REDUCED WIDTH LEGEND LABELS ON THE RIGHT SIDE (ALL SLAs INCLUDED) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '210px', width: '100%' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '210px', width: '100%' }}>
           {slices.map((slice) => {
             const isHovered = activeInfo && activeInfo.id === slice.id;
             return (
@@ -406,7 +405,7 @@ function SlaPieChart({ data, title, subtitle }) {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   fontSize: '0.78rem',
-                  padding: '7px 10px',
+                  padding: '6px 10px',
                   borderRadius: '8px',
                   backgroundColor: isHovered ? '#f3f4f6' : '#f9fafb',
                   border: isHovered ? `1px solid ${slice.color}` : '1px solid #f3f4f6',
@@ -776,8 +775,8 @@ export default function AdminAnalyticsView({ analyticsData }) {
         </div>
       </div>
 
-      {/* TOP SECTION: 2x2 SQUARE KPI CARDS ON LEFT + ENLARGED SLA PIE CHART WITH RIGHT-SIDE LEGENDS */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '16px', alignItems: 'stretch' }}>
+      {/* TOP SECTION: 2x2 SQUARE KPI CARDS ON LEFT + COMPACT SLA PIE CHART WITH RIGHT-SIDE LEGENDS */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '16px', alignItems: 'start' }}>
         
         {/* LEFT: 2 X 2 SQUARE GRID OF COMPACT KPI CARDS WITH INCREASED TEXT & NUMBER SIZES */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
@@ -801,7 +800,7 @@ export default function AdminAnalyticsView({ analyticsData }) {
               </span>
             </div>
             <div style={{ fontSize: '2.05rem', fontWeight: 900, color: '#1d4ed8', margin: '4px 0', lineHeight: 1.05, display: 'flex', alignItems: 'center', gap: '6px' }}>
-              ⭐ 4.65 <span style={{ fontSize: '0.95rem', color: '#6b7280', fontWeight: 600 }}>/ 5.0</span>
+              4.65 <span style={{ fontSize: '0.95rem', color: '#6b7280', fontWeight: 600 }}>/ 5.0</span>
             </div>
             <div style={{ fontSize: '0.78rem', color: '#1e40af', fontWeight: 700, marginTop: '4px' }}>
               Based on 1,250 Ratings
