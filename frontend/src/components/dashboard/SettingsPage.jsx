@@ -172,8 +172,7 @@ export default function SettingsPage({ user }) {
           fontWeight: 700,
           fontSize: '0.9rem',
           boxShadow: '0 8px 24px rgba(128, 0, 32, 0.35)',
-          zIndex: 9999,
-          borderLeft: '4px solid #ffb300'
+          zIndex: 9999
         }}>
           {toastMessage}
         </div>
@@ -189,7 +188,6 @@ export default function SettingsPage({ user }) {
         alignItems: 'center',
         justifyContent: 'space-between',
         boxShadow: '0 10px 28px rgba(54, 4, 18, 0.25)',
-        borderLeft: '6px solid #e65c00',
         background: 'linear-gradient(135deg, #360412 0%, #58081f 100%)'
       }}>
         <div>

@@ -81,7 +81,6 @@ export default function AdminStaffManagementView() {
         backgroundColor: '#ffffff',
         borderRadius: '12px',
         padding: '20px 24px',
-        borderLeft: '5px solid #800020',
         border: '1px solid #e5e7eb',
         boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
         display: 'flex',
@@ -109,25 +108,25 @@ export default function AdminStaffManagementView() {
 
       {/* STAFF MANAGEMENT SUMMARY CARDS (FROM DATABASE) */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Total Registered Staff</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#111827', margin: '4px 0' }}>{totalStaffCount}</div>
           <div style={{ fontSize: '0.75rem', color: '#800020', fontWeight: 700 }}>Network Personnel Roster</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #059669', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #388E3C', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Available On Duty</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#059669', margin: '4px 0' }}>{availableCount}</div>
-          <div style={{ fontSize: '0.75rem', color: '#065f46', fontWeight: 700 }}>Active Field Personnel</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#388E3C', margin: '4px 0' }}>{availableCount}</div>
+          <div style={{ fontSize: '0.75rem', color: '#2E7D32', fontWeight: 700 }}>Active Field Personnel</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #d97706', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #F57C00', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Off Duty / Rest</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#d97706', margin: '4px 0' }}>{offDutyCount}</div>
-          <div style={{ fontSize: '0.75rem', color: '#92400e', fontWeight: 700 }}>Shift Resting Personnel</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#F57C00', margin: '4px 0' }}>{offDutyCount}</div>
+          <div style={{ fontSize: '0.75rem', color: '#C2410C', fontWeight: 700 }}>Shift Resting Personnel</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #2563eb', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #2563eb', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Active Deployments</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#2563eb', margin: '4px 0' }}>{activeDutyCount}</div>
           <div style={{ fontSize: '0.75rem', color: '#1e40af', fontWeight: 700 }}>Onboard Train & Station Roster</div>

@@ -89,12 +89,12 @@ export default function HelpPage({ user }) {
     { code: 'CIVIL', name: 'Civil Engineering', duties: 'Station building maintenance, platforms, foot overbridges, ramp access.' }
   ];
 
-  // Priority Matrix System
+  // Priority Matrix System matching official system-wide palette
   const prioritiesList = [
-    { priority: 'Critical', color: '#c5221f', bg: '#fce8e6', sla: '< 15 Mins', desc: 'Active safety threats, medical emergencies, robbery, harassment, rape, active fire.' },
-    { priority: 'High', color: '#ea4335', bg: '#fee8e6', sla: '< 1 Hour', desc: 'Food/water non-availability, total AC failure, toilet choked, Divyangjan access obstruction.' },
-    { priority: 'Medium', color: '#b06000', bg: '#fef3d6', sla: '< 2 Hours', desc: 'Food quality, bedroll non-availability, fan/light defect, delayed train running inquiry.' },
-    { priority: 'Low', color: '#137333', bg: '#e6f4ea', sla: '< 4 Hours', desc: 'Minor cosmetic defects, general feedback, website/app queries.' }
+    { priority: 'Critical', color: '#D32F2F', bg: '#FFEBEE', sla: '< 15 Mins', desc: 'Active safety threats, medical emergencies, robbery, harassment, rape, active fire.' },
+    { priority: 'High', color: '#F57C00', bg: '#FFF3E0', sla: '< 1 Hour', desc: 'Food/water non-availability, total AC failure, toilet choked, Divyangjan access obstruction.' },
+    { priority: 'Medium', color: '#FBC02D', bg: '#FFFDE7', sla: '< 2 Hours', desc: 'Food quality, bedroll non-availability, fan/light defect, delayed train running inquiry.' },
+    { priority: 'Low', color: '#388E3C', bg: '#E8F5E9', sla: '< 4 Hours', desc: 'Minor cosmetic defects, general feedback, website/app queries.' }
   ];
 
   // Railway Officials Directory (Only 2 cards requested)
@@ -130,7 +130,6 @@ export default function HelpPage({ user }) {
         alignItems: 'center',
         justifyContent: 'space-between',
         boxShadow: '0 10px 28px rgba(54, 4, 18, 0.25)',
-        borderLeft: '6px solid #e65c00',
         background: 'linear-gradient(135deg, #360412 0%, #58081f 100%)'
       }}>
         <div>

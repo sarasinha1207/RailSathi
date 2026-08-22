@@ -157,7 +157,6 @@ export default function ReassignmentPage({ user }) {
         flexWrap: 'wrap',
         gap: '16px',
         boxShadow: '0 10px 28px rgba(54, 4, 18, 0.25)',
-        borderLeft: '6px solid #ffb300',
         background: 'linear-gradient(135deg, #360412 0%, #58081f 100%)'
       }}>
         <div>
@@ -193,28 +192,28 @@ export default function ReassignmentPage({ user }) {
 
       {/* KPI SUMMARY CARDS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Total Reassignment Log</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#111827', margin: '4px 0' }}>{totalReqs}</div>
           <div style={{ fontSize: '0.75rem', color: '#800020', fontWeight: 700 }}>Network-wide transfer requests</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #d97706', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #F57C00', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Pending CMO Review</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#d97706', margin: '4px 0' }}>{pendingReqs}</div>
-          <div style={{ fontSize: '0.75rem', color: '#b45309', fontWeight: 700 }}>Action Required by CMO</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#F57C00', margin: '4px 0' }}>{pendingReqs}</div>
+          <div style={{ fontSize: '0.75rem', color: '#C2410C', fontWeight: 700 }}>Action Required by CMO</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #059669', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #388E3C', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Approved & Transferred</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#059669', margin: '4px 0' }}>{approvedReqs}</div>
-          <div style={{ fontSize: '0.75rem', color: '#065f46', fontWeight: 700 }}>Reassigned to new officer</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#388E3C', margin: '4px 0' }}>{approvedReqs}</div>
+          <div style={{ fontSize: '0.75rem', color: '#2E7D32', fontWeight: 700 }}>Reassigned to new officer</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #c5221f', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #D32F2F', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Rejected / Declined</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#c5221f', margin: '4px 0' }}>{rejectedReqs}</div>
-          <div style={{ fontSize: '0.75rem', color: '#991b1b', fontWeight: 700 }}>Retained in original division</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#D32F2F', margin: '4px 0' }}>{rejectedReqs}</div>
+          <div style={{ fontSize: '0.75rem', color: '#C62828', fontWeight: 700 }}>Retained in original division</div>
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import PriorityBadge from '../../components/dashboard/PriorityBadge';
 import StatusBadge from '../../components/dashboard/StatusBadge';
+import SLABadge from '../../components/dashboard/SLABadge';
 
 export default function StaffComplaintsPage({ user }) {
   const [complaints, setComplaints] = useState([]);
@@ -160,7 +161,6 @@ export default function StaffComplaintsPage({ user }) {
         alignItems: 'center',
         justifyContent: 'space-between',
         boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-        borderLeft: '5px solid #800020',
         border: '1px solid #e5e7eb',
         flexWrap: 'wrap',
         gap: '16px'
@@ -170,7 +170,7 @@ export default function StaffComplaintsPage({ user }) {
             Assigned Complaints Workspace
           </h2>
           <p style={{ margin: '4px 0 0 0', fontSize: '0.88rem', color: '#6b7280' }}>
-            Click any complaint to view full audit record, passenger description, log remarks, and mark as closed.
+            Click any complaint to view full audit record, passenger description, SLA countdown timers, and mark as closed.
           </p>
         </div>
 
@@ -238,8 +238,9 @@ export default function StaffComplaintsPage({ user }) {
                   <th style={{ padding: '14px 16px', color: '#374151', fontWeight: 700 }}>Complaint ID</th>
                   <th style={{ padding: '14px 16px', color: '#374151', fontWeight: 700 }}>Category & Subcategory</th>
                   <th style={{ padding: '14px 16px', color: '#374151', fontWeight: 700 }}>Coach & Seat</th>
-                  <th style={{ padding: '14px 16px', color: '#374151', fontWeight: 700 }}>Priority</th>
+                  <th style={{ padding: '14px 16px', color: '#374151', fontWeight: 700 }}>Priority & Target SLA</th>
                   <th style={{ padding: '14px 16px', color: '#374151', fontWeight: 700 }}>Status</th>
+                  <th style={{ padding: '14px 16px', color: '#374151', fontWeight: 700 }}>SLA Status</th>
                   <th style={{ padding: '14px 16px', color: '#374151', fontWeight: 700 }}>Registered Date</th>
                   <th style={{ padding: '14px 16px', color: '#374151', fontWeight: 700, textAlign: 'right' }}>Action</th>
                 </tr>
@@ -270,9 +271,24 @@ export default function StaffComplaintsPage({ user }) {
                       </td>
                       <td style={{ padding: '14px 16px' }}>
                         <PriorityBadge priority={c.priority} />
+                        {c.sla_target_formatted && (
+                          <div style={{ fontSize: '0.73rem', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>
+                            Target: {c.sla_target_formatted}
+                          </div>
+                        )}
                       </td>
                       <td style={{ padding: '14px 16px' }}>
                         <StatusBadge status={c.internal_status} />
+                      </td>
+                      <td style={{ padding: '14px 16px' }}>
+                        <SLABadge
+                          slaStatus={c.sla_status}
+                          slaTier={c.sla_tier}
+                          slaTimeDetails={c.sla_time_details}
+                          slaBreached={c.sla_breached}
+                          slaWarning={c.sla_warning}
+                          targetFormatted={c.sla1_target_formatted || c.sla_target_formatted}
+                        />
                       </td>
                       <td style={{ padding: '14px 16px', color: '#6b7280', fontSize: '0.82rem' }}>
                         {c.created_at || 'Just now'}
@@ -301,6 +317,48 @@ export default function StaffComplaintsPage({ user }) {
             <h3 style={{ margin: '0 0 12px 0', color: '#800020', fontSize: '1.3rem', fontWeight: 800 }}>
               Complaint Audit Record — {selectedComplaint.complaint_id}
             </h3>
+
+            {/* 3-Tier SLA Status Highlight Box */}
+            <div style={{
+              backgroundColor: selectedComplaint.sla_breached ? '#fef2f2' : selectedComplaint.sla_warning ? '#fffbe6' : '#f0fdf4',
+              border: selectedComplaint.sla_breached ? '1px solid #fecaca' : selectedComplaint.sla_warning ? '1px solid #ffe58f' : '1px solid #bbf7d0',
+              padding: '14px 16px',
+              borderRadius: '8px',
+              marginBottom: '16px'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <div>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 800, color: selectedComplaint.sla_breached ? '#991b1b' : selectedComplaint.sla_warning ? '#d97706' : '#166534', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    3-TIER SERVICE LEVEL AGREEMENT (SLA) MONITOR
+                  </div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#1f2937', marginTop: '2px' }}>
+                    Priority: <strong>{selectedComplaint.priority || 'Medium'}</strong>
+                  </div>
+                </div>
+                <SLABadge
+                  slaStatus={selectedComplaint.sla_status}
+                  slaTier={selectedComplaint.sla_tier}
+                  slaBreached={selectedComplaint.sla_breached}
+                  slaWarning={selectedComplaint.sla_warning}
+                  slaTimeDetails={selectedComplaint.sla_time_details}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginTop: '10px', paddingTop: '10px', borderTop: '1px dashed #d1d5db', fontSize: '0.78rem' }}>
+                <div style={{ backgroundColor: '#ffffff', padding: '6px 10px', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
+                  <div style={{ color: '#059669', fontWeight: 800 }}>SLA-1 Target (Field Staff)</div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827' }}>{selectedComplaint.sla1_target_formatted || selectedComplaint.sla_target_formatted || '15 Mins'}</div>
+                </div>
+                <div style={{ backgroundColor: '#ffffff', padding: '6px 10px', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
+                  <div style={{ color: '#d97706', fontWeight: 800 }}>SLA-2 Officer Warning</div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827' }}>{selectedComplaint.sla2_target_formatted || '25 Mins'}</div>
+                </div>
+                <div style={{ backgroundColor: '#ffffff', padding: '6px 10px', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
+                  <div style={{ color: '#dc2626', fontWeight: 800 }}>SLA-3 Critical Breach</div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827' }}>{selectedComplaint.sla3_target_formatted || '30 Mins'}</div>
+                </div>
+              </div>
+            </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '0.85rem', color: '#374151', marginBottom: '16px' }}>
               <div><strong>Passenger PNR:</strong> {selectedComplaint.pnr_number || 'N/A'}</div>

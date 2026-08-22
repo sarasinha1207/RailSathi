@@ -123,7 +123,6 @@ class User(Base):
     department            = relationship("Department",                 back_populates="users")
     division              = relationship("Division",                   back_populates="users")
     staff                 = relationship("Staff",                      uselist=False, back_populates="user", cascade="all, delete-orphan")
-    notifications         = relationship("Notification",               back_populates="user", cascade="all, delete-orphan")
     status_updates        = relationship("ComplaintStatusHistory",     back_populates="updated_by_user")
     verified_complaints   = relationship("Complaint",                  foreign_keys="Complaint.verified_by_user_id", back_populates="verified_by_user")
     resolved_complaints   = relationship("Complaint",                  foreign_keys="Complaint.resolved_by_user_id", back_populates="resolved_by_user")
@@ -359,30 +358,6 @@ class ComplaintEscalationHistory(Base):
     complaint         = relationship("Complaint", back_populates="escalation_history")
     escalated_by_user = relationship("User",      foreign_keys=[escalated_by_user_id], back_populates="escalated_histories")
     escalated_to_user = relationship("User",      foreign_keys=[escalated_to_user_id], back_populates="received_escalations")
-
-
-class OtpVerification(Base):
-    __tablename__ = "otp_verifications"
-    otp_id       = Column(Integer, primary_key=True, autoincrement=True)
-    phone_number = Column(String(15), nullable=False)
-    otp_code     = Column(String(6),  nullable=False)
-    purpose      = Column(String(50), nullable=False)
-    expires_at   = Column(DateTime,   nullable=False)
-    is_verified  = Column(Boolean, default=False)
-    created_at   = Column(DateTime, default=datetime.utcnow)
-
-
-class Notification(Base):
-    __tablename__ = "notifications"
-    notification_id   = Column(Integer, primary_key=True, autoincrement=True)
-    user_id           = Column(String(50), ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
-    notification_type = Column(String(50),  nullable=False)
-    title             = Column(String(150), nullable=False)
-    message           = Column(Text,  nullable=False)
-    is_read           = Column(Boolean, default=False)
-    created_at        = Column(DateTime, default=datetime.utcnow)
-
-    user = relationship("User", back_populates="notifications")
 
 
 # ---------------------------------------------------------------------------

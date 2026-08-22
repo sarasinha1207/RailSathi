@@ -1,6 +1,5 @@
 import React from 'react';
 import Hero from '../../components/public/Hero';
-import RailwayZonesSlider from '../../components/public/RailwayZonesSlider';
 
 
 
@@ -48,21 +47,21 @@ export default function Home({ onRegisterClick, onTrackClick }) {
             left: 50%;
             transform: translateX(-50%);
             width: 60px;
-            height: 3px;
-            background-color: var(--accent-color);
+            height: 3.5px;
+            background: linear-gradient(90deg, var(--primary-color), #3b82f6);
             border-radius: 2px;
         }
 
         .section-title-sub {
-            font-size: 1rem;
+            font-size: 1.05rem;
             color: var(--text-muted);
-            max-width: 650px;
+            max-width: 680px;
             margin: 15px auto 0 auto;
             line-height: 1.6;
         }
 
-        /* 1. About Indian Railways Section */
-        .about-railways-layout {
+        /* 1. About RailSathi Section */
+        .about-railsathi-layout {
             display: flex;
             align-items: stretch;
             gap: 50px;
@@ -70,33 +69,33 @@ export default function Home({ onRegisterClick, onTrackClick }) {
             box-sizing: border-box;
         }
 
-        .about-railways-text {
+        .about-railsathi-text {
             flex: 1.2;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
-        .about-railways-text p {
+        .about-railsathi-text p {
             font-size: 1.05rem;
             line-height: 1.75;
             color: #475569;
             margin-bottom: 20px;
         }
 
-        .about-railways-text strong {
+        .about-railsathi-text strong {
             color: var(--primary-color);
             font-weight: 700;
         }
 
-        .about-railways-stats {
+        .about-railsathi-stats {
             flex: 0.8;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
 
-        .railway-stat-item {
+        .railsathi-stat-item {
             background-color: #ffffff;
             border-radius: 12px;
             padding: 30px 20px;
@@ -110,20 +109,20 @@ export default function Home({ onRegisterClick, onTrackClick }) {
             align-items: center;
         }
 
-        .railway-stat-item:hover {
+        .railsathi-stat-item:hover {
             transform: translateY(-3px);
             border-color: var(--primary-color);
             box-shadow: 0 10px 25px rgba(26, 54, 93, 0.08);
         }
 
-        .railway-stat-num {
+        .railsathi-stat-num {
             font-size: 2.1rem;
             font-weight: 800;
             color: var(--primary-color);
             margin-bottom: 5px;
         }
 
-        .railway-stat-label {
+        .railsathi-stat-label {
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
@@ -132,15 +131,12 @@ export default function Home({ onRegisterClick, onTrackClick }) {
         }
 
         @media (max-width: 900px) {
-            .about-railways-layout {
+            .about-railsathi-layout {
                 flex-direction: column;
                 gap: 35px;
             }
-            .about-railways-text {
+            .about-railsathi-text {
                 text-align: center;
-            }
-            .about-railways-stats {
-                width: 100%;
             }
         }
 
@@ -453,48 +449,45 @@ export default function Home({ onRegisterClick, onTrackClick }) {
       {/* Hero Header Banner */}
       <Hero onRegisterClick={onRegisterClick} onTrackClick={onTrackClick} />
 
-      {/* Section 1: About Indian Railways */}
+      {/* Section 1: About RailSathi */}
       <section className="home-section-wrapper" style={{ backgroundColor: '#ffffff' }}>
         <div className="home-section-container">
           <div className="section-title-wrapper">
-            <h3 className="section-title-main">About Indian Railways</h3>
-            <p className="section-title-sub">The lifeline of the nation, connecting people, cultures, and trade across the subcontinent.</p>
+            <h3 className="section-title-main">About RailSathi</h3>
+            <p className="section-title-sub">Centralized Passenger Grievance & Real-Time Operational Assistance Portal</p>
           </div>
 
-          <div className="about-railways-layout">
-            <div className="about-railways-text">
+          <div className="about-railsathi-layout">
+            <div className="about-railsathi-text">
               <p>
-                <strong>Indian Railways (IR)</strong> is a statutory body under the ownership of the Ministry of Railways, Government of India, that operates India's national railway system. It is one of the largest railway networks in the world by size, spanning over 68,000 route kilometers and running more than 13,000 passenger trains daily.
+                <strong>RailSathi</strong> is Indian Railways' next-generation digital grievance redressal and operational assistance platform. Engineered to deliver rapid, transparent, and trackable support, RailSathi connects passengers directly with Complaint Management Officers (CMO) and onboard field staff across all 18 Zonal Railways and 71 Divisions.
               </p>
               <p>
-                Serving as the economic backbone of the nation, Indian Railways carries over <strong>22 million passengers</strong> and 3 million tonnes of freight every single day. Under the Digital India and Passenger-Centric initiatives, IR continues to modernize its infrastructure, train speed, safety systems, and digital customer support portals to ensure a seamless and safe journey for everyone.
+                Under the Digital India initiative, RailSathi integrates <strong>10-digit PNR auto-verification</strong>, dynamic division section routing, live Reference ID tracking timelines (<em>CMP...</em>), and multi-role control room dashboards to ensure passenger grievances are addressed swiftly and complete accountability is maintained at every step.
               </p>
             </div>
-            
-            <div className="about-railways-stats">
-              <div className="railway-stat-item">
-                <div className="railway-stat-num">13k+</div>
-                <div className="railway-stat-label">Daily Trains</div>
+
+            <div className="about-railsathi-stats">
+              <div className="railsathi-stat-item">
+                <div className="railsathi-stat-num">10k+</div>
+                <div className="railsathi-stat-label">Grievances Solved</div>
               </div>
-              <div className="railway-stat-item">
-                <div className="railway-stat-num">68k+</div>
-                <div className="railway-stat-label">Route KMs</div>
+              <div className="railsathi-stat-item">
+                <div className="railsathi-stat-num">18</div>
+                <div className="railsathi-stat-label">Zonal Railways</div>
               </div>
-              <div className="railway-stat-item">
-                <div className="railway-stat-num">7.3k+</div>
-                <div className="railway-stat-label">Stations</div>
+              <div className="railsathi-stat-item">
+                <div className="railsathi-stat-num">71</div>
+                <div className="railsathi-stat-label">Divisions Covered</div>
               </div>
-              <div className="railway-stat-item">
-                <div className="railway-stat-num">22M+</div>
-                <div className="railway-stat-label">Daily Passengers</div>
+              <div className="railsathi-stat-item">
+                <div className="railsathi-stat-num">100%</div>
+                <div className="railsathi-stat-label">Live Trackable</div>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-      {/* Railway Zones Image Slider */}
-      <RailwayZonesSlider />
 
       {/* Section 2: How It Works */}
       <section className="home-section-wrapper" style={{ backgroundColor: '#f0f4f8' }}>
@@ -503,7 +496,7 @@ export default function Home({ onRegisterClick, onTrackClick }) {
             <h3 className="section-title-main">How It Works</h3>
             <p className="section-title-sub">Our simplified workflow connects you directly to the division team on your train or station.</p>
           </div>
-          
+
           <div className="workflow-timeline">
             <div className="workflow-step">
               <div className="step-number">1</div>
@@ -677,7 +670,7 @@ export default function Home({ onRegisterClick, onTrackClick }) {
                   Non-emergency portal issues or suggestions can be sent to <strong>support@railsathi.gov.in</strong>
                 </p>
               </div>
-              
+
               <div className="emergency-actions">
                 <a href="tel:139" className="hotline-button">
                   <div className="hotline-text-block">

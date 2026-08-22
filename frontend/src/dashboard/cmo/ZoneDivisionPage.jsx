@@ -223,7 +223,6 @@ export default function ZoneDivisionPage({ user }) {
         flexWrap: 'wrap',
         gap: '16px',
         boxShadow: '0 10px 28px rgba(54, 4, 18, 0.25)',
-        borderLeft: '6px solid #e65c00',
         background: 'linear-gradient(135deg, #360412 0%, #58081f 100%)'
       }}>
         <div>
@@ -245,37 +244,37 @@ export default function ZoneDivisionPage({ user }) {
       {/* 1. DYNAMIC SUMMARY CARDS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
         
-        <div style={{ backgroundColor: '#ffffff', padding: '18px 20px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #800020' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '18px 20px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
           <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Complaints</div>
           <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#800020', marginTop: '4px' }}>{summaryMetrics.total_complaints || 0}</div>
           <div style={{ fontSize: '0.76rem', color: '#9ca3af', marginTop: '2px' }}>Filtered Volume</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', padding: '18px 20px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #b06000' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '18px 20px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
           <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#b06000', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Pending Verification</div>
           <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#b06000', marginTop: '4px' }}>{summaryMetrics.pending_verification || 0}</div>
           <div style={{ fontSize: '0.76rem', color: '#b45309', marginTop: '2px' }}>Awaiting Verification</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', padding: '18px 20px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #0284c7' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '18px 20px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
           <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#0284c7', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Under Review / Assigned</div>
           <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#0369a1', marginTop: '4px' }}>{summaryMetrics.under_review_assigned || 0}</div>
           <div style={{ fontSize: '0.76rem', color: '#0284c7', marginTop: '2px' }}>Field Staff Dispatched</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', padding: '18px 20px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #137333' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '18px 20px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
           <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#137333', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Resolved Complaints</div>
           <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#137333', marginTop: '4px' }}>{summaryMetrics.resolved_complaints || 0}</div>
           <div style={{ fontSize: '0.76rem', color: '#15803d', marginTop: '2px' }}>OTP Verified</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', padding: '18px 20px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #c5221f' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '18px 20px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
           <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#c5221f', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Critical / High Priority</div>
           <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#c5221f', marginTop: '4px' }}>{summaryMetrics.critical_high_priority || 0}</div>
           <div style={{ fontSize: '0.76rem', color: '#b91c1c', marginTop: '2px' }}>Safety / Emergency</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', padding: '18px 20px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #700c28' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '18px 20px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
           <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#700c28', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Resolution Rate</div>
           <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#700c28', marginTop: '4px' }}>{summaryMetrics.resolution_rate || '0.0%'}</div>
           <div style={{ fontSize: '0.76rem', color: '#6b7280', marginTop: '2px' }}>Avg Time: {summaryMetrics.avg_resolution_time || '0 Mins'}</div>

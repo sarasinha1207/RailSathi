@@ -162,6 +162,19 @@ class ComplaintResponse(BaseModel):
     display_status:        Optional[str] = None
     feedback:              Optional[str] = None
     rating:                Optional[str] = None
+    sla_target_minutes:    Optional[int] = None
+    sla_target_formatted:  Optional[str] = None
+    sla1_target_formatted: Optional[str] = None
+    sla2_target_formatted: Optional[str] = None
+    sla3_target_formatted: Optional[str] = None
+    sla_tier:              Optional[str] = None
+    sla_due_at:            Optional[str] = None
+    sla3_due_at:           Optional[str] = None
+    sla_status:            Optional[str] = None
+    sla_breached:          Optional[bool] = None
+    sla_warning:           Optional[bool] = None
+    sla_time_details:      Optional[str] = None
+    sla_remaining_minutes: Optional[int] = None
 
     class Config:
         from_attributes = True

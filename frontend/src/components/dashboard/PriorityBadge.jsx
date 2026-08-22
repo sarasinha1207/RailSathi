@@ -1,10 +1,9 @@
 import React from 'react';
 import { PRIORITY_COLORS } from '../../utils/statusMapper';
 
-
-
 export default function PriorityBadge({ priority }) {
-  const color = PRIORITY_COLORS[priority] || { bg: '#fef7e0', text: '#b06000' };
+  const pKey = priority || 'Medium';
+  const color = PRIORITY_COLORS[pKey] || PRIORITY_COLORS[pKey.toUpperCase()] || { bg: '#FFFDE7', text: '#FBC02D', border: '#FFF9C4' };
   return (
     <span style={{
       padding: '4px 10px',
@@ -13,9 +12,10 @@ export default function PriorityBadge({ priority }) {
       fontWeight: 800,
       backgroundColor: color.bg,
       color: color.text,
+      border: `1px solid ${color.border || color.text}`,
       display: 'inline-block'
     }}>
-      {priority || 'Medium'}
+      {pKey}
     </span>
   );
 }

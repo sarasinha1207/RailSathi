@@ -117,35 +117,35 @@ export default function AdminComplaintsView({ user, initialDivisionFilter }) {
     });
   }, [complaints, searchTerm, zoneFilter, divFilter, selectedPriorities, selectedStatuses]);
 
-  // Distinct color badge helper for Priority system
+  // Distinct color badge helper for Priority system matching system-wide theme
   const getPriorityBadgeStyle = (priorityStr) => {
     const p = (priorityStr || 'MEDIUM').toUpperCase();
     if (p === 'CRITICAL') {
       return {
-        backgroundColor: '#fee2e2',
-        color: '#991b1b',
-        border: '1px solid #f87171'
+        backgroundColor: '#FFEBEE',
+        color: '#D32F2F',
+        border: '1px solid #FFCDD2'
       };
     }
     if (p === 'HIGH') {
       return {
-        backgroundColor: '#ffedd5',
-        color: '#c2410c',
-        border: '1px solid #fb923c'
+        backgroundColor: '#FFF3E0',
+        color: '#F57C00',
+        border: '1px solid #FFE0B2'
       };
     }
     if (p === 'LOW') {
       return {
-        backgroundColor: '#dcfce7',
-        color: '#15803d',
-        border: '1px solid #86efac'
+        backgroundColor: '#E8F5E9',
+        color: '#388E3C',
+        border: '1px solid #C8E6C9'
       };
     }
     // Default MEDIUM
     return {
-      backgroundColor: '#fef9c3',
-      color: '#a16207',
-      border: '1px solid #fde047'
+      backgroundColor: '#FFFDE7',
+      color: '#FBC02D',
+      border: '1px solid #FFF9C4'
     };
   };
 
@@ -192,7 +192,6 @@ export default function AdminComplaintsView({ user, initialDivisionFilter }) {
         alignItems: 'center',
         justifyContent: 'space-between',
         boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-        borderLeft: '5px solid #800020',
         border: '1px solid #e5e7eb'
       }}>
         <div>
@@ -214,28 +213,28 @@ export default function AdminComplaintsView({ user, initialDivisionFilter }) {
 
       {/* SUMMARY KPI CARDS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Total Network Grievances</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#111827', margin: '4px 0' }}>{kpiTotal}</div>
           <div style={{ fontSize: '0.75rem', color: '#800020', fontWeight: 700 }}>Network-wide Logged Complaints</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #c5221f', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #F57C00', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Pending Resolutions</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#c5221f', margin: '4px 0' }}>{kpiPending}</div>
-          <div style={{ fontSize: '0.75rem', color: '#991b1b', fontWeight: 700 }}>Action Pending Field Action</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#F57C00', margin: '4px 0' }}>{kpiPending}</div>
+          <div style={{ fontSize: '0.75rem', color: '#C2410C', fontWeight: 700 }}>Action Pending Field Action</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #059669', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #388E3C', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Resolved Grievances</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#059669', margin: '4px 0' }}>{kpiResolved}</div>
-          <div style={{ fontSize: '0.75rem', color: '#065f46', fontWeight: 700 }}>Closed & Passenger Verified</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#388E3C', margin: '4px 0' }}>{kpiResolved}</div>
+          <div style={{ fontSize: '0.75rem', color: '#2E7D32', fontWeight: 700 }}>Closed & Passenger Verified</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #d97706', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #D32F2F', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Critical Complaints</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#d97706', margin: '4px 0' }}>{kpiCritical}</div>
-          <div style={{ fontSize: '0.75rem', color: '#92400e', fontWeight: 700 }}>Open / In-Progress safety risks</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#D32F2F', margin: '4px 0' }}>{kpiCritical}</div>
+          <div style={{ fontSize: '0.75rem', color: '#C62828', fontWeight: 700 }}>Open / In-Progress safety risks</div>
         </div>
       </div>
 
@@ -315,22 +314,6 @@ export default function AdminComplaintsView({ user, initialDivisionFilter }) {
           )}
         </div>
 
-        {/* PRIORITY SYSTEM COLOR LEGEND */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '14px', padding: '8px 12px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.78rem', fontWeight: 800 }}>
-          <span style={{ color: '#475569' }}>Priority System Legend:</span>
-          <span style={{ padding: '3px 8px', borderRadius: '10px', backgroundColor: '#fee2e2', color: '#991b1b', border: '1px solid #f87171' }}>
-            CRITICAL
-          </span>
-          <span style={{ padding: '3px 8px', borderRadius: '10px', backgroundColor: '#ffedd5', color: '#c2410c', border: '1px solid #fb923c' }}>
-            HIGH
-          </span>
-          <span style={{ padding: '3px 8px', borderRadius: '10px', backgroundColor: '#fef9c3', color: '#a16207', border: '1px solid #fde047' }}>
-            MEDIUM
-          </span>
-          <span style={{ padding: '3px 8px', borderRadius: '10px', backgroundColor: '#dcfce7', color: '#15803d', border: '1px solid #86efac' }}>
-            LOW
-          </span>
-        </div>
 
         {/* COMPLAINTS TABLE */}
         {loading ? (

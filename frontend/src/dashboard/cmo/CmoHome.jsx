@@ -46,7 +46,6 @@ export default function Home({ user }) {
         alignItems: 'center',
         justifyContent: 'space-between',
         boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-        borderLeft: '5px solid #800020',
         border: '1px solid #e5e7eb'
       }}>
         <div>

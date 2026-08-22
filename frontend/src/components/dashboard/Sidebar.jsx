@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SIDEBAR_NAV_ITEMS } from '../../utils/sidebarConfig';
 
-
-
-
-
 const IconClock = () => (
   <svg style={{ width: '16px', height: '16px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -90,7 +86,6 @@ const renderNavIcon = (iconName, itemId) => {
   return <IconMapLayers />;
 };
 
-
 export default function Sidebar({ user, activeTab, setActiveTab, onLogout, onCloseMobile, isMobile }) {
   const username = user?.username || 'User';
   const role = user?.role || 'Senior Officer';
@@ -160,7 +155,7 @@ export default function Sidebar({ user, activeTab, setActiveTab, onLogout, onClo
                 cursor: 'pointer'
               }}
             >
-              Close Menu 
+              Close Menu ✕
             </button>
           </div>
         )}
@@ -232,21 +227,17 @@ export default function Sidebar({ user, activeTab, setActiveTab, onLogout, onClo
                   width: '100%',
                   padding: '12px 18px',
                   borderRadius: '10px',
-                  border: 'none',
+                  border: isActive ? '1.5px solid #e65c00' : '1.5px solid transparent',
                   fontSize: '0.92rem',
                   fontWeight: isActive ? 800 : 600,
                   cursor: 'pointer',
                   textAlign: 'left',
                   transition: 'all 0.15s ease',
-                  position: 'relative',
                   backgroundColor: isActive ? '#700c28' : 'transparent',
                   color: isActive ? '#ffffff' : '#f0b8c4',
-                  boxShadow: isActive ? '0 4px 14px rgba(0, 0, 0, 0.25)' : 'none'
+                  boxShadow: isActive ? '0 3px 10px rgba(0, 0, 0, 0.2)' : 'none'
                 }}
               >
-                {isActive && (
-                  <span style={{ position: 'absolute', left: 0, top: '6px', bottom: '6px', width: '4px', backgroundColor: '#e65c00', borderRadius: '0 4px 4px 0' }}></span>
-                )}
                 <span style={{ color: isActive ? '#ffb300' : '#f0b8c4', display: 'flex', alignItems: 'center' }}>
                   {renderNavIcon(item.icon, item.id)}
                 </span>
@@ -290,7 +281,7 @@ export default function Sidebar({ user, activeTab, setActiveTab, onLogout, onClo
           </div>
         </div>
 
-        {/* HELP BUTTON - Common in every dashboard below Clock and above Settings/Logout */}
+        {/* HELP BUTTON */}
         <button
           onClick={() => setActiveTab('help')}
           style={{
@@ -300,25 +291,20 @@ export default function Sidebar({ user, activeTab, setActiveTab, onLogout, onClo
             width: '100%',
             padding: '12px 18px',
             borderRadius: '10px',
-            border: 'none',
+            border: (activeTab === 'help' || activeTab === 'info') ? '1.5px solid #e65c00' : '1.5px solid transparent',
             fontSize: '0.92rem',
             fontWeight: (activeTab === 'help' || activeTab === 'info') ? 800 : 600,
             cursor: 'pointer',
             textAlign: 'left',
             transition: 'all 0.15s ease',
-            position: 'relative',
             backgroundColor: (activeTab === 'help' || activeTab === 'info') ? '#700c28' : 'transparent',
             color: (activeTab === 'help' || activeTab === 'info') ? '#ffffff' : '#f0b8c4',
-            boxShadow: (activeTab === 'help' || activeTab === 'info') ? '0 4px 14px rgba(0, 0, 0, 0.25)' : 'none'
+            boxShadow: (activeTab === 'help' || activeTab === 'info') ? '0 3px 10px rgba(0, 0, 0, 0.2)' : 'none'
           }}
         >
-          {(activeTab === 'help' || activeTab === 'info') && (
-            <span style={{ position: 'absolute', left: 0, top: '6px', bottom: '6px', width: '4px', backgroundColor: '#e65c00', borderRadius: '0 4px 4px 0' }}></span>
-          )}
           <span style={{ color: (activeTab === 'help' || activeTab === 'info') ? '#ffb300' : '#f0b8c4', display: 'flex', alignItems: 'center' }}><IconInfo /></span>
           <span style={{ letterSpacing: '0.3px' }}>Help</span>
         </button>
-
 
         {/* SETTINGS BUTTON */}
         <button
@@ -330,21 +316,17 @@ export default function Sidebar({ user, activeTab, setActiveTab, onLogout, onClo
             width: '100%',
             padding: '12px 18px',
             borderRadius: '10px',
-            border: 'none',
+            border: activeTab === 'settings' ? '1.5px solid #e65c00' : '1.5px solid transparent',
             fontSize: '0.92rem',
             fontWeight: activeTab === 'settings' ? 800 : 600,
             cursor: 'pointer',
             textAlign: 'left',
             transition: 'all 0.15s ease',
-            position: 'relative',
             backgroundColor: activeTab === 'settings' ? '#700c28' : 'transparent',
             color: activeTab === 'settings' ? '#ffffff' : '#f0b8c4',
-            boxShadow: activeTab === 'settings' ? '0 4px 14px rgba(0, 0, 0, 0.25)' : 'none'
+            boxShadow: activeTab === 'settings' ? '0 3px 10px rgba(0, 0, 0, 0.2)' : 'none'
           }}
         >
-          {activeTab === 'settings' && (
-            <span style={{ position: 'absolute', left: 0, top: '6px', bottom: '6px', width: '4px', backgroundColor: '#e65c00', borderRadius: '0 4px 4px 0' }}></span>
-          )}
           <span style={{ color: activeTab === 'settings' ? '#ffb300' : '#f0b8c4', display: 'flex', alignItems: 'center' }}><IconCog /></span>
           <span style={{ letterSpacing: '0.3px' }}>Settings</span>
         </button>

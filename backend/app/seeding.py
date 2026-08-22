@@ -662,7 +662,7 @@ STATIONS_DATA = [
 from .models import (
     Zone, Division, Station, Train, TrainRoute, TrainCoach, User, Department,
     Staff, StaffDutyAssignment, StaffGpsLocation, PnrBooking, ComplaintCategory, Complaint,
-    Feedback, ComplaintStatusHistory, OtpVerification, Notification, TrainInventory
+    Feedback, ComplaintStatusHistory, TrainInventory
 )
 
 

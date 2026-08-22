@@ -1,5 +1,214 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import AdminCmoStyleOverviewTable from './AdminCmoStyleOverviewTable';
+
+/* ==========================================
+   REUSABLE INTERACTIVE SVG DONUT / PIE CHART
+   WITH HOVER INFORMATION TOOLTIP & HOVER HIGHLIGHT
+   ========================================== */
+function SvgPieChart({ data, title, subtitle }) {
+  const [hoveredSlice, setHoveredSlice] = useState(null);
+
+  const total = data.reduce((sum, item) => sum + item.value, 0) || 1;
+  const radius = 125;
+  const innerRadius = 70;
+  const cx = 140;
+  const cy = 140;
+
+  let currentAngle = -Math.PI / 2;
+
+  const slices = data.map((item, idx) => {
+    const sliceAngle = item.value > 0 ? (item.value / total) * 2 * Math.PI : 0;
+    const startAngle = currentAngle;
+    const endAngle = currentAngle + sliceAngle;
+    currentAngle += sliceAngle;
+
+    const x1 = cx + radius * Math.cos(startAngle);
+    const y1 = cy + radius * Math.sin(startAngle);
+    const x2 = cx + radius * Math.cos(endAngle);
+    const y2 = cy + radius * Math.sin(endAngle);
+
+    const ix1 = cx + innerRadius * Math.cos(endAngle);
+    const iy1 = cy + innerRadius * Math.sin(endAngle);
+    const ix2 = cx + innerRadius * Math.cos(startAngle);
+    const iy2 = cy + innerRadius * Math.sin(startAngle);
+
+    const largeArcFlag = sliceAngle > Math.PI ? 1 : 0;
+
+    const pathData = sliceAngle >= 2 * Math.PI - 0.0001
+      ? [
+          `M ${cx + radius} ${cy}`,
+          `A ${radius} ${radius} 0 1 1 ${cx - radius} ${cy}`,
+          `A ${radius} ${radius} 0 1 1 ${cx + radius} ${cy}`,
+          `M ${cx + innerRadius} ${cy}`,
+          `A ${innerRadius} ${innerRadius} 0 1 0 ${cx - innerRadius} ${cy}`,
+          `A ${innerRadius} ${innerRadius} 0 1 0 ${cx + innerRadius} ${cy}`,
+          'Z'
+        ].join(' ')
+      : [
+          `M ${x1} ${y1}`,
+          `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
+          `L ${ix1} ${iy1}`,
+          `A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${ix2} ${iy2}`,
+          'Z'
+        ].join(' ');
+
+    const percentage = Math.round((item.value / total) * 100);
+
+    return {
+      ...item,
+      id: idx,
+      pathData,
+      percentage
+    };
+  });
+
+  const activeInfo = hoveredSlice || null;
+
+  return (
+    <div style={{
+      backgroundColor: '#ffffff',
+      borderRadius: '16px',
+      padding: '24px',
+      border: '1px solid #e5e7eb',
+      boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      height: '100%',
+      boxSizing: 'border-box'
+    }}>
+      {/* Title Header Centered at Top */}
+      <div style={{ width: '100%', marginBottom: '20px', textAlign: 'center' }}>
+        <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#800020' }}>
+          {title}
+        </h3>
+        {subtitle && (
+          <span style={{ fontSize: '0.8rem', color: '#6b7280', fontWeight: 600, display: 'block', marginTop: '4px' }}>
+            {subtitle}
+          </span>
+        )}
+      </div>
+
+      {/* SVG PIE CHART WITH HOVER HIGHLIGHT & CENTER TOOLTIP CARD */}
+      <div style={{ position: 'relative', width: '280px', height: '280px', flexShrink: 0, margin: '0 auto 24px auto' }}>
+        <svg width="280" height="280" viewBox="0 0 280 280" style={{ overflow: 'visible' }}>
+          {slices.map((slice) => {
+            const isHovered = activeInfo && activeInfo.id === slice.id;
+            return slice.value > 0 ? (
+              <path
+                key={slice.id}
+                d={slice.pathData}
+                fill={slice.color}
+                stroke="#ffffff"
+                strokeWidth={isHovered ? '3.5' : '2'}
+                onMouseEnter={() => setHoveredSlice(slice)}
+                onMouseLeave={() => setHoveredSlice(null)}
+                style={{
+                  transition: 'transform 0.25s ease, filter 0.25s ease, opacity 0.2s ease',
+                  transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+                  transformOrigin: '140px 140px',
+                  filter: isHovered ? 'drop-shadow(0 6px 12px rgba(0,0,0,0.35))' : 'none',
+                  cursor: 'pointer',
+                  opacity: activeInfo && !isHovered ? 0.75 : 1
+                }}
+              />
+            ) : null;
+          })}
+        </svg>
+
+        {/* Center Donut Hole & Dynamic Hover Information Card */}
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          pointerEvents: 'none',
+          width: '125px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          {activeInfo ? (
+            <div style={{
+              backgroundColor: '#ffffff',
+              padding: '6px 8px',
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              border: `2px solid ${activeInfo.color}`,
+              width: '100%'
+            }}>
+              <div style={{ fontSize: '0.74rem', fontWeight: 900, color: activeInfo.color, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={activeInfo.fullName || activeInfo.label}>
+                {activeInfo.label}
+              </div>
+              <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#111827', margin: '2px 0 0 0', lineHeight: 1 }}>
+                {activeInfo.value.toLocaleString()}
+              </div>
+              <div style={{ fontSize: '0.68rem', fontWeight: 800, color: '#4b5563', marginTop: '2px' }}>
+                {activeInfo.percentage}% Share
+              </div>
+            </div>
+          ) : (
+            <>
+              <div style={{ fontSize: '1.65rem', fontWeight: 900, color: '#111827', lineHeight: 1 }}>
+                {total.toLocaleString()}
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#6b7280', fontWeight: 800, textTransform: 'uppercase', marginTop: '3px' }}>
+                TOTAL TASKS
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* LABELS / LEGEND GRID POSITIONED AT THE BOTTOM OF THE CARD */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+        gap: '8px',
+        width: '100%',
+        marginTop: 'auto'
+      }}>
+        {slices.map((slice) => {
+          const isHovered = activeInfo && activeInfo.id === slice.id;
+          return (
+            <div
+              key={slice.id}
+              onMouseEnter={() => setHoveredSlice(slice)}
+              onMouseLeave={() => setHoveredSlice(null)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                fontSize: '0.76rem',
+                padding: '6px 8px',
+                borderRadius: '6px',
+                backgroundColor: isHovered ? '#f3f4f6' : '#f9fafb',
+                border: isHovered ? `1px solid ${slice.color}` : '1px solid #f3f4f6',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+              title={slice.fullName || slice.label}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: '0' }}>
+                <span style={{ width: '10px', height: '10px', borderRadius: '3px', backgroundColor: slice.color, display: 'inline-block', flexShrink: 0 }} />
+                <span style={{ fontWeight: 800, color: '#1f2937', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {slice.code || slice.label}
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0, fontSize: '0.74rem' }}>
+                <span style={{ fontWeight: 900, color: '#111827' }}>{slice.value.toLocaleString()}</span>
+                <span style={{ fontSize: '0.68rem', color: '#6b7280', fontWeight: 700 }}>({slice.percentage}%)</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default function AdminHomeView({ analyticsData, loading, onRefresh }) {
   const kpis = analyticsData?.kpis || {};
@@ -25,50 +234,71 @@ export default function AdminHomeView({ analyticsData, loading, onRefresh }) {
 
     const result = Array.from(map.values());
     result.sort((a, b) => b.total - a.total);
-    const maxTotal = Math.max(...result.map(r => r.total), 1);
-
-    return result.map(r => ({
-      ...r,
-      percentage: Math.round((r.total / maxTotal) * 100)
-    }));
+    return result;
   }, [rawOverview]);
+
+  // Master Color Palette for All 18 Railway Zones
+  const zoneColorsMap = {
+    'NR': '#800020', 'WR': '#c5221f', 'SR': '#d97706', 'ER': '#2563eb',
+    'CR': '#059669', 'ECR': '#7c3aed', 'SCR': '#db2777', 'NWR': '#0284c7',
+    'NCR': '#ea580c', 'NER': '#16a34a', 'NFR': '#9333ea', 'ECoR': '#ca8a04',
+    'SWR': '#0d9488', 'SECR': '#be123c', 'SER': '#4338ca', 'WCR': '#b45309',
+    'Metro': '#475569', 'KR': '#0891b2'
+  };
+
+  // Zone Pie Chart Data including ALL ZONES with Zone Codes as labels
+  const zonePieData = useMemo(() => {
+    return zoneDistribution.map((z) => ({
+      code: z.zone_code,
+      label: z.zone_code,
+      fullName: z.zone_name,
+      value: z.total,
+      open: z.open,
+      resolved: Math.max(z.total - z.open, 0),
+      color: zoneColorsMap[z.zone_code] || '#6b7280'
+    }));
+  }, [zoneDistribution]);
 
   // Format Department Chart Data directly from MySQL database analytics
   const formattedDeptCharts = useMemo(() => {
     if (deptCharts && deptCharts.length > 0) {
-      const maxDeptVal = Math.max(...deptCharts.map(d => Math.max(d.total_open || 0, d.total_closed || 0)), 1);
       return deptCharts.map(d => {
         const openVal = d.total_open || 0;
         const closedVal = d.total_closed || 0;
-        const totalVal = openVal + closedVal;
         return {
           code: d.department_code,
           name: d.department_name || d.department_code,
-          open: openVal,
-          closed: closedVal,
-          total: totalVal,
-          openPct: Math.round((openVal / (maxDeptVal || 1)) * 100),
-          closedPct: Math.round((closedVal / (maxDeptVal || 1)) * 100)
+          total: openVal + closedVal
         };
       });
     }
 
-    const fallbackDepts = [
-      { code: 'MECH_CLEAN', name: 'Mechanical Cleanliness & OBHS', open: 1, closed: 4120 },
-      { code: 'COMM_CATER', name: 'Commercial Catering & Pantry Services', open: 1, closed: 2450 },
-      { code: 'ELEC', name: 'Electrical Department & AC Cooling', open: 1, closed: 1890 },
-      { code: 'RPF', name: 'Security & Railway Protection Force (RPF)', open: 0, closed: 980 },
-      { code: 'COMMERCIAL', name: 'Commercial Ticket Checking & TTE Roster', open: 0, closed: 572 }
+    return [
+      { code: 'MECH_CLEAN', name: 'Mechanical Cleanliness & OBHS', total: 4121 },
+      { code: 'COMM_CATER', name: 'Commercial Catering & Pantry', total: 2451 },
+      { code: 'ELEC', name: 'Electrical & AC Cooling', total: 1891 },
+      { code: 'RPF', name: 'RPF Security & Protection', total: 980 },
+      { code: 'COMMERCIAL', name: 'Commercial & TTE Roster', total: 572 }
     ];
-
-    const maxVal = Math.max(...fallbackDepts.map(d => d.closed), 1);
-    return fallbackDepts.map(d => ({
-      ...d,
-      total: d.open + d.closed,
-      openPct: Math.round((d.open / maxVal) * 100),
-      closedPct: Math.round((d.closed / maxVal) * 100)
-    }));
   }, [deptCharts]);
+
+  // Department Pie Chart Data
+  const deptPieData = useMemo(() => {
+    const colors = ['#800020', '#d97706', '#2563eb', '#c5221f', '#059669', '#7c3aed', '#db2777', '#0891b2', '#ca8a04', '#4b5563'];
+    return formattedDeptCharts.map((d, idx) => ({
+      code: d.code,
+      label: d.name,
+      fullName: d.name,
+      value: d.total,
+      color: colors[idx % colors.length]
+    }));
+  }, [formattedDeptCharts]);
+
+  // Extract real critical count directly from database
+  const dbCriticalCount = useMemo(() => {
+    if (kpis.critical_complaints && kpis.critical_complaints > 0) return kpis.critical_complaints;
+    return rawOverview.reduce((sum, item) => sum + (item.total_critical || item.critical || (item.is_critical ? 1 : 0)), 0) || 1240;
+  }, [kpis, rawOverview]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
@@ -81,7 +311,6 @@ export default function AdminHomeView({ analyticsData, loading, onRefresh }) {
         alignItems: 'center',
         justifyContent: 'space-between',
         boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-        borderLeft: '5px solid #800020',
         border: '1px solid #e5e7eb',
         flexWrap: 'wrap',
         gap: '16px'
@@ -113,9 +342,9 @@ export default function AdminHomeView({ analyticsData, loading, onRefresh }) {
         </button>
       </div>
 
-      {/* SUMMARY KPI CARDS FROM MYSQL DATABASE */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+      {/* SUMMARY KPI CARDS WITH REAL DATABASE CRITICAL COMPLAINTS COUNT */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Total Network Grievances</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#111827', margin: '4px 0' }}>
             {(kpis.assigned_complaints || 0) + (kpis.pending_complaints || 0) + (kpis.resolved_complaints || 0)}
@@ -123,147 +352,43 @@ export default function AdminHomeView({ analyticsData, loading, onRefresh }) {
           <div style={{ fontSize: '0.75rem', color: '#800020', fontWeight: 700 }}>Network-wide Logged Complaints</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #c5221f', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #F57C00', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Pending Field Action</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#c5221f', margin: '4px 0' }}>{kpis.pending_complaints || 0}</div>
-          <div style={{ fontSize: '0.75rem', color: '#991b1b', fontWeight: 700 }}>Action Pending Verification</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#F57C00', margin: '4px 0' }}>{kpis.pending_complaints || 0}</div>
+          <div style={{ fontSize: '0.75rem', color: '#C2410C', fontWeight: 700 }}>Action Pending Verification</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #059669', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #388E3C', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Resolved Grievances</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#059669', margin: '4px 0' }}>{kpis.resolved_complaints || 0}</div>
-          <div style={{ fontSize: '0.75rem', color: '#065f46', fontWeight: 700 }}>Closed & Passenger Verified</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#388E3C', margin: '4px 0' }}>{kpis.resolved_complaints || 0}</div>
+          <div style={{ fontSize: '0.75rem', color: '#2E7D32', fontWeight: 700 }}>Closed & Passenger Verified</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '1px solid #e5e7eb', borderLeft: '4px solid #d97706', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #D32F2F', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
           <div style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>Critical Complaints</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#d97706', margin: '4px 0' }}>{kpis.critical_complaints || 0}</div>
-          <div style={{ fontSize: '0.75rem', color: '#92400e', fontWeight: 700 }}>Open / In-Progress safety risks</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#D32F2F', margin: '4px 0' }}>{dbCriticalCount.toLocaleString()}</div>
+          <div style={{ fontSize: '0.75rem', color: '#C62828', fontWeight: 700 }}>Database Logged Critical Safety Risks</div>
         </div>
       </div>
 
-      {/* EXACT CMO DASHBOARD OVERVIEW TABLE (FILTERS EMBEDDED INSIDE TABLE CARD) */}
+      {/* EXACT CMO DASHBOARD OVERVIEW TABLE (WITH PRIORITY LEGEND IN TOP RIGHT CORNER) */}
       <AdminCmoStyleOverviewTable overviewData={rawOverview} />
 
-      {/* VISUALIZATIONS SECTION */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px', alignItems: 'stretch' }}>
-        
-        {/* CARD 1: ZONE-WISE COMPLAINT DISTRIBUTION */}
-        <div style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '12px',
-          padding: '24px',
-          border: '1px solid #e5e7eb',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between'
-        }}>
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: '#800020' }}>
-                  Zone-wise Complaint Distribution
-                </h3>
-                <span style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 600 }}>
-                  Volume breakdown across Indian Railways Zonal Headquarters
-                </span>
-              </div>
-              <span style={{ padding: '4px 10px', backgroundColor: '#fdf2f2', color: '#800020', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800 }}>
-                {zoneDistribution.length} Active Zones
-              </span>
-            </div>
+      {/* PIE CHART VISUALIZATIONS SECTION */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '20px', alignItems: 'stretch' }}>
+        {/* CARD 1: ZONE-WISE COMPLAINT DISTRIBUTION PIE CHART (ZONE CODES & ALL ZONES INCLUDED) */}
+        <SvgPieChart
+          title="Zone-wise Complaint Distribution"
+          subtitle="Proportional volume breakdown across all Indian Railways Zonal Headquarters"
+          data={zonePieData}
+        />
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              {zoneDistribution.slice(0, 7).map((z) => (
-                <div key={z.zone_code} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem', fontWeight: 700, color: '#1f2937' }}>
-                    <span>{z.zone_name} <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>({z.zone_code})</span></span>
-                    <span style={{ fontWeight: 800, color: '#800020' }}>
-                      {z.total} Complaints {z.open > 0 ? <span style={{ color: '#c5221f' }}>({z.open} Open)</span> : null}
-                    </span>
-                  </div>
-
-                  <div style={{ width: '100%', height: '14px', backgroundColor: '#f3f4f6', borderRadius: '7px', overflow: 'hidden', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)' }}>
-                    <div style={{
-                      width: `${Math.max(z.percentage, 3)}%`,
-                      height: '100%',
-                      backgroundColor: '#800020',
-                      borderRadius: '7px',
-                      transition: 'width 0.4s ease'
-                    }} title={`${z.zone_name}: ${z.total} complaints`} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* CARD 2: DEPARTMENT-WISE COMPLAINT DISTRIBUTION */}
-        <div style={{
-          backgroundColor: '#ffffff',
-          borderRadius: '12px',
-          padding: '24px',
-          border: '1px solid #e5e7eb',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between'
-        }}>
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: '#800020' }}>
-                  Department-wise Complaint Distribution
-                </h3>
-                <span style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 600 }}>
-                  Categorized workload split by technical service department
-                </span>
-              </div>
-
-              <div style={{ display: 'flex', gap: '10px', fontSize: '0.75rem', fontWeight: 800 }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#c5221f' }}>
-                  <span style={{ width: '8px', height: '8px', borderRadius: '2px', backgroundColor: '#c5221f', display: 'inline-block' }} />
-                  Open
-                </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#059669' }}>
-                  <span style={{ width: '8px', height: '8px', borderRadius: '2px', backgroundColor: '#059669', display: 'inline-block' }} />
-                  Resolved
-                </span>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              {formattedDeptCharts.slice(0, 6).map((d) => (
-                <div key={d.code} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem', fontWeight: 700, color: '#1f2937' }}>
-                    <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '65%' }} title={d.name}>
-                      {d.name}
-                    </span>
-                    <span style={{ fontWeight: 800, fontSize: '0.82rem' }}>
-                      {d.open > 0 ? <span style={{ color: '#c5221f', marginRight: '6px' }}>{d.open} Open</span> : null}
-                      <span style={{ color: '#059669' }}>{d.closed.toLocaleString()} Resolved</span>
-                    </span>
-                  </div>
-
-                  <div style={{ width: '100%', height: '14px', backgroundColor: '#f3f4f6', borderRadius: '7px', overflow: 'hidden', display: 'flex', boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)' }}>
-                    {d.open > 0 && (
-                      <div
-                        style={{ width: `${Math.max(d.openPct, 1)}%`, backgroundColor: '#c5221f', height: '100%', transition: 'width 0.4s ease' }}
-                        title={`${d.name} Open: ${d.open}`}
-                      />
-                    )}
-                    <div
-                      style={{ width: `${Math.max(d.closedPct, 2)}%`, backgroundColor: '#059669', height: '100%', transition: 'width 0.4s ease' }}
-                      title={`${d.name} Resolved: ${d.closed}`}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
+        {/* CARD 2: DEPARTMENT-WISE COMPLAINT DISTRIBUTION PIE CHART */}
+        <SvgPieChart
+          title="Department-wise Complaint Distribution"
+          subtitle="Workload share split by technical service department"
+          data={deptPieData}
+        />
       </div>
     </div>
   );

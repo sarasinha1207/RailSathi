@@ -262,7 +262,7 @@ export default function ComplaintsPage({ user, initialSubTab = 'pending' }) {
         alignItems: 'center',
         justifyContent: 'space-between',
         boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-        borderLeft: '5px solid #800020'
+        border: '1px solid #e5e7eb'
       }}>
         <div>
           <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#800020', fontWeight: 800 }}>
@@ -515,8 +515,8 @@ export default function ComplaintsPage({ user, initialSubTab = 'pending' }) {
               </thead>
               <tbody>
                 {paginatedComplaints.map((c) => {
-                  const isCritical = c.is_critical;
-                  const priorityColor = isCritical ? '#c5221f' : c.priority === 'High' ? '#ea4335' : c.priority === 'Medium' ? '#b06000' : '#137333';
+                  const isCritical = c.is_critical || (c.priority || '').toUpperCase() === 'CRITICAL';
+                  const priorityColor = isCritical ? '#D32F2F' : (c.priority || '').toUpperCase() === 'HIGH' ? '#F57C00' : (c.priority || '').toUpperCase() === 'MEDIUM' ? '#FBC02D' : '#388E3C';
                   
                   // Compute Displayed Status Badge
                   const isAssignedToStaff = Boolean(c.assigned_staff_id);

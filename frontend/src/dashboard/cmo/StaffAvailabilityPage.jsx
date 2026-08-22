@@ -162,7 +162,6 @@ export default function StaffAvailabilityPage({ user }) {
         alignItems: 'center',
         justifyContent: 'space-between',
         boxShadow: '0 10px 28px rgba(54, 4, 18, 0.25)',
-        borderLeft: '6px solid #e65c00',
         background: 'linear-gradient(135deg, #360412 0%, #58081f 100%)'
       }}>
         <div>
@@ -184,32 +183,32 @@ export default function StaffAvailabilityPage({ user }) {
       {/* 1. SUMMARY CARDS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '18px' }}>
         
-        <div style={{ backgroundColor: '#ffffff', padding: '20px 22px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #800020' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '20px 22px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
           <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Staff</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#800020', marginTop: '6px' }}>{metrics.total_staff || 0}</div>
           <div style={{ fontSize: '0.78rem', color: '#9ca3af', marginTop: '4px' }}>Database Master Records</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', padding: '20px 22px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #0284c7' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '20px 22px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
           <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0284c7', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Currently Onboard</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#0369a1', marginTop: '6px' }}>{metrics.currently_onboard || 0}</div>
           <div style={{ fontSize: '0.78rem', color: '#9ca3af', marginTop: '4px' }}>On Active Train Duty</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', padding: '20px 22px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #137333' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '20px 22px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
           <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#137333', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Available</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#137333', marginTop: '6px' }}>{metrics.available || 0}</div>
           <div style={{ fontSize: '0.78rem', color: '#15803d', marginTop: '4px', fontWeight: 700 }}> Ready for Dispatch</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', padding: '20px 22px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #b06000' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '20px 22px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
           <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#b06000', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Currently Assigned</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#b06000', marginTop: '6px' }}>{metrics.currently_assigned || 0}</div>
 
           <div style={{ fontSize: '0.78rem', color: '#b45309', marginTop: '4px', fontWeight: 700 }}> Handling Grievance</div>
         </div>
 
-        <div style={{ backgroundColor: '#ffffff', padding: '20px 22px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', borderTop: '4px solid #c5221f' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '20px 22px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
           <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#c5221f', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Unavailable / Offline</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#c5221f', marginTop: '6px' }}>{metrics.unavailable || 0}</div>
           <div style={{ fontSize: '0.78rem', color: '#b91c1c', marginTop: '4px', fontWeight: 700 }}> On Break / Off Duty</div>

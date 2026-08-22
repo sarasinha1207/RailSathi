@@ -1382,7 +1382,7 @@ html {
     }
 
     /* Top Banners on Mobile */
-    div[style*="borderLeft: 5px solid"] {
+    div[style*="justify-content: space-between"] {
         flex-direction: column !important;
         align-items: flex-start !important;
         padding: 16px !important;

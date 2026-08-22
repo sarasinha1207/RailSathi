@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import KPICard from '../../components/dashboard/KPICard';
 import PriorityBadge from '../../components/dashboard/PriorityBadge';
 import StatusBadge from '../../components/dashboard/StatusBadge';
+import SLABadge from '../../components/dashboard/SLABadge';
 
 
 
@@ -97,13 +98,14 @@ export default function StaffDashboardPage({ user, onNavigate }) {
         </button>
       </div>
 
-      {/* 5 Real-Time Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
+      {/* 6 Real-Time Summary Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px' }}>
         <KPICard title="Pending Complaints" value={metrics?.pending_complaints || 0} subtitle="Queued for Staff Review" accentColor="#1a73e8" />
         <KPICard title="Assigned Complaints" value={metrics?.assigned_complaints || 0} subtitle="Active Duty Tasks" accentColor="#137333" />
         <KPICard title="Reassignment Requests" value={metrics?.reassignment_requests || 0} subtitle="Pending Officer Approval" accentColor="#8430ce" />
+        <KPICard title="SLA-2 Warning Tasks" value={metrics?.sla_warning_complaints || 0} subtitle="Nearing SLA Deadline" accentColor="#b45309" />
+        <KPICard title="SLA-3 Breached Tasks" value={metrics?.sla_breached_complaints || 0} subtitle="Critical Target Exceeded" accentColor="#b91c1c" />
         <KPICard title="Resolved Complaints" value={metrics?.resolved_complaints || 0} subtitle="Completed Grievances" accentColor="#0f9d58" />
-        <KPICard title="Open Critical Complaints" value={metrics?.open_critical_complaints || 0} subtitle="Immediate Safety Risks" accentColor="#c5221f" />
       </div>
 
       {/* Compact Train Information Card */}
@@ -142,7 +144,7 @@ export default function StaffDashboardPage({ user, onNavigate }) {
               Train {train_info?.train_number} — {train_info?.train_name}
             </div>
             <div style={{ fontSize: '0.88rem', color: '#6b7280', marginTop: '2px' }}>
-              Route: <strong>{train_info?.source}</strong>  <strong>{train_info?.destination}</strong> ({train_info?.direction})
+              Route: <strong>{train_info?.source}</strong> ➔ <strong>{train_info?.destination}</strong> ({train_info?.direction})
             </div>
           </div>
         </div>
@@ -215,8 +217,9 @@ export default function StaffDashboardPage({ user, onNavigate }) {
                   <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Complaint ID</th>
                   <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Category</th>
                   <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Coach & Seat</th>
-                  <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Priority</th>
+                  <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Priority & Target SLA</th>
                   <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Status</th>
+                  <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>SLA Status</th>
                   <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Assigned Time</th>
                   <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700, textAlign: 'right' }}>Action</th>
                 </tr>
@@ -234,9 +237,24 @@ export default function StaffDashboardPage({ user, onNavigate }) {
                     </td>
                     <td style={{ padding: '12px 14px' }}>
                       <PriorityBadge priority={c.priority} />
+                      {c.sla_target_formatted && (
+                        <div style={{ fontSize: '0.73rem', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>
+                          Target: {c.sla_target_formatted}
+                        </div>
+                      )}
                     </td>
                     <td style={{ padding: '12px 14px' }}>
                       <StatusBadge status={c.internal_status} />
+                    </td>
+                    <td style={{ padding: '12px 14px' }}>
+                      <SLABadge
+                        slaStatus={c.sla_status}
+                        slaTier={c.sla_tier}
+                        slaTimeDetails={c.sla_time_details}
+                        slaBreached={c.sla_breached}
+                        slaWarning={c.sla_warning}
+                        targetFormatted={c.sla1_target_formatted || c.sla_target_formatted}
+                      />
                     </td>
                     <td style={{ padding: '12px 14px', color: '#6b7280', fontSize: '0.82rem' }}>
                       {c.created_at || 'Just now'}
