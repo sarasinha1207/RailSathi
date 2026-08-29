@@ -60,27 +60,30 @@ export default function StaffDashboardPage({ user, onNavigate }) {
       <div style={{
         backgroundColor: '#4a071a',
         borderRadius: '14px',
-        padding: '24px 28px',
+        padding: '20px 24px',
         color: '#ffffff',
         display: 'flex',
+        flexWrap: 'wrap',
         justifyContent: 'space-between',
         alignItems: 'center',
+        gap: '16px',
         boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
         background: 'linear-gradient(135deg, #4a071a 0%, #700c28 100%)'
       }}>
-        <div>
-          <div style={{ fontSize: '0.8rem', color: '#ffb300', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '4px' }}>
+        <div style={{ flex: '1 1 280px' }}>
+          <div style={{ fontSize: '0.78rem', color: '#ffb300', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '4px' }}>
             ONBOARD STAFF OPERATIONAL CONTROL
           </div>
-          <h1 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 800 }}>
+          <h1 style={{ margin: 0, fontSize: 'clamp(1.3rem, 2.5vw, 1.6rem)', fontWeight: 800 }}>
             Welcome, {staff?.name || user?.username}!
           </h1>
-          <p style={{ margin: '6px 0 0 0', fontSize: '0.92rem', color: '#f0b8c4' }}>
+          <p style={{ margin: '6px 0 0 0', fontSize: '0.88rem', color: '#f0b8c4' }}>
             {staff?.designation || 'Railway Official'} • Department: <strong>{staff?.department_code || 'General'}</strong>
           </p>
         </div>
 
         <button
+          type="button"
           onClick={fetchOverview}
           style={{
             padding: '10px 18px',
@@ -91,7 +94,8 @@ export default function StaffDashboardPage({ user, onNavigate }) {
             fontWeight: 700,
             fontSize: '0.88rem',
             cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+            whiteSpace: 'nowrap'
           }}
         >
           Refresh Roster Data
@@ -99,7 +103,7 @@ export default function StaffDashboardPage({ user, onNavigate }) {
       </div>
 
       {/* 6 Real-Time Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '14px' }}>
         <KPICard title="Pending Complaints" value={metrics?.pending_complaints || 0} subtitle="Queued for Staff Review" accentColor="#1a73e8" />
         <KPICard title="Assigned Complaints" value={metrics?.assigned_complaints || 0} subtitle="Active Duty Tasks" accentColor="#137333" />
         <KPICard title="Reassignment Requests" value={metrics?.reassignment_requests || 0} subtitle="Pending Officer Approval" accentColor="#8430ce" />
@@ -211,79 +215,155 @@ export default function StaffDashboardPage({ user, onNavigate }) {
              No active assigned complaints found for your roster duty.
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
-              <thead>
-                <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb', textAlign: 'left' }}>
-                  <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Complaint ID</th>
-                  <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Category</th>
-                  <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Coach & Seat</th>
-                  <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Priority & Target SLA</th>
-                  <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Status</th>
-                  <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>SLA Status</th>
-                  <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Assigned Time</th>
-                  <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700, textAlign: 'right' }}>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recent_complaints.map((c) => (
-                  <tr key={c.complaint_id} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                    <td style={{ padding: '12px 14px', fontWeight: 800, color: '#800020' }}>{c.complaint_id}</td>
-                    <td style={{ padding: '12px 14px' }}>
-                      <div style={{ fontWeight: 700, color: '#111827' }}>{c.main_class || c.category_name}</div>
-                      <div style={{ fontSize: '0.78rem', color: '#6b7280' }}>{c.sub_class || c.subcategory_name}</div>
-                    </td>
-                    <td style={{ padding: '12px 14px', fontWeight: 700, color: '#1f2937' }}>
-                      Coach {c.coach_number || 'N/A'} {c.seat_number ? `• Seat ${c.seat_number}` : ''}
-                    </td>
-                    <td style={{ padding: '12px 14px' }}>
-                      <PriorityBadge priority={c.priority} />
-                      {c.sla_target_formatted && (
-                        <div style={{ fontSize: '0.73rem', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>
-                          Target: {c.sla_target_formatted}
-                        </div>
-                      )}
-                    </td>
-                    <td style={{ padding: '12px 14px' }}>
-                      <StatusBadge status={c.internal_status} />
-                    </td>
-                    <td style={{ padding: '12px 14px' }}>
-                      <SLABadge
-                        slaStatus={c.sla_status}
-                        slaTier={c.sla_tier}
-                        slaTimeDetails={c.sla_time_details}
-                        slaBreached={c.sla_breached}
-                        slaWarning={c.sla_warning}
-                        targetFormatted={c.sla1_target_formatted || c.sla_target_formatted}
-                      />
-                    </td>
-                    <td style={{ padding: '12px 14px', color: '#6b7280', fontSize: '0.82rem' }}>
-                      {c.created_at || 'Just now'}
-                    </td>
-                    <td style={{ padding: '12px 14px', textAlign: 'right' }}>
-                      {onNavigate && (
-                        <button
-                          onClick={() => onNavigate('complaints')}
-                          style={{
-                            padding: '6px 12px',
-                            backgroundColor: '#800020',
-                            color: '#ffffff',
-                            border: 'none',
-                            borderRadius: '6px',
-                            fontWeight: 700,
-                            fontSize: '0.78rem',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          View Task
-                        </button>
-                      )}
-                    </td>
+          <>
+            {/* Desktop / Tablet Table View */}
+            <div className="hidden-on-mobile" style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb', textAlign: 'left' }}>
+                    <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Complaint ID</th>
+                    <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Category</th>
+                    <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Coach & Seat</th>
+                    <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Priority & Target SLA</th>
+                    <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Status</th>
+                    <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>SLA Status</th>
+                    <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700 }}>Assigned Time</th>
+                    <th style={{ padding: '12px 14px', color: '#374151', fontWeight: 700, textAlign: 'right' }}>Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {recent_complaints.map((c) => (
+                    <tr key={c.complaint_id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                      <td style={{ padding: '12px 14px', fontWeight: 800, color: '#800020' }}>{c.complaint_id}</td>
+                      <td style={{ padding: '12px 14px' }}>
+                        <div style={{ fontWeight: 700, color: '#111827' }}>{c.main_class || c.category_name}</div>
+                        <div style={{ fontSize: '0.78rem', color: '#6b7280' }}>{c.sub_class || c.subcategory_name}</div>
+                      </td>
+                      <td style={{ padding: '12px 14px', fontWeight: 700, color: '#1f2937' }}>
+                        Coach {c.coach_number || 'N/A'} {c.seat_number ? `• Seat ${c.seat_number}` : ''}
+                      </td>
+                      <td style={{ padding: '12px 14px' }}>
+                        <PriorityBadge priority={c.priority} />
+                        {c.sla_target_formatted && (
+                          <div style={{ fontSize: '0.73rem', color: '#6b7280', fontWeight: 600, marginTop: '2px' }}>
+                            Target: {c.sla_target_formatted}
+                          </div>
+                        )}
+                      </td>
+                      <td style={{ padding: '12px 14px' }}>
+                        <StatusBadge status={c.internal_status} />
+                      </td>
+                      <td style={{ padding: '12px 14px' }}>
+                        <SLABadge
+                          slaStatus={c.sla_status}
+                          slaTier={c.sla_tier}
+                          slaTimeDetails={c.sla_time_details}
+                          slaBreached={c.sla_breached}
+                          slaWarning={c.sla_warning}
+                          targetFormatted={c.sla1_target_formatted || c.sla_target_formatted}
+                        />
+                      </td>
+                      <td style={{ padding: '12px 14px', color: '#6b7280', fontSize: '0.82rem' }}>
+                        {c.created_at || 'Just now'}
+                      </td>
+                      <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                        {onNavigate && (
+                          <button
+                            type="button"
+                            onClick={() => onNavigate('complaints')}
+                            style={{
+                              padding: '6px 12px',
+                              backgroundColor: '#800020',
+                              color: '#ffffff',
+                              border: 'none',
+                              borderRadius: '6px',
+                              fontWeight: 700,
+                              fontSize: '0.78rem',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            View Task
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card List View */}
+            <div className="visible-on-mobile" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {recent_complaints.map((c) => (
+                <div
+                  key={c.complaint_id}
+                  style={{
+                    backgroundColor: '#fafbfc',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '10px',
+                    padding: '14px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 800, color: '#800020', fontSize: '0.95rem' }}>
+                      {c.complaint_id}
+                    </span>
+                    <StatusBadge status={c.internal_status} />
+                  </div>
+
+                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#111827' }}>
+                    {c.main_class || c.category_name}
+                    <span style={{ fontWeight: 500, color: '#6b7280', fontSize: '0.8rem', marginLeft: '6px' }}>
+                      ({c.sub_class || c.subcategory_name})
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem', color: '#4b5563' }}>
+                    <div>
+                      <strong>Coach:</strong> {c.coach_number || 'N/A'} {c.seat_number ? `• Seat ${c.seat_number}` : ''}
+                    </div>
+                    <PriorityBadge priority={c.priority} />
+                  </div>
+
+                  <div style={{ backgroundColor: '#ffffff', padding: '8px 10px', borderRadius: '6px', border: '1px solid #f0f0f0' }}>
+                    <SLABadge
+                      slaStatus={c.sla_status}
+                      slaTier={c.sla_tier}
+                      slaTimeDetails={c.sla_time_details}
+                      slaBreached={c.sla_breached}
+                      slaWarning={c.sla_warning}
+                      targetFormatted={c.sla1_target_formatted || c.sla_target_formatted}
+                    />
+                  </div>
+
+                  {onNavigate && (
+                    <button
+                      type="button"
+                      onClick={() => onNavigate('complaints')}
+                      style={{
+                        width: '100%',
+                        padding: '8px',
+                        backgroundColor: '#800020',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontWeight: 700,
+                        fontSize: '0.82rem',
+                        cursor: 'pointer',
+                        textAlign: 'center',
+                        marginTop: '2px'
+                      }}
+                    >
+                      View & Attend Task
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

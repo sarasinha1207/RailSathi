@@ -130,7 +130,7 @@ export default function AdminCmoStyleOverviewTable({ overviewData = [] }) {
           border: '1px solid #e5e7eb',
           display: 'flex',
           flexDirection: 'row',
-          flexWrap: 'nowrap',
+          flexWrap: 'wrap',
           gap: '12px',
           alignItems: 'center',
           width: '100%',

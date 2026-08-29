@@ -111,7 +111,8 @@ export default function StaffInventoryPage({ user }) {
         </div>
       ) : (
         <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
-          <div style={{ overflowX: 'auto' }}>
+          {/* Desktop & Tablet Table */}
+          <div className="hidden-on-mobile" style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
               <thead>
                 <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb', textAlign: 'left' }}>
@@ -160,6 +161,7 @@ export default function StaffInventoryPage({ user }) {
                       </td>
                       <td style={{ padding: '14px 16px', textAlign: 'right' }}>
                         <button
+                          type="button"
                           onClick={() => handleOpenUpdate(item)}
                           style={{
                             padding: '6px 12px',
@@ -180,6 +182,81 @@ export default function StaffInventoryPage({ user }) {
                 })}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Inventory Cards */}
+          <div className="visible-on-mobile" style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '12px' }}>
+            {inventory.map((item) => {
+              const isOut = item.status === 'Out of Stock' || item.quantity === 0;
+              const isLow = item.status === 'Low Stock' || item.quantity <= item.min_threshold;
+
+              return (
+                <div
+                  key={item.inventory_id}
+                  style={{
+                    backgroundColor: '#fafbfc',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '10px',
+                    padding: '14px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <div style={{ fontWeight: 800, color: '#111827', fontSize: '0.95rem' }}>
+                        {item.item_name}
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: '#6b7280', marginTop: '2px' }}>
+                        {item.category}
+                      </div>
+                    </div>
+                    <span style={{
+                      padding: '4px 10px',
+                      borderRadius: '12px',
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      backgroundColor: isOut ? '#fee2e2' : isLow ? '#fef3c7' : '#d1fae5',
+                      color: isOut ? '#991b1b' : isLow ? '#92400e' : '#065f46'
+                    }}>
+                      {isOut ? 'Out of Stock' : isLow ? 'Low Stock' : 'Available'}
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#ffffff', padding: '8px 12px', borderRadius: '6px', border: '1px solid #f0f0f0', fontSize: '0.85rem' }}>
+                    <div>
+                      <span style={{ color: '#6b7280' }}>Stock: </span>
+                      <strong style={{ color: isOut ? '#c5221f' : isLow ? '#b06000' : '#059669', fontSize: '0.95rem' }}>
+                        {item.quantity} {item.unit}
+                      </strong>
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: '#6b7280' }}>
+                      Min: {item.min_threshold} {item.unit}
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleOpenUpdate(item)}
+                    style={{
+                      width: '100%',
+                      padding: '8px',
+                      backgroundColor: '#800020',
+                      color: '#ffffff',
+                      border: 'none',
+                      borderRadius: '6px',
+                      fontWeight: 700,
+                      fontSize: '0.82rem',
+                      cursor: 'pointer',
+                      textAlign: 'center'
+                    }}
+                  >
+                    Update Quantity
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

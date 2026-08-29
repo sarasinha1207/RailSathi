@@ -82,7 +82,7 @@ export default function StaffOtherStaffPage({ user }) {
         </div>
       </div>
 
-      {/* Filter Controls — Horizontal Single Line Layout */}
+      {/* Filter Controls — Responsive Layout */}
       <div style={{
         backgroundColor: '#ffffff',
         borderRadius: '12px',
@@ -90,7 +90,7 @@ export default function StaffOtherStaffPage({ user }) {
         border: '1px solid #e5e7eb',
         boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
         display: 'flex',
-        flexDirection: 'row',
+        flexWrap: 'wrap',
         gap: '12px',
         alignItems: 'center',
         width: '100%',
@@ -101,13 +101,13 @@ export default function StaffOtherStaffPage({ user }) {
           placeholder="Search Staff Name / ID..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ flex: 2, minWidth: '180px', padding: '9px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem', boxSizing: 'border-box' }}
+          style={{ flex: '1 1 200px', minWidth: '160px', padding: '9px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem', boxSizing: 'border-box' }}
         />
 
         <select
           value={deptFilter}
           onChange={(e) => setDeptFilter(e.target.value)}
-          style={{ flex: 1, minWidth: '160px', padding: '9px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem', boxSizing: 'border-box' }}
+          style={{ flex: '1 1 180px', minWidth: '160px', padding: '9px 14px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '0.88rem', boxSizing: 'border-box' }}
         >
           <option value="all">All Departments</option>
           <option value="COMMERCIAL">Commercial (TTE / Ticket Checking)</option>

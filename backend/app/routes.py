@@ -1624,6 +1624,9 @@ async def get_zone_division_analytics(
             "open": 0,
             "resolved": 0,
             "critical": 0,
+            "high": 0,
+            "medium": 0,
+            "low": 0,
             "divisions_list": [],
             "catering": 0,
             "cleanliness": 0,
@@ -1643,12 +1646,18 @@ async def get_zone_division_analytics(
             "complaints": 0,
             "open": 0,
             "resolved": 0,
-            "critical": 0
+            "critical": 0,
+            "high": 0,
+            "medium": 0,
+            "low": 0
         }
 
     total_cmp = 0
     resolved_cnt = 0
     critical_cnt = 0
+    high_cnt = 0
+    medium_cnt = 0
+    low_cnt = 0
 
     for st, is_crit, dcode, prio, cat_code in raw_tuples:
         if division_code and division_code.lower() != 'all' and dcode != division_code:
@@ -1660,13 +1669,25 @@ async def get_zone_division_analytics(
             continue
 
         is_res = st in ("Resolved", "Closed")
-        is_critical_flag = is_crit or prio in ("High", "CRITICAL")
+        prio_upper = (prio or "").strip().upper()
+        is_critical_flag = bool(is_crit) or prio_upper == "CRITICAL"
 
         total_cmp += 1
         if is_res:
             resolved_cnt += 1
+
         if is_critical_flag:
             critical_cnt += 1
+            p_key = "critical"
+        elif prio_upper == "HIGH":
+            high_cnt += 1
+            p_key = "high"
+        elif prio_upper == "MEDIUM":
+            medium_cnt += 1
+            p_key = "medium"
+        else:
+            low_cnt += 1
+            p_key = "low"
 
         # Categorize department
         cat_upper = (cat_code or "").upper()
@@ -1691,22 +1712,20 @@ async def get_zone_division_analytics(
             zs = zone_stats[zcode]
             zs["complaints"] += 1
             zs[cat_key] += 1
+            zs[p_key] += 1
             if is_res:
                 zs["resolved"] += 1
             else:
                 zs["open"] += 1
-            if is_critical_flag:
-                zs["critical"] += 1
 
         if dcode and dcode in division_stats:
             ds = division_stats[dcode]
             ds["complaints"] += 1
+            ds[p_key] += 1
             if is_res:
                 ds["resolved"] += 1
             else:
                 ds["open"] += 1
-            if is_critical_flag:
-                ds["critical"] += 1
 
     # Attach division statistics directly from database counts
     for dcode, ds in division_stats.items():
@@ -1743,7 +1762,10 @@ async def get_zone_division_analytics(
         "pending_verification": 0,
         "under_review_assigned": max(0, total_cmp - resolved_cnt),
         "resolved_complaints": resolved_cnt,
-        "critical_high_priority": critical_cnt,
+        "critical_complaints": critical_cnt,
+        "high_complaints": high_cnt,
+        "medium_complaints": medium_cnt,
+        "low_complaints": low_cnt,
         "resolution_rate": f"{res_rate}%",
         "avg_resolution_time": "42 Mins" if total_cmp > 0 else "0 Mins"
     }

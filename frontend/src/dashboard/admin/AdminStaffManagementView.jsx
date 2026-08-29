@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import KPICard from '../../components/dashboard/KPICard';
 
 export default function AdminStaffManagementView() {
   const [staffList, setStaffList] = useState([]);
@@ -107,30 +108,38 @@ export default function AdminStaffManagementView() {
       </div>
 
       {/* STAFF MANAGEMENT SUMMARY CARDS (FROM DATABASE) */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
-          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Total Registered Staff</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#111827', margin: '6px 0', lineHeight: 1 }}>{totalStaffCount}</div>
-          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#800020', fontWeight: 700, lineHeight: 1.3 }}>Network Personnel Roster</div>
-        </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(135px, 1fr))', gap: '12px' }}>
+        <KPICard
+          title="Total Registered Staff"
+          value={totalStaffCount}
+          subtitle="Network Personnel"
+          accentColor="#800020"
+          textColor="#111827"
+        />
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #388E3C', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
-          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Available On Duty</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#388E3C', margin: '6px 0', lineHeight: 1 }}>{availableCount}</div>
-          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#2E7D32', fontWeight: 700, lineHeight: 1.3 }}>Active Field Personnel</div>
-        </div>
+        <KPICard
+          title="Available On Duty"
+          value={availableCount}
+          subtitle="Active Field Staff"
+          accentColor="#388E3C"
+          textColor="#388E3C"
+        />
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #F57C00', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
-          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Off Duty / Rest</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#F57C00', margin: '6px 0', lineHeight: 1 }}>{offDutyCount}</div>
-          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#C2410C', fontWeight: 700, lineHeight: 1.3 }}>Shift Resting Personnel</div>
-        </div>
+        <KPICard
+          title="Off Duty / Rest"
+          value={offDutyCount}
+          subtitle="Shift Resting"
+          accentColor="#F57C00"
+          textColor="#F57C00"
+        />
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #2563eb', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
-          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Active Deployments</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#2563eb', margin: '6px 0', lineHeight: 1 }}>{activeDutyCount}</div>
-          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#1e40af', fontWeight: 700, lineHeight: 1.3 }}>Onboard Train & Station Roster</div>
-        </div>
+        <KPICard
+          title="Active Deployments"
+          value={activeDutyCount}
+          subtitle="Onboard & Station"
+          accentColor="#2563eb"
+          textColor="#2563eb"
+        />
       </div>
 
       {/* STAFF MANAGEMENT FILTER BAR (SEARCH, ROLE, DEPARTMENT) */}

@@ -94,7 +94,9 @@ export default function AppRoutes() {
 
   const handleSwitchToTrack = (complaintId) => {
     setTrackedId(complaintId);
+    setActivePage('complaint');
     handleSubTabChange('track');
+    setTimeout(scrollToForm, 50);
   };
 
   const scrollToForm = () => {
@@ -170,8 +172,18 @@ export default function AppRoutes() {
               <span>Track Concern</span>
             </button>
           </div>
-          {activeSubTab === 'train' && <TrainForm onSubmissionSuccess={handleSwitchToTrack} />}
-          {activeSubTab === 'station' && <StationForm onSubmissionSuccess={handleSwitchToTrack} />}
+          {activeSubTab === 'train' && (
+            <TrainForm 
+              onSwitchToTrack={handleSwitchToTrack} 
+              onSubmissionSuccess={handleSwitchToTrack} 
+            />
+          )}
+          {activeSubTab === 'station' && (
+            <StationForm 
+              onSwitchToTrack={handleSwitchToTrack} 
+              onSubmissionSuccess={handleSwitchToTrack} 
+            />
+          )}
           {activeSubTab === 'track' && <TrackConcern initialComplaintId={trackedId} />}
         </main>
       )}

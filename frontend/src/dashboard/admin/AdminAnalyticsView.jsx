@@ -88,8 +88,8 @@ function InteractivePieChart({ data, title, subtitle }) {
       </div>
 
       {/* SVG PIE CHART WITH HOVER HIGHLIGHT & CENTER TOOLTIP CARD */}
-      <div style={{ position: 'relative', width: '230px', height: '230px', flexShrink: 0, margin: '0 auto 10px auto' }}>
-        <svg width="230" height="230" viewBox="0 0 230 230" style={{ overflow: 'visible' }}>
+      <div style={{ position: 'relative', width: 'min(230px, 70vw)', height: 'min(230px, 70vw)', maxWidth: '230px', maxHeight: '230px', flexShrink: 0, margin: '0 auto 10px auto' }}>
+        <svg width="100%" height="100%" viewBox="0 0 230 230" style={{ overflow: 'visible' }}>
           {slices.map((slice) => {
             const isHovered = activeInfo && activeInfo.id === slice.id;
             return slice.value > 0 ? (
@@ -668,35 +668,31 @@ export default function AdminAnalyticsView({ analyticsData }) {
   // Real DB SLA Pie Chart Data
   const slaPieData = useMemo(() => {
     return [
-      { label: 'SLA-1 On-Track Target', value: kpis.sla1_count || 10002, color: '#059669' },
-      { label: 'SLA-2 Officer Warning', value: kpis.sla2_count || 412, color: '#d97706' },
-      { label: 'SLA-3 Critical Breach', value: kpis.sla3_count || 32, color: '#c5221f' }
+      { label: 'SLA-1 On-Track Target', value: kpis.sla1_count || 0, color: '#059669' },
+      { label: 'SLA-2 Officer Warning', value: kpis.sla2_count || 0, color: '#d97706' },
+      { label: 'SLA-3 Critical Breach', value: kpis.sla3_count || 0, color: '#c5221f' }
     ];
   }, [kpis]);
 
   // Real DB Priority Breakdown calculated from zoneOverview database items
   const priorityPieData = useMemo(() => {
     let crit = 0;
-    let openTot = 0;
-    let resTot = 0;
-    let totalAll = 0;
+    let high = 0;
+    let med = 0;
+    let low = 0;
 
     zoneOverview.forEach(z => {
       crit += z.critical || 0;
-      openTot += z.open || 0;
-      resTot += z.resolved || 0;
-      totalAll += z.complaints || 0;
+      high += z.high || 0;
+      med += z.medium || 0;
+      low += z.low || 0;
     });
 
-    const high = Math.round(totalAll * 0.28);
-    const med = Math.round(totalAll * 0.41);
-    const low = Math.max(totalAll - (crit + high + med), 0);
-
     return [
-      { label: 'Critical Priority', value: crit || 1240, color: '#D32F2F' },
-      { label: 'High Priority', value: high || 2850, color: '#F57C00' },
-      { label: 'Medium Priority', value: med || 4120, color: '#FBC02D' },
-      { label: 'Low Priority', value: low || 1824, color: '#388E3C' }
+      { label: 'Critical Priority', value: crit, color: '#D32F2F' },
+      { label: 'High Priority', value: high, color: '#F57C00' },
+      { label: 'Medium Priority', value: med, color: '#FBC02D' },
+      { label: 'Low Priority', value: low, color: '#388E3C' }
     ];
   }, [zoneOverview]);
 
@@ -719,20 +715,11 @@ export default function AdminAnalyticsView({ analyticsData }) {
         totals['Coach Cleanliness'] += z.cleanliness || 0;
         totals['Electrical Equipment'] += z.electrical || 0;
         totals['Punctuality & Delays'] += z.punctuality || 0;
-        totals['Water Availability'] += (z.other || 0) > 0 ? Math.round(z.other * 0.45) : 1050;
+        totals['Water Availability'] += z.water || 0;
         totals['Catering & Pantry'] += z.catering || 0;
         totals['Bedroll & Linen'] += z.bedroll || 0;
-        totals['Staff Behavior & Service'] += (z.other || 0) > 0 ? Math.round(z.other * 0.35) : 520;
+        totals['Staff Behavior & Service'] += z.staff_service || z.other || 0;
       });
-    } else {
-      totals['Security & RPF'] = 2095;
-      totals['Coach Cleanliness'] = 1380;
-      totals['Electrical Equipment'] = 1265;
-      totals['Water Availability'] = 1050;
-      totals['Punctuality & Delays'] = 805;
-      totals['Catering & Pantry'] = 710;
-      totals['Bedroll & Linen'] = 580;
-      totals['Staff Behavior & Service'] = 450;
     }
 
     const sorted = Object.entries(totals)
@@ -743,7 +730,7 @@ export default function AdminAnalyticsView({ analyticsData }) {
   }, [zoneOverview]);
 
   const totalDbComplaints = useMemo(() => {
-    return zoneOverview.reduce((sum, z) => sum + (z.complaints || 0), 0) || 10446;
+    return zoneOverview.reduce((sum, z) => sum + (z.complaints || z.total || 0), 0);
   }, [zoneOverview]);
 
   return (

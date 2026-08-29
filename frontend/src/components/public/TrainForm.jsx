@@ -4,7 +4,7 @@ import { TRAIN_CATEGORIES } from '../../constants';
 
 
 
-export default function TrainForm({ onSwitchToTrack }) {
+export default function TrainForm({ onSwitchToTrack, onSubmissionSuccess }) {
   const [formData, setFormData] = useState({
     phone_number: '',
     pnr_number: '',
@@ -160,13 +160,21 @@ export default function TrainForm({ onSwitchToTrack }) {
         </div>
         <div className="submit-container" style={{ gap: '15px', justifyContent: 'center' }}>
           <button 
+            type="button"
             className="btn-submit" 
             style={{ backgroundColor: '#555' }} 
-            onClick={() => onSwitchToTrack(registeredId)}
+            onClick={() => {
+              const callback = onSwitchToTrack || onSubmissionSuccess;
+              if (typeof callback === 'function') {
+                callback(registeredId);
+              } else {
+                window.location.hash = 'track';
+              }
+            }}
           >
             Track Status
           </button>
-          <button className="btn-submit" onClick={() => window.location.reload()}>
+          <button type="button" className="btn-submit" onClick={() => window.location.reload()}>
             File New Grievance
           </button>
         </div>

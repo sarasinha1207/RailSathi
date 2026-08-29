@@ -316,11 +316,25 @@ export default function RailwayZonesSlider() {
 
         /* Responsive */
         @media (max-width:900px) {
-          .rzs-card { flex-direction:column; min-height:auto; }
-          .rzs-image-panel { flex:0 0 280px; min-height:280px; }
-          .rzs-info-panel { padding:28px 26px; }
+          .rzs-card { flex-direction:column; min-height:auto; border-radius:16px; }
+          .rzs-image-panel { flex:0 0 240px; min-height:240px; }
+          .rzs-info-panel { padding:24px 20px; }
           .rzs-arrow { width:42px; height:42px; border-radius:10px; }
           .rzs-row-label { flex:0 0 110px; }
+          .rzs-title { font-size:1.8rem; }
+        }
+
+        @media (max-width:600px) {
+          .rzs-track { gap:8px; }
+          .rzs-arrow { width:34px; height:34px; border-radius:8px; }
+          .rzs-image-panel { flex:0 0 180px; min-height:180px; }
+          .rzs-info-panel { padding:18px 14px; }
+          .rzs-zone-name { font-size:1.2rem; }
+          .rzs-zone-desc { font-size:0.85rem; }
+          .rzs-row-label { flex:0 0 95px; font-size:0.78rem; }
+          .rzs-row-value { font-size:0.85rem; }
+          .rzs-title { font-size:1.5rem; }
+          .rzs-subtitle { font-size:0.88rem; }
         }
       `}</style>
 

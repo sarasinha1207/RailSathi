@@ -118,21 +118,21 @@ export default function TrackConcern({ initialComplaintId }) {
         <div className="form-grid">
           <div className="form-group full-width">
             <label htmlFor="trackId">Complaint ID <span className="required-asterisk">*</span></label>
-            <div style={{ display: 'flex', gap: '15px' }}>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               <input 
                 type="text" 
                 id="trackId" 
                 name="complaint_id" 
                 required
                 placeholder="Enter Complaint ID (e.g. CMP0001)" 
-                style={{ flexGrow: 1 }}
+                style={{ flex: '1 1 220px', minWidth: '180px' }}
                 value={complaintId}
                 onChange={(e) => setComplaintId(e.target.value)}
               />
               <button 
                 type="submit" 
                 className="btn-submit" 
-                style={{ marginTop: 0, padding: '12px 25px', whiteSpace: 'nowrap' }}
+                style={{ marginTop: 0, padding: '12px 25px', whiteSpace: 'nowrap', flex: '1 1 auto' }}
                 disabled={loading}
               >
                 {loading ? 'Searching...' : 'Track Status'}

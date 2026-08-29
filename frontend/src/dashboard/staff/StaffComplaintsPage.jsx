@@ -231,7 +231,8 @@ export default function StaffComplaintsPage({ user }) {
         </div>
       ) : (
         <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', overflow: 'hidden' }}>
-          <div style={{ overflowX: 'auto' }}>
+          {/* Desktop & Tablet Table */}
+          <div className="hidden-on-mobile" style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
               <thead>
                 <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb', textAlign: 'left' }}>
@@ -295,6 +296,7 @@ export default function StaffComplaintsPage({ user }) {
                       </td>
                       <td style={{ padding: '14px 16px', textAlign: 'right' }}>
                         <button
+                          type="button"
                           onClick={(e) => { e.stopPropagation(); openComplaintModal(c); }}
                           style={{ padding: '6px 14px', backgroundColor: '#800020', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
                         >
@@ -307,31 +309,116 @@ export default function StaffComplaintsPage({ user }) {
               </tbody>
             </table>
           </div>
+
+          {/* Mobile Card List */}
+          <div className="visible-on-mobile" style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '12px' }}>
+            {filteredComplaints.map((c) => (
+              <div
+                key={c.complaint_id}
+                onClick={() => openComplaintModal(c)}
+                style={{
+                  backgroundColor: '#fafbfc',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '10px',
+                  padding: '14px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                  cursor: 'pointer'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <span style={{ fontWeight: 800, color: '#800020', fontSize: '0.95rem' }}>
+                      {c.complaint_id}
+                    </span>
+                    {c.pnr_number && <div style={{ fontSize: '0.72rem', color: '#6b7280' }}>PNR: {c.pnr_number}</div>}
+                  </div>
+                  <StatusBadge status={c.internal_status} />
+                </div>
+
+                <div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#111827' }}>
+                    {c.main_class || c.category_name}
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: '#6b7280' }}>
+                    {c.sub_class || c.subcategory_name}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.82rem', color: '#4b5563' }}>
+                  <div>
+                    <strong>Coach:</strong> {c.coach_number || 'N/A'} {c.seat_number ? `• Seat ${c.seat_number}` : ''}
+                  </div>
+                  <PriorityBadge priority={c.priority} />
+                </div>
+
+                <div style={{ backgroundColor: '#ffffff', padding: '8px 10px', borderRadius: '6px', border: '1px solid #f0f0f0' }}>
+                  <SLABadge
+                    slaStatus={c.sla_status}
+                    slaTier={c.sla_tier}
+                    slaTimeDetails={c.sla_time_details}
+                    slaBreached={c.sla_breached}
+                    slaWarning={c.sla_warning}
+                    targetFormatted={c.sla1_target_formatted || c.sla_target_formatted}
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); openComplaintModal(c); }}
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    backgroundColor: '#800020',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '6px',
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    cursor: 'pointer',
+                    textAlign: 'center'
+                  }}
+                >
+                  View Details & Take Action
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* --- COMPLAINT AUDIT RECORD MODAL (IDENTICAL LAYOUT TO CMO VIEW MODAL) --- */}
+      {/* --- COMPLAINT AUDIT RECORD MODAL --- */}
       {selectedComplaint && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '16px' }}>
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px', maxWidth: '650px', width: '90%', boxShadow: '0 10px 25px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h3 style={{ margin: '0 0 12px 0', color: '#800020', fontSize: '1.3rem', fontWeight: 800 }}>
-              Complaint Audit Record - {selectedComplaint.complaint_id}
-            </h3>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '12px' }}>
+          <div style={{ backgroundColor: '#ffffff', borderRadius: '14px', padding: '20px', maxWidth: '650px', width: '96%', boxShadow: '0 10px 30px rgba(0,0,0,0.25)', maxHeight: '92vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+              <h3 style={{ margin: 0, color: '#800020', fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)', fontWeight: 800 }}>
+                Audit Record - {selectedComplaint.complaint_id}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setSelectedComplaint(null)}
+                style={{ background: 'none', border: 'none', fontSize: '1.2rem', color: '#6b7280', cursor: 'pointer', padding: '4px' }}
+              >
+                ✕
+              </button>
+            </div>
 
             {/* 3-Tier SLA Status Highlight Box */}
             <div style={{
               backgroundColor: selectedComplaint.sla_breached ? '#fef2f2' : selectedComplaint.sla_warning ? '#fffbe6' : '#f0fdf4',
               border: selectedComplaint.sla_breached ? '1px solid #fecaca' : selectedComplaint.sla_warning ? '1px solid #ffe58f' : '1px solid #bbf7d0',
-              padding: '14px 16px',
+              padding: '12px 14px',
               borderRadius: '8px',
-              marginBottom: '16px'
+              marginBottom: '14px'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
                 <div>
-                  <div style={{ fontSize: '0.78rem', fontWeight: 800, color: selectedComplaint.sla_breached ? '#991b1b' : selectedComplaint.sla_warning ? '#d97706' : '#166534', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    3-TIER SERVICE LEVEL AGREEMENT (SLA) MONITOR
+                  <div style={{ fontSize: '0.74rem', fontWeight: 800, color: selectedComplaint.sla_breached ? '#991b1b' : selectedComplaint.sla_warning ? '#d97706' : '#166534', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    3-TIER SLA MONITOR
                   </div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#1f2937', marginTop: '2px' }}>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#1f2937', marginTop: '2px' }}>
                     Priority: <strong>{selectedComplaint.priority || 'Medium'}</strong>
                   </div>
                 </div>
@@ -344,31 +431,31 @@ export default function StaffComplaintsPage({ user }) {
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginTop: '10px', paddingTop: '10px', borderTop: '1px dashed #d1d5db', fontSize: '0.78rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px', marginTop: '10px', paddingTop: '10px', borderTop: '1px dashed #d1d5db', fontSize: '0.76rem' }}>
                 <div style={{ backgroundColor: '#ffffff', padding: '6px 10px', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
-                  <div style={{ color: '#059669', fontWeight: 800 }}>SLA-1 Target (Field Staff)</div>
+                  <div style={{ color: '#059669', fontWeight: 800 }}>SLA-1 Target</div>
                   <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827' }}>{selectedComplaint.sla1_target_formatted || selectedComplaint.sla_target_formatted || '15 Mins'}</div>
                 </div>
                 <div style={{ backgroundColor: '#ffffff', padding: '6px 10px', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
-                  <div style={{ color: '#d97706', fontWeight: 800 }}>SLA-2 Officer Warning</div>
+                  <div style={{ color: '#d97706', fontWeight: 800 }}>SLA-2 Warning</div>
                   <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827' }}>{selectedComplaint.sla2_target_formatted || '25 Mins'}</div>
                 </div>
                 <div style={{ backgroundColor: '#ffffff', padding: '6px 10px', borderRadius: '6px', border: '1px solid #e5e7eb' }}>
-                  <div style={{ color: '#dc2626', fontWeight: 800 }}>SLA-3 Critical Breach</div>
+                  <div style={{ color: '#dc2626', fontWeight: 800 }}>SLA-3 Breach</div>
                   <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827' }}>{selectedComplaint.sla3_target_formatted || '30 Mins'}</div>
                 </div>
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '0.85rem', color: '#374151', marginBottom: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px', fontSize: '0.84rem', color: '#374151', marginBottom: '14px' }}>
               <div><strong>Passenger PNR:</strong> {selectedComplaint.pnr_number || 'N/A'}</div>
               <div><strong>Phone Number:</strong> {selectedComplaint.phone_number || 'N/A'}</div>
-              <div><strong>Train Number / Coach:</strong> Train {selectedComplaint.train_number || '22477'} (Coach {selectedComplaint.coach_number || 'N/A'})</div>
+              <div><strong>Train / Coach:</strong> Train {selectedComplaint.train_number || '22477'} ({selectedComplaint.coach_number || 'N/A'})</div>
               <div><strong>Zone / Division:</strong> {selectedComplaint.zone_code || 'NR'} / {selectedComplaint.assigned_division_code || 'DLI'}</div>
-              <div><strong>Category & Subcategory:</strong> {selectedComplaint.main_class || selectedComplaint.category_name}</div>
-              <div><strong>Submitted At:</strong> {selectedComplaint.created_at || 'Just now'}</div>
+              <div><strong>Category:</strong> {selectedComplaint.main_class || selectedComplaint.category_name}</div>
+              <div><strong>Registered:</strong> {selectedComplaint.created_at || 'Just now'}</div>
               <div><strong>Priority:</strong> <PriorityBadge priority={selectedComplaint.priority} /></div>
-              <div><strong>Internal Status:</strong> <StatusBadge status={selectedComplaint.internal_status} /></div>
+              <div><strong>Status:</strong> <StatusBadge status={selectedComplaint.internal_status} /></div>
             </div>
 
             <div style={{ marginBottom: '16px' }}>
@@ -451,11 +538,11 @@ export default function StaffComplaintsPage({ user }) {
               </div>
 
               {/* Modal Footer Controls */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', paddingTop: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', paddingTop: '8px', flexWrap: 'wrap' }}>
                 <button
                   type="button"
                   onClick={() => setSelectedComplaint(null)}
-                  style={{ padding: '8px 18px', borderRadius: '6px', border: '1px solid #d1d5db', backgroundColor: '#f3f4f6', color: '#374151', fontWeight: 700, cursor: 'pointer' }}
+                  style={{ flex: '1 1 120px', padding: '10px 18px', borderRadius: '6px', border: '1px solid #d1d5db', backgroundColor: '#f3f4f6', color: '#374151', fontWeight: 700, cursor: 'pointer' }}
                 >
                   Close Record
                 </button>
@@ -464,7 +551,7 @@ export default function StaffComplaintsPage({ user }) {
                   <button
                     type="submit"
                     disabled={submitting}
-                    style={{ padding: '8px 18px', borderRadius: '6px', border: 'none', backgroundColor: '#800020', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
+                    style={{ flex: '1 1 160px', padding: '10px 18px', borderRadius: '6px', border: 'none', backgroundColor: '#800020', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
                   >
                     {submitting ? 'Closing...' : 'Mark Resolved & Close'}
                   </button>

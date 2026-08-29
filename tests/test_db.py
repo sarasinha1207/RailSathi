@@ -19,10 +19,10 @@ def test_db():
         station_count = db.query(Station).count()
         train_count = db.query(Train).count()
 
-        print(f"[PASS] TEST 1: Total Registered Complaints  : {complaint_count} Records (Target: >=10000)")
-        print(f"[PASS] TEST 2: Total Zonal Railways        : {zone_count} Zones (Target: 18)")
-        print(f"[PASS] TEST 3: Total Operational Divisions  : {division_count} Divisions (Target: 71)")
-        print(f"[PASS] TEST 4: Total Active Staff Personnel : {staff_count} Personnel (Target: >=500)")
+        print(f"[PASS] TEST 1: Total Registered Complaints  : {complaint_count} Records")
+        print(f"[PASS] TEST 2: Total Zonal Railways        : {zone_count} Zones")
+        print(f"[PASS] TEST 3: Total Operational Divisions  : {division_count} Divisions")
+        print(f"[PASS] TEST 4: Total Active Staff Personnel : {staff_count} Personnel")
         print(f"[PASS] TEST 5: Total Railway Stations       : {station_count} Stations")
         print(f"[PASS] TEST 6: Total Active Train Schedules : {train_count} Trains")
 

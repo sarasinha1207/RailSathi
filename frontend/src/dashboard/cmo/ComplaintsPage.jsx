@@ -257,33 +257,37 @@ export default function ComplaintsPage({ user, initialSubTab = 'pending' }) {
       <div style={{
         backgroundColor: '#ffffff',
         borderRadius: '12px',
-        padding: '20px 24px',
+        padding: '18px 22px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-        border: '1px solid #e5e7eb'
+        border: '1px solid #e5e7eb',
+        flexWrap: 'wrap',
+        gap: '14px'
       }}>
-        <div>
-          <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#800020', fontWeight: 800 }}>
+        <div style={{ flex: '1 1 280px' }}>
+          <h2 style={{ margin: 0, fontSize: 'clamp(1.15rem, 2.5vw, 1.4rem)', color: '#800020', fontWeight: 800 }}>
             Complaint Management Officer - Detailed Complaints Workspace
           </h2>
-          <p style={{ margin: '4px 0 0 0', fontSize: '0.88rem', color: '#666' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: '0.86rem', color: '#666' }}>
             Verify, categorize, assign, and audit full passenger complaint records across Indian Railways.
           </p>
         </div>
         <button
+          type="button"
           onClick={() => { fetchKPIs(); fetchComplaints(); }}
           style={{
-            padding: '10px 18px',
+            padding: '9px 18px',
             backgroundColor: '#800020',
             color: '#fff',
             border: 'none',
             borderRadius: '8px',
             fontWeight: 700,
             cursor: 'pointer',
-            fontSize: '0.88rem',
-            boxShadow: '0 2px 6px rgba(128,0,32,0.25)'
+            fontSize: '0.86rem',
+            boxShadow: '0 2px 6px rgba(128,0,32,0.25)',
+            whiteSpace: 'nowrap'
           }}
         >
           Refresh Data
@@ -314,23 +318,25 @@ export default function ComplaintsPage({ user, initialSubTab = 'pending' }) {
       </div>
 
       {/* 2. COMPACT FILTER WORKSPACE CARD */}
-      <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px 24px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+      <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '16px 20px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
         
         {/* QUEUE BUTTONS INSIDE CARD */}
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '18px', borderBottom: '1px solid #f3f4f6', paddingBottom: '14px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', borderBottom: '1px solid #f3f4f6', paddingBottom: '12px', flexWrap: 'wrap' }}>
           <button
             type="button"
             onClick={() => setActiveSubTab('pending')}
             style={{
-              padding: '9px 20px',
+              flex: '1 1 auto',
+              padding: '8px 16px',
               borderRadius: '8px',
               border: 'none',
               fontWeight: 800,
               cursor: 'pointer',
-              fontSize: '0.88rem',
+              fontSize: '0.84rem',
               backgroundColor: activeSubTab === 'pending' ? '#800020' : '#f3f4f6',
               color: activeSubTab === 'pending' ? '#ffffff' : '#374151',
-              boxShadow: activeSubTab === 'pending' ? '0 3px 10px rgba(128,0,32,0.25)' : 'none'
+              boxShadow: activeSubTab === 'pending' ? '0 3px 10px rgba(128,0,32,0.25)' : 'none',
+              whiteSpace: 'nowrap'
             }}
           >
             Pending Complaints ({kpis.pending_complaints || 0})
@@ -340,15 +346,17 @@ export default function ComplaintsPage({ user, initialSubTab = 'pending' }) {
             type="button"
             onClick={() => setActiveSubTab('reassignment')}
             style={{
-              padding: '9px 20px',
+              flex: '1 1 auto',
+              padding: '8px 16px',
               borderRadius: '8px',
               border: 'none',
               fontWeight: 800,
               cursor: 'pointer',
-              fontSize: '0.88rem',
+              fontSize: '0.84rem',
               backgroundColor: activeSubTab === 'reassignment' ? '#800020' : '#f3f4f6',
               color: activeSubTab === 'reassignment' ? '#ffffff' : '#374151',
-              boxShadow: activeSubTab === 'reassignment' ? '0 3px 10px rgba(128,0,32,0.25)' : 'none'
+              boxShadow: activeSubTab === 'reassignment' ? '0 3px 10px rgba(128,0,32,0.25)' : 'none',
+              whiteSpace: 'nowrap'
             }}
           >
             Reassignment Requests ({kpis.reassignment_requests || 0})
@@ -358,15 +366,17 @@ export default function ComplaintsPage({ user, initialSubTab = 'pending' }) {
             type="button"
             onClick={() => setActiveSubTab('all')}
             style={{
-              padding: '9px 20px',
+              flex: '1 1 auto',
+              padding: '8px 16px',
               borderRadius: '8px',
               border: 'none',
               fontWeight: 800,
               cursor: 'pointer',
-              fontSize: '0.88rem',
+              fontSize: '0.84rem',
               backgroundColor: activeSubTab === 'all' ? '#800020' : '#f3f4f6',
               color: activeSubTab === 'all' ? '#ffffff' : '#374151',
-              boxShadow: activeSubTab === 'all' ? '0 3px 10px rgba(128,0,32,0.25)' : 'none'
+              boxShadow: activeSubTab === 'all' ? '0 3px 10px rgba(128,0,32,0.25)' : 'none',
+              whiteSpace: 'nowrap'
             }}
           >
             All Complaints List

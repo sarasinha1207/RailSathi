@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import AdminCmoStyleOverviewTable from './AdminCmoStyleOverviewTable';
+import KPICard from '../../components/dashboard/KPICard';
 
 /* ==========================================
    REUSABLE INTERACTIVE SVG DONUT / PIE CHART
@@ -68,7 +69,7 @@ function SvgPieChart({ data, title, subtitle }) {
     <div style={{
       backgroundColor: '#ffffff',
       borderRadius: '16px',
-      padding: '24px',
+      padding: 'clamp(14px, 3vw, 24px)',
       border: '1px solid #e5e7eb',
       boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
       display: 'flex',
@@ -78,20 +79,20 @@ function SvgPieChart({ data, title, subtitle }) {
       boxSizing: 'border-box'
     }}>
       {/* Title Header Centered at Top */}
-      <div style={{ width: '100%', marginBottom: '20px', textAlign: 'center' }}>
-        <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#800020' }}>
+      <div style={{ width: '100%', marginBottom: '16px', textAlign: 'center' }}>
+        <h3 style={{ margin: 0, fontSize: 'clamp(1.05rem, 2.5vw, 1.2rem)', fontWeight: 800, color: '#800020' }}>
           {title}
         </h3>
         {subtitle && (
-          <span style={{ fontSize: '0.8rem', color: '#6b7280', fontWeight: 600, display: 'block', marginTop: '4px' }}>
+          <span style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 600, display: 'block', marginTop: '4px' }}>
             {subtitle}
           </span>
         )}
       </div>
 
       {/* SVG PIE CHART WITH HOVER HIGHLIGHT & CENTER TOOLTIP CARD */}
-      <div style={{ position: 'relative', width: '280px', height: '280px', flexShrink: 0, margin: '0 auto 24px auto' }}>
-        <svg width="280" height="280" viewBox="0 0 280 280" style={{ overflow: 'visible' }}>
+      <div style={{ position: 'relative', width: 'min(280px, 75vw)', height: 'min(280px, 75vw)', maxWidth: '280px', maxHeight: '280px', flexShrink: 0, margin: '0 auto 20px auto' }}>
+        <svg width="100%" height="100%" viewBox="0 0 280 280" style={{ overflow: 'visible' }}>
           {slices.map((slice) => {
             const isHovered = activeInfo && activeInfo.id === slice.id;
             return slice.value > 0 ? (
@@ -124,19 +125,23 @@ function SvgPieChart({ data, title, subtitle }) {
           transform: 'translate(-50%, -50%)',
           textAlign: 'center',
           pointerEvents: 'none',
-          width: '125px',
+          width: '120px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          backgroundColor: '#ffffff',
+          borderRadius: '50%',
+          height: '120px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.06)'
         }}>
           {activeInfo ? (
             <div style={{
-              backgroundColor: '#ffffff',
-              padding: '6px 8px',
-              borderRadius: '8px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              border: `2px solid ${activeInfo.color}`,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '4px',
               width: '100%'
             }}>
               <div style={{ fontSize: '0.74rem', fontWeight: 900, color: activeInfo.color, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={activeInfo.fullName || activeInfo.label}>
@@ -151,10 +156,10 @@ function SvgPieChart({ data, title, subtitle }) {
             </div>
           ) : (
             <>
-              <div style={{ fontSize: '1.65rem', fontWeight: 900, color: '#111827', lineHeight: 1 }}>
+              <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#111827', lineHeight: 1 }}>
                 {total.toLocaleString()}
               </div>
-              <div style={{ fontSize: '0.72rem', color: '#6b7280', fontWeight: 800, textTransform: 'uppercase', marginTop: '3px' }}>
+              <div style={{ fontSize: '0.7rem', color: '#6b7280', fontWeight: 800, textTransform: 'uppercase', marginTop: '3px' }}>
                 TOTAL TASKS
               </div>
             </>
@@ -165,7 +170,7 @@ function SvgPieChart({ data, title, subtitle }) {
       {/* LABELS / LEGEND GRID POSITIONED AT THE BOTTOM OF THE CARD */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(105px, 1fr))',
         gap: '8px',
         width: '100%',
         marginTop: 'auto'
@@ -297,7 +302,7 @@ export default function AdminHomeView({ analyticsData, loading, onRefresh }) {
   // Extract real critical count directly from database
   const dbCriticalCount = useMemo(() => {
     if (kpis.critical_complaints && kpis.critical_complaints > 0) return kpis.critical_complaints;
-    return rawOverview.reduce((sum, item) => sum + (item.total_critical || item.critical || (item.is_critical ? 1 : 0)), 0) || 1240;
+    return rawOverview.reduce((sum, item) => sum + (item.total_critical || item.critical || (item.is_critical ? 1 : 0)), 0);
   }, [kpis, rawOverview]);
 
   return (
@@ -343,39 +348,45 @@ export default function AdminHomeView({ analyticsData, loading, onRefresh }) {
       </div>
 
       {/* SUMMARY KPI CARDS WITH REAL DATABASE CRITICAL COMPLAINTS COUNT */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #800020', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
-          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Total Network Grievances</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#111827', margin: '6px 0', lineHeight: 1 }}>
-            {(kpis.assigned_complaints || 0) + (kpis.pending_complaints || 0) + (kpis.resolved_complaints || 0)}
-          </div>
-          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#800020', fontWeight: 700, lineHeight: 1.3 }}>Network-wide Logged Complaints</div>
-        </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(135px, 1fr))', gap: '12px' }}>
+        <KPICard
+          title="Total Network Grievances"
+          value={(kpis.assigned_complaints || 0) + (kpis.pending_complaints || 0) + (kpis.resolved_complaints || 0)}
+          subtitle="Network-wide Logged"
+          accentColor="#800020"
+          textColor="#111827"
+        />
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #F57C00', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
-          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Pending Field Action</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#F57C00', margin: '6px 0', lineHeight: 1 }}>{kpis.pending_complaints || 0}</div>
-          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#C2410C', fontWeight: 700, lineHeight: 1.3 }}>Action Pending Verification</div>
-        </div>
+        <KPICard
+          title="Pending Field Action"
+          value={kpis.pending_complaints || 0}
+          subtitle="Pending Verification"
+          accentColor="#F57C00"
+          textColor="#F57C00"
+        />
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #388E3C', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
-          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Resolved Grievances</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#388E3C', margin: '6px 0', lineHeight: 1 }}>{kpis.resolved_complaints || 0}</div>
-          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#2E7D32', fontWeight: 700, lineHeight: 1.3 }}>Closed & Passenger Verified</div>
-        </div>
+        <KPICard
+          title="Resolved Grievances"
+          value={kpis.resolved_complaints || 0}
+          subtitle="Closed & Verified"
+          accentColor="#388E3C"
+          textColor="#388E3C"
+        />
 
-        <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px', border: '2px solid #D32F2F', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
-          <div style={{ minHeight: '2.4rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.78rem', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.3 }}>Critical Complaints</div>
-          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#D32F2F', margin: '6px 0', lineHeight: 1 }}>{dbCriticalCount.toLocaleString()}</div>
-          <div style={{ marginTop: 'auto', minHeight: '2rem', display: 'flex', alignItems: 'flex-start', fontSize: '0.75rem', color: '#C62828', fontWeight: 700, lineHeight: 1.3 }}>Database Logged Critical Safety Risks</div>
-        </div>
+        <KPICard
+          title="Critical Complaints"
+          value={dbCriticalCount.toLocaleString()}
+          subtitle="Safety Risks Logged"
+          accentColor="#D32F2F"
+          textColor="#D32F2F"
+        />
       </div>
 
       {/* EXACT CMO DASHBOARD OVERVIEW TABLE (WITH PRIORITY LEGEND IN TOP RIGHT CORNER) */}
       <AdminCmoStyleOverviewTable overviewData={rawOverview} />
 
       {/* PIE CHART VISUALIZATIONS SECTION */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '20px', alignItems: 'stretch' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '16px', alignItems: 'stretch' }}>
         {/* CARD 1: ZONE-WISE COMPLAINT DISTRIBUTION PIE CHART (ZONE CODES & ALL ZONES INCLUDED) */}
         <SvgPieChart
           title="Zone-wise Complaint Distribution"

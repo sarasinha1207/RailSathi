@@ -149,9 +149,9 @@ export default function ZoneDivisionPage({ user }) {
 
   // Y-axis max value calculation for Vertical Bar Chart
   const barChartMax = useMemo(() => {
-    if (sortedZoneOverview.length === 0) return 10000;
-    const maxVal = Math.max(...sortedZoneOverview.map(z => z.complaints), 100);
-    return Math.ceil(maxVal / 1000) * 1000 || 10000;
+    if (sortedZoneOverview.length === 0) return 100;
+    const maxVal = Math.max(...sortedZoneOverview.map(z => z.complaints || 0), 10);
+    return Math.ceil(maxVal * 1.1);
   }, [sortedZoneOverview]);
 
   // Pure Database Category Slices for Pie Chart strictly derived from database response

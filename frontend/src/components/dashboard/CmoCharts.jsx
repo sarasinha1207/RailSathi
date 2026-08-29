@@ -9,14 +9,14 @@ export function CMOKPISection({ kpis = {} }) {
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-      gap: '16px'
+      gridTemplateColumns: 'repeat(auto-fit, minmax(135px, 1fr))',
+      gap: '12px'
     }}>
       {/* 1. Pending Complaints */}
       <KPICard
         title="Pending Complaints"
         value={kpis.pending_complaints || 0}
-        subtitle="Complaints waiting for CMO review"
+        subtitle="Waiting for CMO review"
         accentColor="#F57C00"
         textColor="#F57C00"
       />
@@ -25,7 +25,7 @@ export function CMOKPISection({ kpis = {} }) {
       <KPICard
         title="Assigned Complaints"
         value={kpis.assigned_complaints || 0}
-        subtitle="Currently assigned to staff"
+        subtitle="Assigned to staff"
         accentColor="#2563eb"
         textColor="#2563eb"
       />
@@ -43,7 +43,7 @@ export function CMOKPISection({ kpis = {} }) {
       <KPICard
         title="Resolved Complaints"
         value={kpis.resolved_complaints || 0}
-        subtitle="Successfully resolved grievances"
+        subtitle="Resolved grievances"
         accentColor="#388E3C"
         textColor="#388E3C"
       />
@@ -52,7 +52,7 @@ export function CMOKPISection({ kpis = {} }) {
       <KPICard
         title="Critical Complaints"
         value={kpis.critical_complaints || 0}
-        subtitle="Open / In-Progress safety risks"
+        subtitle="Open safety risks"
         accentColor="#D32F2F"
         textColor="#D32F2F"
       />
@@ -191,10 +191,10 @@ export function DepartmentComplaintChart({ data = [], selectedZone = 'all', onZo
             >
               {/* Left Y-Axis Label: FULL DEPARTMENT NAME directly from database */}
               <div style={{
-                width: '240px',
-                minWidth: '240px',
+                width: 'clamp(90px, 20vw, 220px)',
+                minWidth: 'clamp(90px, 20vw, 220px)',
                 textAlign: 'right',
-                fontSize: '0.78rem',
+                fontSize: 'clamp(0.68rem, 1.4vw, 0.78rem)',
                 fontWeight: 700,
                 color: '#1f2937',
                 lineHeight: 1.1,
