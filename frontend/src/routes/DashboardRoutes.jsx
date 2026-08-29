@@ -38,7 +38,36 @@ export default function DashboardRoutes({ user, activeTab = 'home', onNavigate }
       return <SettingsPage user={user} />;
     }
 
-    // ADMIN ROUTE: Always render AdminDashboardPage for Admin users
+    // Feature tabs accessible across roles (including Admin preview)
+    if (activeTab === 'train_journey') {
+      return <StaffTrainJourneyPage user={user} />;
+    }
+
+    if (activeTab === 'inventory') {
+      return <StaffInventoryPage user={user} />;
+    }
+
+    if (activeTab === 'other_staff') {
+      return <StaffOtherStaffPage user={user} />;
+    }
+
+    if (activeTab === 'reassignment_requests' || activeTab === 'reassignment') {
+      return <ReassignmentPage user={user} />;
+    }
+
+    if (activeTab === 'zone_division_complaints' || activeTab === 'zone_division') {
+      return <ZoneDivisionPage user={user} />;
+    }
+
+    if (activeTab === 'staff_availability') {
+      return <StaffAvailabilityPage user={user} />;
+    }
+
+    if (activeTab === 'my_complaints') {
+      return <StaffComplaintsPage user={user} />;
+    }
+
+    // ADMIN ROUTE: Render AdminDashboardPage for Admin users on core admin tabs
     if (user.role === ROLES.ADMIN) {
       return (
         <RoleRoute user={user} allowedRoles={[ROLES.ADMIN]}>

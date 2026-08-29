@@ -170,6 +170,26 @@ export default function StaffDashboardPage({ user, onNavigate }) {
           }}>
             {train_info?.onboard_status || 'Onboard Active Duty'}
           </span>
+          {onNavigate && (
+            <button
+              type="button"
+              onClick={() => onNavigate('train_journey')}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#800020',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '8px',
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                cursor: 'pointer',
+                boxShadow: '0 2px 6px rgba(128,0,32,0.2)',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              Inspect Coaches & Timetable →
+            </button>
+          )}
         </div>
       </div>
 
