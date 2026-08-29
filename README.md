@@ -10,13 +10,12 @@ Indian Railways operates one of the largest passenger transportation systems in 
 
 <div align="center">
 
-<img src="docs/screenshots/RailSathi_Interface.png" width="100%" alt="RailSathi Unified Public Interface">
+<img src="docs/screenshots/RailSathi_Interface.png" width="1503" height="1125" alt="RailSathi Unified Public Interface">
 
-<p><em>Figure 1: RailSathi Public Interface</em></p>
+<p> <em>Figure 1: RailSathi Public Interface</em></p>
 
 </div>
 
----
 
 ## 2. Key Features
 
@@ -26,11 +25,10 @@ Indian Railways operates one of the largest passenger transportation systems in 
 - **SLA Breach Monitoring & Escalation**: Automatic deadline tracking across 4 priority levels (Critical: 15m, High: 30m, Medium: 60m, Low: 90m).
 - **Inter-Divisional Reassignment Desk**: Seamless ticket escalation and handover when trains cross division/zonal borders.
 - **Mobile Field Staff Task Execution**: Dedicated mobile-optimized duty portal for TTEs, OBHS housekeeping, electrical engineers, and RPF personnel.
-- **Coach Physical Composition**: Interactive coach track view (`🚂 Swipe Track` & `▦ Quick Matrix Grid`) mapping coach classes and physical positions.
+- **Coach Physical Composition**: Interactive coach track view mapping coach classes and physical positions.
 - **Live Visual Tracking & Feedback**: 16-character Complaint ID lookup (`CMP...`) with a 10-stage vertical progress timeline and 3-level CSAT rating.
 - **Network-Wide Administrative Intelligence**: 100% database-driven metrics, interactive SVG donut charts, and live staff supervision rosters.
 
----
 
 ## 3. User Roles & Operational Capabilities
 
@@ -47,7 +45,7 @@ RailSathi connects four distinct operational user tiers through structured acces
 
 Each stakeholder interacts with the platform through dedicated workflows tailored to their operational responsibilities. Below is a detailed breakdown of the functional capabilities and permissions available across all four user tiers:
 
-### 👤 1. Passenger Capabilities
+###  1. Passenger Capabilities
 - **PNR & Journey Auto-Lookup**: Instant validation of 10-digit PNR numbers against booking records to auto-populate train name, train number, coach, berth, journey date, boarding station, and destination.
 - **Train & Station Grievance Registration**: Multi-channel submission for either on-board train incidents or station facility concerns with incident date, time, and rich text descriptions.
 - **2-Tier Category Selection**: Taxonomy selection across 163 specialized subcategories (Catering, Cleanliness, Security, Electrical, Medical, Bedroll, Punctuality, Divyangjan Amenities).
@@ -55,7 +53,7 @@ Each stakeholder interacts with the platform through dedicated workflows tailore
 - **Live Lifecycle Tracking**: Direct status query using Complaint ID rendering a 10-stage vertical progress timeline without requiring authentication.
 - **Feedback & Resolution Confirmation**: Post-resolution confirmation unlocking a 3-level qualitative service rating (*Excellent, Satisfactory, Unsatisfactory*) and review comments.
 
-### 🛡️ 2. Complaint Management Officer (CMO) Capabilities
+###  2. Complaint Management Officer (CMO) Capabilities
 - **Incoming Complaint Inspection**: Centralized control room queue providing real-time visibility into all unverified grievances filed within the operational division.
 - **Taxonomy Verification & Correction**: Detailed review interface allowing officers to audit passenger-submitted descriptions and correct misclassified categories before dispatch.
 - **Priority Classification**: Rapid tagging marking emergency, medical, and security concerns with visual priority badges (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`).
@@ -64,7 +62,7 @@ Each stakeholder interacts with the platform through dedicated workflows tailore
 - **Inter-Divisional Reassignment Desk**: Formal digital review and approval workflow for transferring tickets when trains cross division or zonal boundaries.
 - **SLA Breach Monitoring & Escalation**: Real-time notifications and control desk flags when configured response deadlines are exceeded.
 
-### 👷 3. Field Staff Capabilities (TTE, OBHS, Electrical, RPF)
+###  3. Field Staff Capabilities (TTE, OBHS, Electrical, RPF)
 - **Role-Based Authentication**: Secure login for onboard train crew, housekeeping managers, electrical technicians, and railway police officers.
 - **Duty-Scoped Task Queue**: Real-time task stream filtered to the staff member's currently assigned train number, coach range, or station post.
 - **Task Acceptance Acknowledgment**: Explicit acknowledgment control updating ticket status to `Accepted` for control room visibility.
@@ -72,7 +70,7 @@ Each stakeholder interacts with the platform through dedicated workflows tailore
 - **Mandatory Resolution Remarks**: Form-enforced logging of actions taken, resolution remarks, and completion timestamps before ticket closure.
 - **Section Boundary Reassignment Request**: Ability to initiate a handover request with operational reasons when a train moves outside their jurisdiction.
 
-### 🏛️ 4. System Administrator Capabilities
+###  4. System Administrator Capabilities
 - **Administrative Authentication & RBAC**: High-security authentication granting system-wide supervisory privileges.
 - **Pan-India Network Monitoring**: Centralized executive dashboard tracking 10,034+ complaints across all 18 Zonal Railways and 71 Divisions.
 - **Executive Analytics & Reporting**: Real-time query-driven SVG charts illustrating complaint distributions, resolution velocities, and departmental workloads.
@@ -81,13 +79,14 @@ Each stakeholder interacts with the platform through dedicated workflows tailore
 
 ---
 
+
 ## 4. Complaint Data Flow
 
 <div align="center">
 
-<img src="docs/figures/complaint_data_flow.png" width="100%" alt="Complaint Data Flow">
+<img src="docs/figures/complaint_data_flow.png" width="512" height="917" alt="Complaint Data Flow">
 
-<p><em>Figure 2: End-to-End Complaint Data Flow & Lifecycle State Progression</em></p>
+<p><em>Figure 2: End-to-End Complaint Data Flow</em></p>
 
 </div>
 
@@ -125,7 +124,6 @@ The persistence tier is built on **MySQL 8.0 (InnoDB Engine)** enforcing strict 
 | **5. Train Management & Inventory** | `trains`, `train_routes`, `train_coaches`, `train_inventory`, `staff_duty_assignments` | Handles 2,202 train schedules, halt sequences, physical coach layouts, and onboard consumable pantry inventory. |
 | **6. Passenger Journey Data** | `pnr_bookings` | Stores 10-digit PNR bookings with coach, berth, journey dates, and boarding/destination points. |
 
----
 
 ### 6.2 Project Dataset Overview & Record Counts
 
@@ -151,74 +149,80 @@ The persistence tier is built on **MySQL 8.0 (InnoDB Engine)** enforcing strict 
 <table align="center">
   <tr>
     <td width="50%" align="center">
-      <img src="docs/screenshots/Complaint_Form.png" width="100%" alt="Complaint Form"><br>
+      <img src="docs/screenshots/Complaint_Form.png" width="500" height="550" alt="Complaint Form"><br>
     </td>
     <td width="50%" align="center">
-      <img src="docs/screenshots/Resolution_Interface.png" width="100%" alt="Complaint Resolution Form"><br>
+      <img src="docs/screenshots/Resolution_Interface.png" width="500" height="550"  alt="Complaint Resolution Form"><br>
     </td>
   </tr>
 </table>
 
-<p><em>Figure 3: Passenger Grievance Registration & Tracking Interface</em></p>
-
 </div>
+<div align="center"><p><em>Figure 3: Passenger Grievance Registration & Tracking Interface </em></p></div>                                       
+
 
 <br>
+
 
 <div align="center">
 
 <table align="center">
   <tr>
     <td width="50%" align="center">
-      <img src="docs/screenshots/CMO_Dashboard-1.png" width="100%" alt="CMO Control Desk"><br>
+      <img src="docs/screenshots/CMO_Dashboard-1.png" width="800" height="600" alt="CMO Dashboards"><br>
     </td>
     <td width="50%" align="center">
-      <img src="docs/screenshots/CMO_Dashboard-2.png" width="100%" alt="CMO Verification Desk"><br>
+      <img src="docs/screenshots/CMO_Dashboard-2.png" width="800" height="600" alt="CMO Dashboards"><br>
     </td>
   </tr>
 </table>
 
-<p><em>Figure 4: Complaint Management Officer (CMO) Interface</em></p>
-
 </div>
+<div align="center"><p><em>Figure 4: Complaint Manager Officer (CMO) Interface</em></p></div>
+
 
 <br>
+
 
 <div align="center">
 
 <table align="center">
   <tr>
     <td width="50%" align="center">
-      <img src="docs/screenshots/Staff_Dashboard-1.png" width="100%" alt="Staff Tasks"><br>
+      <img src="docs/screenshots/Staff_Dashboard-1.png" width="800" height="600" alt="Staff Dashboards"><br>
     </td>
     <td width="50%" align="center">
-      <img src="docs/screenshots/Staff_Dashboard-2.png" width="100%" alt="Staff Coach View"><br>
+      <img src="docs/screenshots/Staff_Dashboard-2.png" width="800" height="600" alt="Staff Dashboards"><br>
     </td>
   </tr>
 </table>
 
-<p><em>Figure 5: Onboarded Field Staff Interface</em></p>
-
 </div>
+<div align="center"><p><em>Figure 5: Onboarded Staff Interface</em></p></div>
+
 
 <br>
+
 
 <div align="center">
 
 <table align="center">
   <tr>
     <td width="50%" align="center">
-      <img src="docs/screenshots/Administrator_Dashboard-1.png" width="100%" alt="Admin Network Overview"><br>
+      <img src="docs/screenshots/Administrator_Dashboard-1.png" width="800" height="600" alt="Administrator Dashboards"><br>
     </td>
     <td width="50%" align="center">
-      <img src="docs/screenshots/Administrator_Dashboard-2.png" width="100%" alt="Admin Analytics & Roster"><br>
+      <img src="docs/screenshots/Administrator_Dashboard-2.png" width="800" height="600" alt="Administrator Dashboards"><br>
     </td>
   </tr>
 </table>
 
-<p><em>Figure 6: Administrator Interface</em></p>
-
 </div>
+
+<div align="center"><p><em> Figure 6: Administrator Interface </em></p></div>
+
+<br>
+
 
 ---
 
@@ -309,6 +313,7 @@ npm install
 cd ..
 ```
 
+
 ### 9.3 Environment Variables
 
 Create a `.env` file in the project root directory:
@@ -325,22 +330,23 @@ ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin123
 ```
 
-### 9.4 Running the Project
 
-#### Start MySQL Database
+###  9.4 Running the Project
+
+### Start MySQL Database
 ```bash
 # Start MySQL Service (or use Windows batch launcher)
 start_mysql.bat
 ```
 
-#### Start Backend Application
+### Start Backend Application
 ```bash
 # Launch FastAPI ASGI server on port 5000
 python run.py
 ```
 *The backend server will start at `http://127.0.0.1:5000` and automatically seed all 19 database tables on initial launch.*
 
-#### Start Frontend Application
+### Start Frontend Application
 ```bash
 cd frontend
 
@@ -351,7 +357,7 @@ npm run build
 npm run dev
 ```
 
-### 9.5 Default Credentials
+### 9.5 Default Credentials:
 | Role | Username | Password | Dashboard Access |
 | :--- | :--- | :--- | :--- |
 | **Administrator** | `admin` | `admin123` | System-wide Supervisory Control & Network Analytics |
@@ -376,7 +382,6 @@ python tests/run_tests.py
 - `[5/6]` **Reassignment & Transfer** (`tests/test_transfer.py`): **PASSED** (Inter-divisional escalation & staff reassignment).
 - `[6/6]` **Performance Benchmarks** (`tests/test_perf.py`): **PASSED** (In-memory cached query latency: **$4.59\text{--}7.54\text{ ms}$**).
 
----
 
 ## 11. Performance
 
@@ -385,7 +390,6 @@ python tests/run_tests.py
 - **Frontend Code Splitting**: `React.lazy` and `Suspense` reduce the initial production bundle size to **$333\text{ KB}$** ($91\text{ KB}$ gzipped).
 - **Responsive Sizing**: Dynamic scaling for KPI cards and data tables across desktop, tablet, and mobile displays without layout breaking.
 
----
 
 ## 12. Future Scope
 
@@ -395,26 +399,5 @@ python tests/run_tests.py
 4. **Multilingual Support (i18n)**: Interface localization across regional Indian languages (Hindi, Bengali, Tamil, Telugu, Marathi).
 5. **Automated Background Daemon**: Standalone background workers for continuous time-elapsed SLA breach escalations without manual triggering.
 
----
-
-## 13. Author
-
-**Sara Sinha**  
-*Bachelor of Technology (B.Tech) — 4th Semester*  
-**Department of Computer Science & Engineering**  
-**Indian Institute of Technology (IIT), Patna**  
-
-**Internship Project Conducted At:**  
-**Centre for Railway Information Systems (CRIS)**  
-*Ministry of Railways (Railway Board), Government of India*  
-*Chanakyapuri, New Delhi - 110021*  
-
-**Supervisors & Mentors:**  
-- **Shri Sameer Shankar**, *Director, CRIS*  
-- **Shri Prabhat Ranjan**, *Principal Project Engineer (PPE), CRIS*  
-
----
-
-## 14. License
-
+## License
 This project was developed during the internship at the **Centre for Railway Information Systems (CRIS), Ministry of Railways, Government of India**. All rights reserved.
